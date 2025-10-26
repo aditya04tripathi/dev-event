@@ -30,7 +30,6 @@ export const metadata = {
 export default function ContactPage() {
   return (
     <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-4xl">
-      {/* Hero Section */}
       <div className="mb-8 sm:mb-10 md:mb-12">
         <h1 className="font-bold tracking-tight mb-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
           Get in Touch
@@ -42,7 +41,6 @@ export default function ContactPage() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 sm:gap-10 md:gap-12 mb-8 sm:mb-10 md:mb-12">
-        {/* Contact Information */}
         <div className="md:col-span-1 space-y-6 sm:space-y-8">
           <section>
             <h3 className="font-semibold mb-3 sm:mb-4 text-base sm:text-lg">
@@ -150,7 +148,6 @@ export default function ContactPage() {
           </section>
         </div>
 
-        {/* Contact Form */}
         <section className="md:col-span-2">
           <h3 className="font-bold tracking-tight mb-4 sm:mb-6 text-xl sm:text-2xl md:text-3xl">
             Send a Message
@@ -161,7 +158,6 @@ export default function ContactPage() {
 
       <Separator className="my-8 sm:my-10 md:my-12" />
 
-      {/* FAQ Section */}
       <section className="space-y-5 sm:space-y-6 mb-8 sm:mb-10 md:mb-12">
         <h2 className="font-bold tracking-tight text-2xl sm:text-3xl md:text-4xl">
           Frequently Asked Questions
@@ -268,7 +264,6 @@ export default function ContactPage() {
 
       <Separator className="my-8 sm:my-10 md:my-12" />
 
-      {/* Support Categories */}
       <section className="space-y-5 sm:space-y-6">
         <h2 className="font-bold tracking-tight text-2xl sm:text-3xl md:text-4xl">
           What I Can Help With

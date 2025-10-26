@@ -177,7 +177,6 @@ export default function NewEventPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-        {/* Error Message */}
         {error && (
           <Alert variant="destructive">
             <AlertCircleIcon className="size-4" />
@@ -185,7 +184,6 @@ export default function NewEventPage() {
           </Alert>
         )}
 
-        {/* Basic Information */}
         <Card>
           <CardHeader>
             <CardTitle>Basic Information</CardTitle>
@@ -259,7 +257,6 @@ export default function NewEventPage() {
           </CardContent>
         </Card>
 
-        {/* Event Image */}
         <Card>
           <CardHeader>
             <CardTitle>Event Image</CardTitle>
@@ -292,7 +289,6 @@ export default function NewEventPage() {
           </CardContent>
         </Card>
 
-        {/* Location & Date */}
         <Card>
           <CardHeader>
             <CardTitle>Location & Date</CardTitle>
@@ -378,7 +374,6 @@ export default function NewEventPage() {
           </CardContent>
         </Card>
 
-        {/* Audience & Organizer */}
         <Card>
           <CardHeader>
             <CardTitle>Audience & Organizer</CardTitle>
@@ -415,7 +410,6 @@ export default function NewEventPage() {
           </CardContent>
         </Card>
 
-        {/* Agenda */}
         <Card>
           <CardHeader>
             <CardTitle>Agenda</CardTitle>
@@ -474,7 +468,6 @@ export default function NewEventPage() {
           </CardContent>
         </Card>
 
-        {/* Tags */}
         <Card>
           <CardHeader>
             <CardTitle>Tags</CardTitle>
@@ -524,7 +517,6 @@ export default function NewEventPage() {
           </CardContent>
         </Card>
 
-        {/* Submit Button */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end pt-2">
           <Button
             type="button"

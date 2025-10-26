@@ -40,7 +40,6 @@ const Navbar = () => {
         </Link>
 
         <div className="flex items-center gap-3 sm:gap-4">
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
             {navigationLinks.map((link) => (
               <Link key={link.href} href={link.href}>
@@ -51,7 +50,6 @@ const Navbar = () => {
             ))}
           </nav>
 
-          {/* Create Event Button - Always visible */}
           <Link href="/events/new" className="hidden sm:block">
             <Button size="sm">
               <PlusIcon className="size-4 mr-2" />
@@ -59,14 +57,12 @@ const Navbar = () => {
             </Button>
           </Link>
 
-          {/* Mobile Create Event Button - Icon only */}
           <Link href="/events/new" className="sm:hidden">
             <Button size="sm" variant="default">
               <PlusIcon className="size-4" />
             </Button>
           </Link>
 
-          {/* Mobile Menu Sheet */}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="sm">

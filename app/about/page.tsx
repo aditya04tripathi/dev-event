@@ -28,7 +28,6 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-4xl">
-      {/* Hero Section */}
       <div className="mb-8 sm:mb-10 md:mb-12">
         <div className="flex flex-col md:flex-row gap-6 sm:gap-8 items-center md:items-start">
           <Avatar className="h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48">
@@ -45,7 +44,6 @@ export default function AboutPage() {
             </AvatarFallback>
           </Avatar>
 
-          {/* Intro */}
           <div className="flex-1 space-y-3 sm:space-y-4 text-center md:text-left">
             <div>
               <h1 className="font-bold tracking-tight mb-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
@@ -116,7 +114,6 @@ export default function AboutPage() {
 
       <Separator className="my-8 sm:my-10 md:my-12" />
 
-      {/* Bio Section */}
       <section className="space-y-5 sm:space-y-6 mb-8 sm:mb-10 md:mb-12">
         <h2 className="font-bold tracking-tight text-2xl sm:text-3xl md:text-4xl">
           About Me
@@ -149,7 +146,6 @@ export default function AboutPage() {
 
       <Separator className="my-8 sm:my-10 md:my-12" />
 
-      {/* Education Section */}
       <section className="space-y-5 sm:space-y-6 mb-8 sm:mb-10 md:mb-12">
         <h2 className="font-bold tracking-tight flex items-center gap-2 text-2xl sm:text-3xl md:text-4xl">
           <GraduationCapIcon className="size-5 sm:size-6" />
@@ -176,7 +172,6 @@ export default function AboutPage() {
 
       <Separator className="my-8 sm:my-10 md:my-12" />
 
-      {/* Skills Section */}
       <section className="space-y-5 sm:space-y-6 mb-8 sm:mb-10 md:mb-12">
         <h2 className="font-bold tracking-tight flex items-center gap-2 text-2xl sm:text-3xl md:text-4xl">
           <CodeIcon className="size-5 sm:size-6" />
@@ -220,7 +215,6 @@ export default function AboutPage() {
 
       <Separator className="my-8 sm:my-10 md:my-12" />
 
-      {/* Projects Section */}
       <section className="space-y-5 sm:space-y-6 mb-8 sm:mb-10 md:mb-12">
         <h2 className="font-bold tracking-tight text-2xl sm:text-3xl md:text-4xl">
           Featured Project
@@ -270,7 +264,6 @@ export default function AboutPage() {
 
       <Separator className="my-8 sm:my-10 md:my-12" />
 
-      {/* Work Experience Section */}
       <section className="space-y-5 sm:space-y-6 mb-8 sm:mb-10 md:mb-12">
         <h2 className="font-bold tracking-tight flex items-center gap-2 text-2xl sm:text-3xl md:text-4xl">
           <BriefcaseIcon className="size-5 sm:size-6" />
@@ -321,7 +314,6 @@ export default function AboutPage() {
 
       <Separator className="my-8 sm:my-10 md:my-12" />
 
-      {/* Call to Action */}
       <section className="text-center space-y-5 sm:space-y-6 py-6 sm:py-8">
         <div>
           <h2 className="font-bold tracking-tight mb-2 text-2xl sm:text-3xl md:text-4xl">
