@@ -256,7 +256,7 @@ export async function createEvent(formData: FormData) {
       agenda,
     });
 
-    // Revalidate pages
+    revalidatePath("/");
     revalidatePath("/events");
     revalidatePath(`/events/${slug}`);
 
