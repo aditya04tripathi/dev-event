@@ -1,12 +1,9 @@
-import EventCard from "@/components/event-card";
+import { Suspense } from "react";
 import ExploreButton from "@/components/explore-btn";
-import { Card, CardContent } from "@/components/ui/card";
-import { IEvent } from "@/database/event.model";
-import { getEvents } from "@/lib/actions/event.action";
+import { FeaturedEvents } from "@/components/featured-events";
+import { FeaturedEventsSkeleton } from "@/components/featured-events-skeleton";
 
-const HomePage = async () => {
-  const { events } = await getEvents();
-
+const HomePage = () => {
   return (
     <section className="container mx-auto w-full px-4">
       <div className="min-h-[400px] sm:min-h-[500px] md:h-[600px] flex gap-3 sm:gap-4 flex-col justify-center items-center py-12 sm:py-16 md:py-0">
@@ -27,25 +24,9 @@ const HomePage = async () => {
       >
         <h2 className="text-2xl sm:text-3xl md:text-4xl">Featured Events</h2>
 
-        {events && events.length > 0 ? (
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
-            {events.map((event: IEvent) => (
-              <li key={event.title}>
-                <EventCard event={event} />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <Card>
-            <CardContent className="p-4 sm:p-6">
-              <div className="text-center">
-                <p className="text-muted-foreground text-sm sm:text-base">
-                  No events found
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <Suspense fallback={<FeaturedEventsSkeleton />}>
+          <FeaturedEvents />
+        </Suspense>
       </div>
     </section>
   );

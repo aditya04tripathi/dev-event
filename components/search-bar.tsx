@@ -20,7 +20,7 @@ export default function SearchBar({ initialSearch = "" }: SearchBarProps) {
 
     if (term) {
       params.set("search", term);
-      params.set("page", "1"); // Reset to first page on search
+      params.set("page", "1");
     } else {
       params.delete("search");
     }

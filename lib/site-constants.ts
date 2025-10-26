@@ -4,10 +4,10 @@ export const SITE_INFO = {
   tagline: "Discover and join amazing tech events",
   description:
     "The hub for every developer event you must not miss. Connect with developers, learn new skills, and grow your network.",
-  email: "contact@devevent.com",
-  supportEmail: "support@devevent.com",
-  privacyEmail: "privacy@devevent.com",
-  legalEmail: "legal@devevent.com",
+  email: "adityatripathi.at04@gmail.com",
+  supportEmail: "adityatripathi.at04@gmail.com",
+  privacyEmail: "adityatripathi.at04@gmail.com",
+  legalEmail: "adityatripathi.at04@gmail.com",
 };
 
 // Creator Information

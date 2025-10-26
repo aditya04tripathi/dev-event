@@ -85,7 +85,6 @@ const ElectricBorder = ({
 
   useEffect(() => {
     updateAnim();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speed, chaos]);
 
   useLayoutEffect(() => {
@@ -94,7 +93,6 @@ const ElectricBorder = ({
     ro.observe(rootRef.current);
     updateAnim();
     return () => ro.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const vars = {

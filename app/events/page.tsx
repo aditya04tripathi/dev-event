@@ -1,12 +1,12 @@
-import EventCard from "@/components/event-card";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { getEvents, getAllTags } from "@/lib/actions/event.action";
+import { getAllTags } from "@/lib/actions/event.action";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import SearchBar from "@/components/search-bar";
-import Pagination from "@/components/pagination";
 import EventFilters from "@/components/event-filters";
+import { EventsList } from "@/components/events-list";
+import { EventsListSkeleton } from "@/components/events-list-skeleton";
 
 interface PageProps {
   searchParams: Promise<{
@@ -24,20 +24,6 @@ export default async function EventsPage({ searchParams }: PageProps) {
   const mode = params.mode || "all";
   const tagsParam = params.tags || "all";
   const selectedTags = tagsParam !== "all" ? tagsParam.split(",") : [];
-
-  const {
-    events,
-    totalEvents,
-    totalPages,
-    currentPage,
-    hasNextPage,
-    hasPrevPage,
-  } = await getEvents({
-    page,
-    search,
-    mode: mode !== "all" ? mode : undefined,
-    tags: selectedTags.length > 0 ? selectedTags : undefined,
-  });
 
   const allTags = await getAllTags();
 
@@ -69,70 +55,17 @@ export default async function EventsPage({ searchParams }: PageProps) {
         />
       </div>
 
-      {search && (
-        <div className="mb-4 sm:mb-6">
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Found {totalEvents} event{totalEvents !== 1 ? "s" : ""} for &quot;
-            {search}&quot;
-          </p>
-        </div>
-      )}
-
-      {events.length > 0 ? (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
-            {events.map((event) => (
-              <EventCard key={event.slug} event={event} />
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <div className="mt-8 sm:mt-10 md:mt-12">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                hasNextPage={hasNextPage}
-                hasPrevPage={hasPrevPage}
-              />
-            </div>
-          )}
-        </>
-      ) : (
-        <Card>
-          <CardContent className="py-12 sm:py-16">
-            <div className="text-center space-y-3 sm:space-y-4 px-4">
-              <p className="text-muted-foreground text-sm sm:text-base">
-                {search
-                  ? `No events found matching "${search}"`
-                  : "No events found"}
-              </p>
-              {!search && (
-                <Link href="/events/new" className="inline-block">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="sm:size-default"
-                  >
-                    <PlusIcon className="size-4 mr-2" />
-                    Create Your First Event
-                  </Button>
-                </Link>
-              )}
-              {search && (
-                <Link href="/events" className="inline-block">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="sm:size-default"
-                  >
-                    Clear Search
-                  </Button>
-                </Link>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <Suspense
+        key={`${page}-${search}-${mode}-${tagsParam}`}
+        fallback={<EventsListSkeleton />}
+      >
+        <EventsList
+          page={page}
+          search={search}
+          mode={mode}
+          selectedTags={selectedTags}
+        />
+      </Suspense>
     </div>
   );
 }

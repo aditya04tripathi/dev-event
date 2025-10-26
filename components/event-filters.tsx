@@ -30,7 +30,7 @@ export default function EventFilters({
     } else {
       params.set("mode", value);
     }
-    params.set("page", "1"); // Reset to first page
+    params.set("page", "1");
     router.push(`/events?${params.toString()}`);
   };
 
@@ -41,7 +41,7 @@ export default function EventFilters({
     } else {
       params.set("tags", value);
     }
-    params.set("page", "1"); // Reset to first page
+    params.set("page", "1");
     router.push(`/events?${params.toString()}`);
   };
 

@@ -1,5 +1,5 @@
+import { Suspense } from "react";
 import BookEvent from "@/components/book-event";
-import EventCard from "@/components/event-card";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -9,11 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { IEvent } from "@/database/event.model";
-import {
-  getEventBySlug,
-  getSimilarEventsBySlug,
-} from "@/lib/actions/event.action";
+import { getEventBySlug } from "@/lib/actions/event.action";
 import {
   CalendarIcon,
   ClockIcon,
@@ -24,6 +20,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { SimilarEvents } from "@/components/similar-events";
+import { SimilarEventsSkeleton } from "@/components/similar-events-skeleton";
 
 type RouteParams = {
   params: Promise<{
@@ -55,19 +53,6 @@ const EventAgenda = ({ agenda }: { agenda: string[] }) => (
   </div>
 );
 
-const EventDetailItem = ({
-  Icon,
-  label,
-}: {
-  Icon: LucideIcon;
-  label: string;
-}) => (
-  <div className="flex items-center gap-3">
-    <Icon className="size-4 text-muted-foreground" />
-    <span>{label}</span>
-  </div>
-);
-
 const EventDetailsPage = async ({ params }: RouteParams) => {
   const { slug } = await params;
 
@@ -92,7 +77,6 @@ const EventDetailsPage = async ({ params }: RouteParams) => {
     organizer,
   } = event;
 
-  const similarEvents = await getSimilarEventsBySlug(slug);
   const bookings = 10;
 
   return (
@@ -162,7 +146,7 @@ const EventDetailsPage = async ({ params }: RouteParams) => {
         </div>
 
         <div className="lg:col-span-1">
-          <Card className="lg:sticky lg:top-8">
+          <Card className="lg:sticky lg:top-22">
             <CardHeader>
               <CardTitle>
                 <h3 className="text-xl sm:text-2xl">Book Your Spot</h3>
@@ -187,21 +171,9 @@ const EventDetailsPage = async ({ params }: RouteParams) => {
             Similar Events
           </h2>
 
-          {similarEvents.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
-              {similarEvents.map((event: IEvent) => (
-                <EventCard key={event.slug} event={event} />
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="py-6 sm:py-8">
-                <p className="text-center text-muted-foreground text-sm sm:text-base">
-                  No similar events found
-                </p>
-              </CardContent>
-            </Card>
-          )}
+          <Suspense fallback={<SimilarEventsSkeleton />}>
+            <SimilarEvents slug={slug} />
+          </Suspense>
         </div>
       </div>
     </div>

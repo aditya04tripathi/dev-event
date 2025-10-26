@@ -53,7 +53,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Events Section */}
           <div className="space-y-4">
             <h4 className="font-semibold">Events</h4>
             <ul className="space-y-2 text-sm">
@@ -92,7 +91,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Company Section */}
           <div className="space-y-4">
             <h4 className="font-semibold">Company</h4>
             <ul className="space-y-2 text-sm">
@@ -115,7 +113,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal Section */}
           <div className="space-y-4">
             <h4 className="font-semibold">Legal</h4>
             <ul className="space-y-2 text-sm">
@@ -141,7 +138,6 @@ export default function Footer() {
 
         <Separator className="my-8" />
 
-        {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
           <p>© {currentYear} DevEvent. All rights reserved.</p>
           <p>Made with ❤️ by developers, for developers</p>

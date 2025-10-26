@@ -272,18 +272,14 @@ export default function AboutPage() {
         <div className="space-y-5 sm:space-y-6">
           {[...WORK_EXPERIENCE]
             .sort((a, b) => {
-              // Extract end dates from period strings
               const getEndDate = (period: string) => {
-                // Handle "Month Year - Month Year" or "Month Year"
                 const parts = period.split(" - ");
                 const endPart = parts.length > 1 ? parts[1] : parts[0];
 
-                // Handle "Present" or ongoing
                 if (endPart.toLowerCase().includes("present")) {
                   return new Date();
                 }
 
-                // Parse date (e.g., "December 2024")
                 return new Date(endPart);
               };
 

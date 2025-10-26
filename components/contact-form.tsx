@@ -48,7 +48,6 @@ export default function ContactForm() {
           message: "",
         });
 
-        // Reset success message after 5 seconds
         setTimeout(() => {
           setIsSubmitted(false);
         }, 5000);
