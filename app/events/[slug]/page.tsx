@@ -1,0 +1,211 @@
+import BookEvent from "@/components/book-event";
+import EventCard from "@/components/event-card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { IEvent } from "@/database/event.model";
+import {
+  getEventBySlug,
+  getSimilarEventsBySlug,
+} from "@/lib/actions/event.action";
+import {
+  CalendarIcon,
+  ClockIcon,
+  GlobeIcon,
+  MapPinIcon,
+  UsersIcon,
+  LucideIcon,
+} from "lucide-react";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+
+type RouteParams = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+const EventTags = ({ tags }: { tags: string[] }) => (
+  <div className="flex flex-wrap gap-2">
+    {tags.map((tag) => (
+      <Badge key={tag} variant="secondary" className="px-3 py-1">
+        {tag}
+      </Badge>
+    ))}
+  </div>
+);
+
+const EventAgenda = ({ agenda }: { agenda: string[] }) => (
+  <div className="flex flex-col items-start gap-2">
+    <h2 className="text-2xl sm:text-3xl md:text-4xl">Agenda</h2>
+    <ul className="space-y-2 w-full">
+      {agenda.map((item, index) => (
+        <li key={item} className="flex gap-3 text-sm sm:text-base">
+          <span className="text-muted-foreground shrink-0">{index + 1}.</span>
+          <span className="leading-relaxed">{item}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+const EventDetailItem = ({
+  Icon,
+  label,
+}: {
+  Icon: LucideIcon;
+  label: string;
+}) => (
+  <div className="flex items-center gap-3">
+    <Icon className="size-4 text-muted-foreground" />
+    <span>{label}</span>
+  </div>
+);
+
+const EventDetailsPage = async ({ params }: RouteParams) => {
+  const { slug } = await params;
+
+  const event = await getEventBySlug(slug);
+
+  if (!event) {
+    return notFound();
+  }
+
+  const {
+    title,
+    description,
+    image,
+    overview,
+    date,
+    time,
+    location,
+    mode,
+    agenda,
+    audience,
+    tags,
+    organizer,
+  } = event;
+
+  const similarEvents = await getSimilarEventsBySlug(slug);
+  const bookings = 10;
+
+  return (
+    <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-7xl">
+      <div className="mb-6 sm:mb-8 space-y-2">
+        <h1 className="font-bold tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+          {title}
+        </h1>
+        <p className="text-base sm:text-lg text-muted-foreground">
+          {description}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="lg:col-span-2 space-y-5 sm:space-y-6">
+          <Image
+            src={image}
+            alt={title}
+            width={800}
+            height={450}
+            className="w-full h-auto object-cover rounded"
+          />
+
+          <div className="flex flex-col items-start gap-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl">Overview</h2>
+            <p className="text-sm sm:text-base leading-relaxed">{overview}</p>
+          </div>
+
+          <div className="flex flex-col items-start gap-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl">Event Details</h2>
+            <div className="flex flex-col items-start gap-2 w-full">
+              <div className="flex items-center gap-2 text-sm sm:text-base">
+                <CalendarIcon className="size-4 text-muted-foreground shrink-0" />
+                <span>{date}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm sm:text-base">
+                <ClockIcon className="size-4 text-muted-foreground shrink-0" />
+                <span>{time}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm sm:text-base">
+                <MapPinIcon className="size-4 text-muted-foreground shrink-0" />
+                <span>{location}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm sm:text-base">
+                <UsersIcon className="size-4 text-muted-foreground shrink-0" />
+                <span>{audience}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm sm:text-base">
+                <GlobeIcon className="size-4 text-muted-foreground shrink-0" />
+                <span>{mode.charAt(0).toUpperCase() + mode.slice(1)}</span>
+              </div>
+            </div>
+          </div>
+
+          <EventAgenda agenda={agenda} />
+
+          <div className="flex flex-col items-start gap-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl">
+              About the Organizer
+            </h2>
+            <p className="text-sm sm:text-base leading-relaxed">{organizer}</p>
+          </div>
+
+          <div>
+            <EventTags tags={tags} />
+          </div>
+        </div>
+
+        <div className="lg:col-span-1">
+          <Card className="lg:sticky lg:top-8">
+            <CardHeader>
+              <CardTitle>
+                <h3 className="text-xl sm:text-2xl">Book Your Spot</h3>
+              </CardTitle>
+              <CardDescription className="text-sm">
+                {bookings > 0
+                  ? `Join ${bookings} people who have already booked their spot.`
+                  : "Be the first to book your spot."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <BookEvent eventId={event._id.toString()} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <div className="mt-12 sm:mt-14 md:mt-16 space-y-5 sm:space-y-6">
+        <Separator />
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-4 sm:mb-6">
+            Similar Events
+          </h2>
+
+          {similarEvents.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
+              {similarEvents.map((event: IEvent) => (
+                <EventCard key={event.slug} event={event} />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-6 sm:py-8">
+                <p className="text-center text-muted-foreground text-sm sm:text-base">
+                  No similar events found
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EventDetailsPage;

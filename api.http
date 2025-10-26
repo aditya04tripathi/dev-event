@@ -1,0 +1,6 @@
+### GET all events
+GET http://localhost:3000/api/events
+
+
+### GET event by slug
+GET http://localhost:3000/api/events/react-conf-2024

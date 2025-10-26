@@ -1,44 +1,61 @@
+import { IEvent } from "@/database/event.model";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { CalendarIcon, ClockIcon, MapPinIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 interface Props {
-  title: string;
-  image: string;
-  location: string;
-  slug: string;
-  date: string;
-  time: string;
+  event: IEvent;
 }
 
-const EventCard = ({ title, image, location, slug, date, time }: Props) => {
+const EventCard = ({ event }: Props) => {
+  if (!event) return <div>no evt</div>;
+
   return (
-    <Link href={`/events/${slug}`} id="event-card">
-      <Image
-        className="poster"
-        src={image}
-        alt={title}
-        width={410}
-        height={300}
-      />
+    <Card className="overflow-hidden transition-all">
+      <CardHeader>
+        <Image
+          src={event.image}
+          alt={event.title}
+          width={410}
+          height={300}
+          className="aspect-video object-cover w-full rounded"
+        />
+      </CardHeader>
 
-      <div className="flex flex-row gap-2">
-        <Image src="/icons/pin.svg" alt="location" height={14} width={14} />
-        <p className="info">{location}</p>
-      </div>
-
-      <p className="title">{title}</p>
-
-      <div className="datetime">
-        <div>
-          <Image src="/icons/calendar.svg" alt="date" height={14} width={14} />
-          <p className="info">{date}</p>
+      <CardContent>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <MapPinIcon className="size-4" />
+          <p className="text-sm">{event.location}</p>
         </div>
-        <div>
-          <Image src="/icons/clock.svg" alt="time" height={14} width={14} />
-          <p className="info">{time}</p>
+
+        <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
+          {event.title}
+        </h3>
+      </CardContent>
+
+      <CardFooter className="p-4 pt-0 flex items-center justify-between gap-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <CalendarIcon className="size-4" />
+            <span>{event.date}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <ClockIcon className="size-4" />
+            <span>{event.time}</span>
+          </div>
         </div>
-      </div>
-    </Link>
+        <Link href={`/events/${event.slug}`} className="block group">
+          <Button variant={"link"}>View Event</Button>
+        </Link>
+      </CardFooter>
+    </Card>
   );
 };
 

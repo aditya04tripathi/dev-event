@@ -1,25 +1,21 @@
-"use client";
-
-import Image from "next/image";
+import { ArrowDown } from "lucide-react";
+import ElectricBorder from "./ElectricBorder";
 
 const ExploreButton = () => {
   return (
-    <button
-      id="explore-btn"
-      className="mt-7 mx-auto"
-      onClick={() => console.log("CLICKED")}
+    <ElectricBorder
+      className="w-fit h-fit px-5 py-2 mt-10"
+      color="var(--primary)"
+      speed={1}
+      chaos={0.5}
+      thickness={2}
+      style={{ borderRadius: 16 }}
     >
-      <a href="#events">
+      <a className="flex items-center gap-2" href="#events">
         Explore Events
-        <Image
-          src="/icons/arrow-down.svg"
-          alt="Arrow Down"
-          width={24}
-          height={24}
-          className="inline-block ml-2"
-        />
+        <ArrowDown />
       </a>
-    </button>
+    </ElectricBorder>
   );
 };
 
