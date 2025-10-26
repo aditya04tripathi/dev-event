@@ -17,7 +17,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               <Link
-                href="https://github.com"
+                href="https://github.com/aditya04tripathi"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -26,16 +26,7 @@ export default function Footer() {
                 <span className="sr-only">GitHub</span>
               </Link>
               <Link
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <TwitterIcon className="size-5" />
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link
-                href="https://linkedin.com"
+                href="https://linkedin.com/in/aditya-tripathi-887586379"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -44,7 +35,7 @@ export default function Footer() {
                 <span className="sr-only">LinkedIn</span>
               </Link>
               <Link
-                href="mailto:contact@devevent.com"
+                href="mailto:adityatripathi.at04@gmail.com"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <MailIcon className="size-5" />
