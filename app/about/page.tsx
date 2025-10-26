@@ -21,8 +21,31 @@ import {
 import Link from "next/link";
 
 export const metadata = {
-  title: "About | DevEvent",
-  description: "Learn about Aditya Tripathi, the developer behind DevEvent",
+  title: "About",
+  description:
+    "Learn about Aditya Tripathi, the developer behind DevEvent. Full-stack developer specializing in Next.js, React, TypeScript, and MongoDB.",
+  keywords: [
+    "Aditya Tripathi",
+    "developer",
+    "full-stack developer",
+    "Next.js developer",
+    "React developer",
+    "portfolio",
+  ],
+  openGraph: {
+    title: "About Aditya Tripathi | DevEvent",
+    description:
+      "Learn about the developer behind DevEvent. Full-stack developer specializing in modern web technologies.",
+    type: "profile",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "About Aditya Tripathi | DevEvent",
+      },
+    ],
+  },
 };
 
 export default function AboutPage() {

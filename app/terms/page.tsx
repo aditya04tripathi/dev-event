@@ -1,8 +1,29 @@
 import { SITE_INFO } from "@/lib/site-constants";
 
 export const metadata = {
-  title: "Terms of Service | DevEvent",
-  description: "Terms of Service for DevEvent platform",
+  title: "Terms of Service",
+  description:
+    "Terms of Service for DevEvent platform. Read our terms and conditions, user agreements, and platform guidelines before using our services.",
+  keywords: [
+    "terms of service",
+    "terms and conditions",
+    "user agreement",
+    "legal",
+    "platform rules",
+  ],
+  openGraph: {
+    title: "Terms of Service | DevEvent",
+    description: "Read our terms and conditions before using DevEvent.",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Terms of Service | DevEvent",
+      },
+    ],
+  },
 };
 
 export default function TermsPage() {

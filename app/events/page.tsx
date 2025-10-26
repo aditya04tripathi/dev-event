@@ -7,6 +7,33 @@ import SearchBar from "@/components/search-bar";
 import EventFilters from "@/components/event-filters";
 import { EventsList } from "@/components/events-list";
 import { EventsListSkeleton } from "@/components/events-list-skeleton";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Browse All Events | DevEvent",
+  description:
+    "Discover and join amazing tech events. Browse through hackathons, meetups, and conferences. Filter by mode, tags, and search to find your perfect event.",
+  keywords: [
+    "browse events",
+    "tech events",
+    "developer conferences",
+    "hackathons list",
+    "coding meetups",
+  ],
+  openGraph: {
+    title: "Browse All Events | DevEvent",
+    description: "Discover and join amazing tech events.",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Browse All Events | DevEvent",
+      },
+    ],
+  },
+};
 
 interface PageProps {
   searchParams: Promise<{

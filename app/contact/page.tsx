@@ -23,8 +23,30 @@ import {
 import Link from "next/link";
 
 export const metadata = {
-  title: "Contact | DevEvent",
-  description: "Get in touch with Aditya Tripathi",
+  title: "Contact",
+  description:
+    "Get in touch with Aditya Tripathi. Have questions, suggestions, or want to collaborate? Reach out for general inquiries, technical support, or career opportunities.",
+  keywords: [
+    "contact",
+    "get in touch",
+    "developer contact",
+    "collaboration",
+    "support",
+  ],
+  openGraph: {
+    title: "Contact | DevEvent",
+    description:
+      "Get in touch for questions, suggestions, or collaboration opportunities.",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Contact | DevEvent",
+      },
+    ],
+  },
 };
 
 export default function ContactPage() {

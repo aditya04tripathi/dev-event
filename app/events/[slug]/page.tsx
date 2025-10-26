@@ -22,12 +22,52 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { SimilarEvents } from "@/components/similar-events";
 import { SimilarEventsSkeleton } from "@/components/similar-events-skeleton";
+import type { Metadata } from "next";
 
 type RouteParams = {
   params: Promise<{
     slug: string;
   }>;
 };
+
+export async function generateMetadata({
+  params,
+}: RouteParams): Promise<Metadata> {
+  const { slug } = await params;
+  const event = await getEventBySlug(slug);
+
+  if (!event) {
+    return {
+      title: "Event Not Found | DevEvent",
+      description: "The requested event could not be found.",
+    };
+  }
+
+  return {
+    title: `${event.title} | DevEvent`,
+    description: event.description,
+    keywords: [
+      ...event.tags,
+      "tech event",
+      "developer event",
+      event.mode,
+      event.location,
+    ],
+    openGraph: {
+      title: event.title,
+      description: event.description,
+      images: [
+        {
+          url: event.image,
+          width: 1200,
+          height: 630,
+          alt: event.title,
+        },
+      ],
+      type: "website",
+    },
+  };
+}
 
 const EventTags = ({ tags }: { tags: string[] }) => (
   <div className="flex flex-wrap gap-2">

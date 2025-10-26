@@ -2,6 +2,35 @@ import { Suspense } from "react";
 import ExploreButton from "@/components/explore-btn";
 import { FeaturedEvents } from "@/components/featured-events";
 import { FeaturedEventsSkeleton } from "@/components/featured-events-skeleton";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "DevEvent - The Hub for Every Dev Event You Can't Miss",
+  description:
+    "Discover hackathons, meetups, and conferences all in one place. Join amazing tech events and connect with the developer community.",
+  keywords: [
+    "developer events",
+    "hackathons",
+    "tech meetups",
+    "conferences",
+    "coding events",
+    "tech community",
+  ],
+  openGraph: {
+    title: "DevEvent - The Hub for Every Dev Event You Can't Miss",
+    description:
+      "Discover hackathons, meetups, and conferences all in one place.",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "DevEvent - The Hub for Every Dev Event You Can't Miss",
+      },
+    ],
+  },
+};
 
 const HomePage = () => {
   return (

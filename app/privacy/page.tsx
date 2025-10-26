@@ -3,8 +3,29 @@ import { Separator } from "@/components/ui/separator";
 import { SITE_INFO } from "@/lib/site-constants";
 
 export const metadata = {
-  title: "Privacy Policy | DevEvent",
-  description: "Privacy Policy for DevEvent platform",
+  title: "Privacy Policy",
+  description:
+    "Privacy Policy for DevEvent platform. Learn how we collect, use, and protect your personal data. Your privacy and data security are our priorities.",
+  keywords: [
+    "privacy policy",
+    "data protection",
+    "privacy",
+    "GDPR",
+    "data security",
+  ],
+  openGraph: {
+    title: "Privacy Policy | DevEvent",
+    description: "Learn how we protect your personal data and privacy.",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Privacy Policy | DevEvent",
+      },
+    ],
+  },
 };
 
 export default function PrivacyPage() {
