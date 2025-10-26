@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { SITE_INFO } from "@/lib/site-constants";
 
 export const metadata = {
   title: "Privacy Policy | DevEvent",
@@ -132,7 +133,7 @@ export default function PrivacyPage() {
           us:
         </p>
         <ul className="space-y-2 text-sm sm:text-base">
-          <li>By email: privacy@devevent.com</li>
+          <li>By email: {SITE_INFO.privacyEmail}</li>
           <li>By visiting our contact page</li>
         </ul>
       </div>

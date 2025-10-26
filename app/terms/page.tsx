@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SITE_INFO } from "@/lib/site-constants";
 
 export const metadata = {
   title: "Terms of Service | DevEvent",
@@ -163,7 +163,7 @@ export default function TermsPage() {
           If you have any questions about these Terms, please contact us:
         </p>
         <ul className="list-disc list-inside space-y-2 ml-4 text-sm sm:text-base">
-          <li>By email: legal@devevent.com</li>
+          <li>By email: {SITE_INFO.legalEmail}</li>
           <li>By visiting our contact page</li>
         </ul>
       </div>
