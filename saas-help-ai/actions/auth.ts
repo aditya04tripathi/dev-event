@@ -2,7 +2,6 @@
 
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { signOut as authSignOut, signIn } from "@/auth";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
@@ -45,7 +44,7 @@ export async function signUp(formData: FormData) {
     });
 
     revalidatePath("/");
-    redirect("/dashboard");
+    return { success: true, redirectTo: "/dashboard" };
   } catch (error) {
     console.error("Sign up error:", error);
     return { error: "Failed to create account" };
@@ -68,7 +67,7 @@ export async function signInAction(formData: FormData) {
     });
 
     revalidatePath("/");
-    redirect("/dashboard");
+    return { success: true, redirectTo: "/dashboard" };
   } catch (error) {
     console.error("Sign in error:", error);
     return { error: "Invalid email or password" };
@@ -77,5 +76,6 @@ export async function signInAction(formData: FormData) {
 
 export async function signOutAction() {
   await authSignOut();
-  redirect("/auth/signin");
+  revalidatePath("/");
+  return { success: true, redirectTo: "/auth/signin" };
 }

@@ -213,3 +213,334 @@ export async function getPayPalOrder(orderId: string) {
 
   return response.json();
 }
+
+// PayPal Subscriptions API functions
+export async function createPayPalSubscriptionPlan(
+  amount: number,
+  currency: string = "USD",
+  intervalUnit: "MONTH" | "YEAR",
+  intervalCount: number = 1
+): Promise<{ planId: string }> {
+  const accessToken = await getPayPalAccessToken();
+  const isSandbox = process.env.PAYPAL_MODE === "sandbox";
+  const baseUrl = isSandbox
+    ? "https://api-m.sandbox.paypal.com"
+    : "https://api-m.paypal.com";
+
+  // First, create a product
+  const productResponse = await fetch(`${baseUrl}/v1/catalogs/products`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      name: "Startup Validator Subscription",
+      description: "AI-powered startup idea validation service",
+      type: "SERVICE",
+    }),
+  });
+
+  if (!productResponse.ok) {
+    const errorData = await productResponse.json().catch(() => ({
+      message: "Failed to create product",
+    }));
+    throw new Error(
+      `PayPal product creation failed: ${JSON.stringify(errorData)}`
+    );
+  }
+
+  const productData = await productResponse.json();
+  const productId = productData.id;
+
+  // Create a billing plan
+  const planResponse = await fetch(`${baseUrl}/v1/billing/plans`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      product_id: productId,
+      name: `${
+        intervalUnit === "MONTH" ? "Monthly" : "Yearly"
+      } Subscription Plan`,
+      description: `Recurring ${
+        intervalUnit === "MONTH" ? "monthly" : "yearly"
+      } subscription`,
+      billing_cycles: [
+        {
+          frequency: {
+            interval_unit: intervalUnit,
+            interval_count: intervalCount,
+          },
+          tenure_type: "REGULAR",
+          sequence: 1,
+          total_cycles: 0, // 0 means unlimited cycles
+          pricing_scheme: {
+            fixed_price: {
+              value: amount.toFixed(2),
+              currency_code: currency,
+            },
+          },
+        },
+      ],
+      payment_preferences: {
+        auto_bill_outstanding: true,
+        setup_fee_failure_action: "CONTINUE",
+        payment_failure_threshold: 3,
+      },
+      taxes: {
+        percentage: "0",
+        inclusive: false,
+      },
+    }),
+  });
+
+  if (!planResponse.ok) {
+    const errorData = await planResponse.json().catch(() => ({
+      message: "Failed to create plan",
+    }));
+    throw new Error(
+      `PayPal plan creation failed: ${JSON.stringify(errorData)}`
+    );
+  }
+
+  const planData = await planResponse.json();
+
+  return {
+    planId: planData.id,
+  };
+}
+
+export async function createPayPalSubscription(
+  planId: string,
+  returnUrl: string,
+  cancelUrl: string,
+  email?: string,
+  name?: string
+): Promise<{ subscriptionId: string; approvalUrl: string }> {
+  const accessToken = await getPayPalAccessToken();
+  const isSandbox = process.env.PAYPAL_MODE === "sandbox";
+  const baseUrl = isSandbox
+    ? "https://api-m.sandbox.paypal.com"
+    : "https://api-m.paypal.com";
+
+  const subscriptionPayload: {
+    plan_id: string;
+    subscriber?: {
+      name?: { given_name?: string; surname?: string };
+      email_address?: string;
+    };
+    application_context: {
+      return_url: string;
+      cancel_url: string;
+      brand_name: string;
+      locale: string;
+      shipping_preference: string;
+      user_action: string;
+    };
+  } = {
+    plan_id: planId,
+    application_context: {
+      return_url: returnUrl,
+      cancel_url: cancelUrl,
+      brand_name: "Startup Validator",
+      locale: "en-US",
+      shipping_preference: "NO_SHIPPING",
+      user_action: "SUBSCRIBE_NOW",
+    },
+  };
+
+  if (email && name) {
+    const nameParts = name.split(" ");
+    subscriptionPayload.subscriber = {
+      name: {
+        given_name: nameParts[0] || name,
+        surname: nameParts.slice(1).join(" ") || "",
+      },
+      email_address: email,
+    };
+  }
+
+  const response = await fetch(`${baseUrl}/v1/billing/subscriptions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(subscriptionPayload),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({
+      message: "Failed to create subscription",
+    }));
+    console.error("PayPal subscription creation error:", errorData);
+    throw new Error(
+      `PayPal subscription creation failed: ${JSON.stringify(errorData)}`
+    );
+  }
+
+  const data = await response.json();
+  const subscriptionId = data.id;
+
+  // Find the approval URL
+  const approveLink = data.links?.find(
+    (link: { rel: string; href: string }) =>
+      link.rel === "approve" || link.rel === "edit"
+  );
+
+  if (!approveLink) {
+    throw new Error("PayPal subscription approval URL not found");
+  }
+
+  return {
+    subscriptionId,
+    approvalUrl: approveLink.href,
+  };
+}
+
+export async function getPayPalSubscription(subscriptionId: string) {
+  const accessToken = await getPayPalAccessToken();
+  const isSandbox = process.env.PAYPAL_MODE === "sandbox";
+  const baseUrl = isSandbox
+    ? "https://api-m.sandbox.paypal.com"
+    : "https://api-m.paypal.com";
+
+  const response = await fetch(
+    `${baseUrl}/v1/billing/subscriptions/${subscriptionId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({
+      message: "Failed to get subscription",
+    }));
+    throw new Error(
+      `Failed to get PayPal subscription: ${JSON.stringify(errorData)}`
+    );
+  }
+
+  return response.json();
+}
+
+export async function updatePayPalSubscription(
+  subscriptionId: string,
+  newPlanId: string
+): Promise<{ success: boolean }> {
+  const accessToken = await getPayPalAccessToken();
+  const isSandbox = process.env.PAYPAL_MODE === "sandbox";
+  const baseUrl = isSandbox
+    ? "https://api-m.sandbox.paypal.com"
+    : "https://api-m.paypal.com";
+
+  const response = await fetch(
+    `${baseUrl}/v1/billing/subscriptions/${subscriptionId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify([
+        {
+          op: "replace",
+          path: "/plan",
+          value: {
+            id: newPlanId,
+          },
+        },
+      ]),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({
+      message: "Failed to update subscription",
+    }));
+    console.error("PayPal subscription update error:", errorData);
+    throw new Error(
+      `PayPal subscription update failed: ${JSON.stringify(errorData)}`
+    );
+  }
+
+  return { success: true };
+}
+
+export async function suspendPayPalSubscription(
+  subscriptionId: string
+): Promise<{ success: boolean }> {
+  const accessToken = await getPayPalAccessToken();
+  const isSandbox = process.env.PAYPAL_MODE === "sandbox";
+  const baseUrl = isSandbox
+    ? "https://api-m.sandbox.paypal.com"
+    : "https://api-m.paypal.com";
+
+  const response = await fetch(
+    `${baseUrl}/v1/billing/subscriptions/${subscriptionId}/suspend`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+        "PayPal-Request-Id": `suspend-${Date.now()}`,
+      },
+      body: JSON.stringify({
+        reason: "User requested cancellation",
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({
+      message: "Failed to suspend subscription",
+    }));
+    throw new Error(
+      `PayPal subscription suspension failed: ${JSON.stringify(errorData)}`
+    );
+  }
+
+  return { success: true };
+}
+
+export async function getPayPalSubscriptionUpdatePaymentUrl(
+  subscriptionId: string,
+  returnUrl: string
+): Promise<{ approvalUrl: string }> {
+  const isSandbox = process.env.PAYPAL_MODE === "sandbox";
+
+  // Get subscription details first to find the edit link
+  const subscription = await getPayPalSubscription(subscriptionId);
+
+  // PayPal provides an "edit" link in the subscription response for updating payment methods
+  const editLink = subscription.links?.find(
+    (link: { rel: string; href: string }) => link.rel === "edit"
+  );
+
+  if (editLink) {
+    // Append return URL to the edit link
+    const separator = editLink.href.includes("?") ? "&" : "?";
+    return {
+      approvalUrl: `${editLink.href}${separator}return_url=${encodeURIComponent(
+        returnUrl
+      )}`,
+    };
+  }
+
+  // Fallback: Redirect to PayPal subscription management page
+  // Users can update payment method through PayPal's customer portal
+  const baseUrl = isSandbox
+    ? "https://www.sandbox.paypal.com"
+    : "https://www.paypal.com";
+  return {
+    approvalUrl: `${baseUrl}/myaccount/autopay/connect/${subscriptionId}?returnUrl=${encodeURIComponent(
+      returnUrl
+    )}`,
+  };
+}

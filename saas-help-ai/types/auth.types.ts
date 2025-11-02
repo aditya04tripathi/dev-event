@@ -1,4 +1,5 @@
-export type SubscriptionTier = "FREE" | "MONTHLY" | "YEARLY" | "ONE_OFF";
+export type SubscriptionTier = "FREE" | "MONTHLY" | "YEARLY";
+export type SubscriptionPlan = "BASIC" | "PRO";
 
 export interface User {
   id: string;

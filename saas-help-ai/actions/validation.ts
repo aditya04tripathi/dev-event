@@ -7,7 +7,7 @@ import {
   CACHE_TTL,
   FREE_SEARCHES_LIMIT,
   RATE_LIMIT,
-  SUBSCRIPTION_TIERS,
+  SUBSCRIPTION_PLANS,
 } from "@/constants";
 import connectDB from "@/lib/db";
 import {
@@ -57,7 +57,12 @@ export async function validateStartupIdea(idea: string) {
       return { error: "User not found" };
     }
 
-    const tier = SUBSCRIPTION_TIERS[user.subscriptionTier];
+    const plan =
+      SUBSCRIPTION_PLANS[
+        user.subscriptionTier === "FREE"
+          ? "FREE"
+          : user.subscriptionPlan || "BASIC"
+      ];
     const now = new Date();
 
     // Reset counter if needed
@@ -84,14 +89,14 @@ export async function validateStartupIdea(idea: string) {
       user.searchesUsed >= FREE_SEARCHES_LIMIT
     ) {
       return {
-        error: "Free tier limit reached",
+        error: "Free plan limit reached",
         upgradeRequired: true,
       };
     }
 
     if (
-      user.searchesUsed >= tier.searchesPerMonth &&
-      user.subscriptionTier !== "ONE_OFF"
+      user.searchesUsed >= plan.searchesPerMonth &&
+      user.subscriptionTier !== "FREE"
     ) {
       return {
         error: "Subscription limit reached",
@@ -121,6 +126,11 @@ export async function validateStartupIdea(idea: string) {
         success: true,
         validationId: (validation._id as mongoose.Types.ObjectId).toString(),
         validationResult: cached,
+        user: {
+          searchesUsed: user.searchesUsed,
+          subscriptionTier: user.subscriptionTier,
+          subscriptionPlan: user.subscriptionPlan,
+        },
       };
     }
 
@@ -146,6 +156,11 @@ export async function validateStartupIdea(idea: string) {
       success: true,
       validationId: (validation._id as mongoose.Types.ObjectId).toString(),
       validationResult,
+      user: {
+        searchesUsed: user.searchesUsed,
+        subscriptionTier: user.subscriptionTier,
+        subscriptionPlan: user.subscriptionPlan,
+      },
     };
   } catch (error) {
     console.error("Validation error:", error);
@@ -250,5 +265,102 @@ export async function updateTaskStatus(
   } catch (error) {
     console.error("Update task error:", error);
     return { error: "Failed to update task" };
+  }
+}
+
+export async function improveProjectPlan(
+  projectPlanId: string,
+  userRequest: string
+) {
+  const session = await auth();
+  if (!session?.user) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    await connectDB();
+
+    const user = await User.findById(session.user.id);
+    if (!user) {
+      return { error: "User not found" };
+    }
+
+    // Check if user has remaining searches (use 0.5 credits)
+    const searchesRemaining =
+      user.subscriptionTier === "FREE"
+        ? FREE_SEARCHES_LIMIT - user.searchesUsed
+        : Infinity;
+
+    if (searchesRemaining < 0.5) {
+      return {
+        error: "Insufficient credits. Please upgrade your plan.",
+      };
+    }
+
+    const projectPlan = await ProjectPlan.findById(projectPlanId);
+    if (!projectPlan || projectPlan.userId.toString() !== session.user.id) {
+      return { error: "Project plan not found" };
+    }
+
+    // Use Groq to improve the plan
+    const Groq = (await import("groq-sdk")).default;
+    const groqClient = new Groq({
+      apiKey: process.env.GROQ_API_KEY!,
+    });
+
+    const planSummary = JSON.stringify({
+      phases: projectPlan.plan.phases.map((p) => ({
+        name: p.name,
+        description: p.description,
+        tasks: p.tasks.map((t) => ({
+          title: t.title,
+          description: t.description,
+          status: t.status,
+          priority: t.priority,
+        })),
+      })),
+      estimatedDuration: projectPlan.plan.estimatedDuration,
+      estimatedCost: projectPlan.plan.estimatedCost,
+      riskLevel: projectPlan.plan.riskLevel,
+    });
+
+    const completion = await groqClient.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert project management consultant. Help users improve their project plans based on their requests. Provide actionable suggestions and explanations.`,
+        },
+        {
+          role: "user",
+          content: `Current project plan:\n${planSummary}\n\nUser request: ${userRequest}\n\nProvide improvements and suggestions. If the user wants specific changes, explain how to implement them.`,
+        },
+      ],
+      model: "llama-3.1-70b-versatile",
+      temperature: 0.7,
+      max_tokens: 2000,
+    });
+
+    const improvements =
+      completion.choices[0]?.message?.content || "No improvements suggested.";
+
+    // Deduct 0.5 credits
+    user.searchesUsed = (user.searchesUsed || 0) + 0.5;
+    await user.save();
+
+    revalidatePath(`/project/${projectPlanId}`);
+
+    return {
+      success: true,
+      improvements,
+      updatedPlan: null, // Could be enhanced to actually update the plan
+      user: {
+        searchesUsed: user.searchesUsed,
+        subscriptionTier: user.subscriptionTier,
+        subscriptionPlan: user.subscriptionPlan,
+      },
+    };
+  } catch (error) {
+    console.error("Improve plan error:", error);
+    return { error: "Failed to improve project plan. Please try again." };
   }
 }

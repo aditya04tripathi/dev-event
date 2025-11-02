@@ -8,7 +8,7 @@ An AI-powered startup idea validation platform built with Next.js 16, featuring 
 - 📊 **Project Planning**: Generate comprehensive project plans with phases, tasks, and timelines
 - 📈 **Flowcharts**: Interactive visual flowcharts using xyflow to visualize project workflows
 - 📋 **KANBAN & SCRUM Boards**: Toggleable task management boards for project execution
-- 💰 **Subscription Tiers**: Free (5 searches), Monthly, Yearly, and One-Time payment options
+- 💰 **Subscription Plans**: Free (5 searches), Basic, Pro with monthly or yearly billing options
 - 🔐 **Authentication**: Secure JWT-based authentication with NextAuth
 - ⚡ **Rate Limiting**: Built-in rate limiting with Redis
 - 💾 **Caching**: Redis caching for improved performance
@@ -129,7 +129,7 @@ pnpm dev
   - Market analysis
   - Competition analysis
   - Target audience insights
-  - Recommended subscription tier
+  - Recommended billing period (monthly or yearly)
 
 ### Project Planning
 
@@ -159,7 +159,7 @@ pnpm dev
   - Tags
   - Phase assignment
 
-### Subscription Tiers
+### Subscription Plans
 
 - **Free**: 5 validations, basic project plans, flowcharts
 - **Monthly ($29/month)**: 50 validations/month, all features

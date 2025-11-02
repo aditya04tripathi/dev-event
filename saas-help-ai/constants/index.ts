@@ -1,51 +1,39 @@
 export const FREE_SEARCHES_LIMIT = 5;
 
-export const SUBSCRIPTION_TIERS = {
+export const SUBSCRIPTION_PLANS = {
   FREE: {
     name: "Free",
     searchesPerMonth: 5,
-    price: 0,
     features: [
       "5 AI validations",
       "Basic project plans",
       "Flowchart visualization",
     ],
   },
-  MONTHLY: {
-    name: "Monthly",
+  BASIC: {
+    name: "Basic",
+    monthlyPrice: 19,
+    yearlyPrice: 190,
     searchesPerMonth: 50,
-    price: 29,
-    interval: "monthly",
     features: [
       "50 AI validations/month",
       "Advanced project plans",
       "KANBAN & SCRUM boards",
-      "Priority support",
+      "Email support",
     ],
   },
-  YEARLY: {
-    name: "Yearly",
-    searchesPerMonth: 600,
-    price: 299,
-    interval: "yearly",
-    features: [
-      "600 AI validations/year",
-      "Advanced project plans",
-      "KANBAN & SCRUM boards",
-      "Priority support",
-      "20% savings",
-    ],
-  },
-  ONE_OFF: {
-    name: "One-Time",
+  PRO: {
+    name: "Pro",
+    monthlyPrice: 49,
+    yearlyPrice: 490,
     searchesPerMonth: Infinity,
-    price: 49,
-    interval: "one-time",
     features: [
-      "Unlimited validations (lifetime)",
+      "Unlimited AI validations",
       "Advanced project plans",
       "KANBAN & SCRUM boards",
       "Priority support",
+      "AI plan improvements",
+      "Export capabilities",
     ],
   },
 } as const;

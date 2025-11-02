@@ -66,6 +66,7 @@ export function ProjectFlowchart({ plan }: ProjectFlowchartProps) {
   const initialNodes = useMemo(() => {
     const nodes: Node[] = [];
     const phaseMap = new Map<string, number>();
+    const taskMap = new Map<string, { phaseId: string; index: number }>();
 
     // Start node
     nodes.push({
@@ -75,10 +76,15 @@ export function ProjectFlowchart({ plan }: ProjectFlowchartProps) {
       data: { label: "Project Start" },
     });
 
-    // Process phases
+    // Process phases and tasks
     let yPosition = 100;
-    plan.phases.forEach((phase, index) => {
-      phaseMap.set(phase.id, index);
+    const horizontalSpacing = 300;
+    const verticalSpacing = 120;
+
+    plan.phases.forEach((phase, phaseIndex) => {
+      phaseMap.set(phase.id, phaseIndex);
+
+      // Phase node
       nodes.push({
         id: phase.id,
         type: "process",
@@ -89,7 +95,36 @@ export function ProjectFlowchart({ plan }: ProjectFlowchartProps) {
           phaseId: phase.id,
         },
       });
-      yPosition += 150;
+      yPosition += 80;
+
+      // Task nodes for this phase
+      phase.tasks.forEach((task, taskIndex) => {
+        const taskId = task.id;
+        const xOffset = (taskIndex % 3) * horizontalSpacing - horizontalSpacing;
+        const yOffset = Math.floor(taskIndex / 3) * verticalSpacing;
+
+        taskMap.set(taskId, { phaseId: phase.id, index: taskIndex });
+
+        nodes.push({
+          id: taskId,
+          type: task.status === "DONE" ? "process" : "decision",
+          position: {
+            x: 250 + xOffset,
+            y: yPosition + yOffset,
+          },
+          data: {
+            label: task.title,
+            description: `${task.status} - ${task.priority} priority`,
+            taskId: task.id,
+            phaseId: phase.id,
+          },
+        });
+      });
+
+      yPosition += Math.max(
+        Math.ceil(phase.tasks.length / 3) * verticalSpacing,
+        80,
+      );
     });
 
     // End node
@@ -116,42 +151,86 @@ export function ProjectFlowchart({ plan }: ProjectFlowchartProps) {
       });
     }
 
-    // Connect phases based on dependencies
-    plan.phases.forEach((phase, index) => {
-      if (phase.dependencies.length === 0) {
-        // If no dependencies, connect to previous phase or start
-        if (index === 0) {
-          // Already connected from start
-        } else {
+    // Connect phases to their tasks and tasks to next phase
+    plan.phases.forEach((phase, phaseIndex) => {
+      // Connect phase to its first task (or multiple tasks)
+      const phaseTasks = phase.tasks.filter(
+        (t) =>
+          !plan.phases
+            .slice(0, phaseIndex)
+            .some((p) => p.tasks.some((pt) => pt.id === t.id)),
+      );
+
+      if (phaseTasks.length > 0) {
+        phaseTasks.slice(0, 1).forEach((task) => {
           edges.push({
-            id: `phase${index - 1}-phase${index}`,
-            source: plan.phases[index - 1].id,
-            target: phase.id,
-            type: "smoothstep",
-          });
-        }
-      } else {
-        // Connect based on dependencies
-        phase.dependencies.forEach((depId) => {
-          edges.push({
-            id: `${depId}-${phase.id}`,
-            source: depId,
-            target: phase.id,
+            id: `${phase.id}-${task.id}`,
+            source: phase.id,
+            target: task.id,
             type: "smoothstep",
           });
         });
       }
+
+      // Connect tasks within phase
+      phase.tasks.forEach((task, taskIndex) => {
+        if (taskIndex < phase.tasks.length - 1) {
+          edges.push({
+            id: `${task.id}-${phase.tasks[taskIndex + 1].id}`,
+            source: task.id,
+            target: phase.tasks[taskIndex + 1].id,
+            type: "smoothstep",
+          });
+        }
+      });
     });
 
-    // Connect last phase to end
+    // Connect phases based on dependencies
+    plan.phases.forEach((phase, index) => {
+      if (phase.dependencies.length === 0) {
+        if (index === 0) {
+          // Already connected from start
+        } else {
+          const prevPhase = plan.phases[index - 1];
+          const prevPhaseLastTask = prevPhase.tasks[prevPhase.tasks.length - 1];
+          const currentPhaseFirstTask = phase.tasks[0];
+
+          if (prevPhaseLastTask && currentPhaseFirstTask) {
+            edges.push({
+              id: `${prevPhaseLastTask.id}-${currentPhaseFirstTask.id}`,
+              source: prevPhaseLastTask.id,
+              target: currentPhaseFirstTask.id,
+              type: "smoothstep",
+            });
+          }
+        }
+      } else {
+        phase.dependencies.forEach((depId) => {
+          const depPhase = plan.phases.find((p) => p.id === depId);
+          if (depPhase && depPhase.tasks.length > 0 && phase.tasks.length > 0) {
+            edges.push({
+              id: `${depPhase.tasks[depPhase.tasks.length - 1].id}-${phase.tasks[0].id}`,
+              source: depPhase.tasks[depPhase.tasks.length - 1].id,
+              target: phase.tasks[0].id,
+              type: "smoothstep",
+            });
+          }
+        });
+      }
+    });
+
+    // Connect last phase's last task to end
     if (plan.phases.length > 0) {
       const lastPhase = plan.phases[plan.phases.length - 1];
-      edges.push({
-        id: `${lastPhase.id}-end`,
-        source: lastPhase.id,
-        target: "end",
-        type: "smoothstep",
-      });
+      if (lastPhase.tasks.length > 0) {
+        const lastTask = lastPhase.tasks[lastPhase.tasks.length - 1];
+        edges.push({
+          id: `${lastTask.id}-end`,
+          source: lastTask.id,
+          target: "end",
+          type: "smoothstep",
+        });
+      }
     }
 
     return edges;

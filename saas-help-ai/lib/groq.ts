@@ -22,7 +22,7 @@ Provide your response in JSON format with the following structure:
   "strengths": string[] (array of 3-5 strengths),
   "weaknesses": string[] (array of 3-5 weaknesses),
   "suggestions": string[] (array of 5-7 actionable suggestions),
-  "recommendedTier": "MONTHLY" | "YEARLY" | "ONE_OFF" (based on idea complexity and potential),
+  "recommendedTier": "MONTHLY" | "YEARLY" (recommended billing period based on idea complexity and potential),
   "marketAnalysis": string (2-3 paragraph market analysis),
   "competition": string[] (array of 3-5 main competitors or similar products),
   "targetAudience": string (detailed description of target audience)

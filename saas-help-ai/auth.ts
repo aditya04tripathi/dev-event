@@ -36,7 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         return {
-          id: user._id.toString(),
+          id: (user._id as { toString(): string }).toString(),
           email: user.email,
           name: user.name,
         };
@@ -62,8 +62,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.userId as string;
-        session.user.subscriptionTier = token.subscriptionTier as string;
+        session.user.id = (token.userId as string) || "";
+        session.user.subscriptionTier =
+          (token.subscriptionTier as "FREE" | "MONTHLY" | "YEARLY") || "FREE";
         session.user.searchesUsed = token.searchesUsed as number;
       }
       return session;

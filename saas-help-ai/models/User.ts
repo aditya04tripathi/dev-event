@@ -6,9 +6,20 @@ export interface IUser extends Document {
   name: string;
   password: string;
   subscriptionTier: SubscriptionTier;
+  subscriptionPlan?: "BASIC" | "PRO";
   searchesUsed: number;
   searchesResetAt: Date;
   paypalSubscriptionId?: string;
+  hasPaymentMethod?: boolean;
+  preferences?: {
+    aiProvider?: "gemini" | "openai" | "anthropic";
+    theme?: "light" | "dark" | "system";
+  };
+  apiKeys?: {
+    gemini?: string;
+    openai?: string;
+    anthropic?: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,8 +45,13 @@ const UserSchema = new Schema<IUser>(
     },
     subscriptionTier: {
       type: String,
-      enum: ["FREE", "MONTHLY", "YEARLY", "ONE_OFF"],
+      enum: ["FREE", "MONTHLY", "YEARLY"],
       default: "FREE",
+    },
+    subscriptionPlan: {
+      type: String,
+      enum: ["BASIC", "PRO"],
+      default: null,
     },
     searchesUsed: {
       type: Number,
@@ -49,6 +65,40 @@ const UserSchema = new Schema<IUser>(
       type: String,
       default: null,
     },
+    hasPaymentMethod: {
+      type: Boolean,
+      default: false,
+    },
+    preferences: {
+      type: {
+        aiProvider: {
+          type: String,
+          enum: ["gemini", "openai", "anthropic"],
+          default: "gemini",
+        },
+        theme: {
+          type: String,
+          enum: ["light", "dark", "system"],
+          default: "system",
+        },
+      },
+      default: {
+        aiProvider: "gemini",
+        theme: "system",
+      },
+    },
+    apiKeys: {
+      type: {
+        gemini: { type: String, default: null },
+        openai: { type: String, default: null },
+        anthropic: { type: String, default: null },
+      },
+      default: {
+        gemini: null,
+        openai: null,
+        anthropic: null,
+      },
+    },
   },
   {
     timestamps: true,
@@ -56,7 +106,6 @@ const UserSchema = new Schema<IUser>(
 );
 
 const User: Model<IUser> =
-  (mongoose.models && mongoose.models.User) ||
-  mongoose.model<IUser>("User", UserSchema);
+  mongoose.models?.User || mongoose.model<IUser>("User", UserSchema);
 
 export default User;
