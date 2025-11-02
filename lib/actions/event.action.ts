@@ -1,9 +1,9 @@
 "use server";
 
 import { v2 as cloudinary } from "cloudinary";
-import Event, { IEvent } from "@/database/event.model";
-import connectDB from "../mongodb";
 import { revalidatePath } from "next/cache";
+import Event, { type IEvent } from "@/database/event.model";
+import connectDB from "../mongodb";
 
 // Configure Cloudinary
 if (

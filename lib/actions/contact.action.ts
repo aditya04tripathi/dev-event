@@ -1,123 +1,123 @@
 "use server";
 
 import nodemailer from "nodemailer";
-import { CREATOR_INFO } from "../site-constants";
 import Contact from "@/database/contact.model";
 import connectDB from "../mongodb";
+import { CREATOR_INFO } from "../site-constants";
 
 interface SubmitContactParams {
-  name: string;
-  email: string;
-  reason: string;
-  subject: string;
-  message: string;
+	name: string;
+	email: string;
+	reason: string;
+	subject: string;
+	message: string;
 }
 
 export async function submitContactForm(params: SubmitContactParams) {
-  try {
-    console.debug("[submitContactForm] Called with params:", {
-      ...params,
-      message: params.message.substring(0, 50) + "...",
-    });
+	try {
+		console.debug("[submitContactForm] Called with params:", {
+			...params,
+			message: `${params.message.substring(0, 50)}...`,
+		});
 
-    await connectDB();
-    console.debug("[submitContactForm] Connected to DB");
+		await connectDB();
+		console.debug("[submitContactForm] Connected to DB");
 
-    const { name, email, reason, subject, message } = params;
+		const { name, email, reason, subject, message } = params;
 
-    // Validate required fields
-    if (!name || !email || !reason || !subject || !message) {
-      return {
-        success: false,
-        message: "All fields are required",
-      };
-    }
+		// Validate required fields
+		if (!name || !email || !reason || !subject || !message) {
+			return {
+				success: false,
+				message: "All fields are required",
+			};
+		}
 
-    // Save contact form submission to database
-    const contactSubmission = await Contact.create({
-      name,
-      email,
-      reason,
-      subject,
-      message,
-      status: "pending",
-    });
+		// Save contact form submission to database
+		const contactSubmission = await Contact.create({
+			name,
+			email,
+			reason,
+			subject,
+			message,
+			status: "pending",
+		});
 
-    console.debug(
-      "[submitContactForm] Contact submission saved:",
-      contactSubmission._id
-    );
+		console.debug(
+			"[submitContactForm] Contact submission saved:",
+			contactSubmission._id,
+		);
 
-    // Check if email credentials are configured
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.warn(
-        "[submitContactForm] Email credentials not configured. Submission saved but emails not sent."
-      );
-      return {
-        success: true,
-        message: "Message received! We'll get back to you soon.",
-      };
-    }
+		// Check if email credentials are configured
+		if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+			console.warn(
+				"[submitContactForm] Email credentials not configured. Submission saved but emails not sent.",
+			);
+			return {
+				success: true,
+				message: "Message received! We'll get back to you soon.",
+			};
+		}
 
-    // Send email to creator
-    await sendContactEmailToCreator({
-      name,
-      email,
-      reason,
-      subject,
-      message,
-    });
+		// Send email to creator
+		await sendContactEmailToCreator({
+			name,
+			email,
+			reason,
+			subject,
+			message,
+		});
 
-    console.debug("[submitContactForm] Email sent to creator");
+		console.debug("[submitContactForm] Email sent to creator");
 
-    // Send confirmation email to user
-    await sendConfirmationEmailToUser({
-      name,
-      email,
-      subject,
-    });
+		// Send confirmation email to user
+		await sendConfirmationEmailToUser({
+			name,
+			email,
+			subject,
+		});
 
-    console.debug(
-      "[submitContactForm] Confirmation email sent to user:",
-      email
-    );
+		console.debug(
+			"[submitContactForm] Confirmation email sent to user:",
+			email,
+		);
 
-    return {
-      success: true,
-      message: "Message sent successfully! We'll get back to you soon.",
-    };
-  } catch (error) {
-    console.error("[submitContactForm] Error:", error);
-    return {
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : "Failed to send message. Please try again.",
-    };
-  }
+		return {
+			success: true,
+			message: "Message sent successfully! We'll get back to you soon.",
+		};
+	} catch (error) {
+		console.error("[submitContactForm] Error:", error);
+		return {
+			success: false,
+			message:
+				error instanceof Error
+					? error.message
+					: "Failed to send message. Please try again.",
+		};
+	}
 }
 
 async function sendContactEmailToCreator(params: {
-  name: string;
-  email: string;
-  reason: string;
-  subject: string;
-  message: string;
+	name: string;
+	email: string;
+	reason: string;
+	subject: string;
+	message: string;
 }) {
-  const { name, email, reason, subject, message } = params;
+	const { name, email, reason, subject, message } = params;
 
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER!,
-      pass: process.env.EMAIL_PASS!,
-    },
-  });
+	const transporter = nodemailer.createTransport({
+		host: "smtp.gmail.com",
+		port: 587,
+		secure: false,
+		auth: {
+			user: process.env.EMAIL_USER!,
+			pass: process.env.EMAIL_PASS!,
+		},
+	});
 
-  const htmlContent = `
+	const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -188,8 +188,8 @@ async function sendContactEmailToCreator(params: {
                     <tr>
                       <td align="center" style="padding: 8px 0;">
                         <a href="mailto:${email}?subject=Re: ${encodeURIComponent(
-    subject
-  )}" 
+													subject,
+												)}" 
                            style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #5b5fc7 0%, #6366f1 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; letter-spacing: -0.01em;">
                           Reply to ${name}
                         </a>
@@ -216,39 +216,39 @@ async function sendContactEmailToCreator(params: {
     </html>
   `;
 
-  try {
-    await transporter.sendMail({
-      from: `"DevEvent Contact Form" <${process.env.EMAIL_USER!}>`,
-      to: CREATOR_INFO.email,
-      replyTo: email,
-      subject: `[DevEvent Contact] ${reason}: ${subject}`,
-      html: htmlContent,
-    });
-    console.info("[sendContactEmailToCreator] Email sent successfully");
-  } catch (err) {
-    console.error("[sendContactEmailToCreator] Error:", err);
-    throw err;
-  }
+	try {
+		await transporter.sendMail({
+			from: `"DevEvent Contact Form" <${process.env.EMAIL_USER!}>`,
+			to: CREATOR_INFO.email,
+			replyTo: email,
+			subject: `[DevEvent Contact] ${reason}: ${subject}`,
+			html: htmlContent,
+		});
+		console.info("[sendContactEmailToCreator] Email sent successfully");
+	} catch (err) {
+		console.error("[sendContactEmailToCreator] Error:", err);
+		throw err;
+	}
 }
 
 async function sendConfirmationEmailToUser(params: {
-  name: string;
-  email: string;
-  subject: string;
+	name: string;
+	email: string;
+	subject: string;
 }) {
-  const { name, email, subject } = params;
+	const { name, email, subject } = params;
 
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER!,
-      pass: process.env.EMAIL_PASS!,
-    },
-  });
+	const transporter = nodemailer.createTransport({
+		host: "smtp.gmail.com",
+		port: 587,
+		secure: false,
+		auth: {
+			user: process.env.EMAIL_USER!,
+			pass: process.env.EMAIL_PASS!,
+		},
+	});
 
-  const htmlContent = `
+	const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -293,8 +293,8 @@ async function sendConfirmationEmailToUser(params: {
                             <td style="padding: 0; border-top: 1px solid #e5e7eb; padding-top: 16px;">
                               <p style="margin: 0 0 4px 0; font-size: 13px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Reference Number</p>
                               <p style="margin: 0; font-size: 16px; color: #2c2847; font-family: 'Menlo', monospace; line-height: 24px;">#${Date.now()
-                                .toString(36)
-                                .toUpperCase()}</p>
+																.toString(36)
+																.toUpperCase()}</p>
                             </td>
                           </tr>
                         </table>
@@ -341,120 +341,120 @@ async function sendConfirmationEmailToUser(params: {
     </html>
   `;
 
-  try {
-    await transporter.sendMail({
-      from: `"DevEvent" <${process.env.EMAIL_USER!}>`,
-      to: email,
-      subject: `Message Received: ${subject}`,
-      html: htmlContent,
-    });
-    console.info("[sendConfirmationEmailToUser] Email sent successfully");
-  } catch (err) {
-    console.error("[sendConfirmationEmailToUser] Error:", err);
-    throw err;
-  }
+	try {
+		await transporter.sendMail({
+			from: `"DevEvent" <${process.env.EMAIL_USER!}>`,
+			to: email,
+			subject: `Message Received: ${subject}`,
+			html: htmlContent,
+		});
+		console.info("[sendConfirmationEmailToUser] Email sent successfully");
+	} catch (err) {
+		console.error("[sendConfirmationEmailToUser] Error:", err);
+		throw err;
+	}
 }
 
 // Admin helper functions for managing contact submissions
 
 export async function getAllContacts(params?: {
-  status?: "pending" | "responded" | "archived";
-  limit?: number;
-  page?: number;
+	status?: "pending" | "responded" | "archived";
+	limit?: number;
+	page?: number;
 }) {
-  try {
-    await connectDB();
+	try {
+		await connectDB();
 
-    const { status, limit = 20, page = 1 } = params || {};
-    const skip = (page - 1) * limit;
+		const { status, limit = 20, page = 1 } = params || {};
+		const skip = (page - 1) * limit;
 
-    const query = status ? { status } : {};
+		const query = status ? { status } : {};
 
-    const [contacts, total] = await Promise.all([
-      Contact.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Contact.countDocuments(query),
-    ]);
+		const [contacts, total] = await Promise.all([
+			Contact.find(query)
+				.sort({ createdAt: -1 })
+				.skip(skip)
+				.limit(limit)
+				.lean(),
+			Contact.countDocuments(query),
+		]);
 
-    return {
-      success: true,
-      contacts: JSON.parse(JSON.stringify(contacts)),
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  } catch (error) {
-    console.error("[getAllContacts] Error:", error);
-    return {
-      success: false,
-      message: "Failed to fetch contacts",
-    };
-  }
+		return {
+			success: true,
+			contacts: JSON.parse(JSON.stringify(contacts)),
+			pagination: {
+				total,
+				page,
+				limit,
+				totalPages: Math.ceil(total / limit),
+			},
+		};
+	} catch (error) {
+		console.error("[getAllContacts] Error:", error);
+		return {
+			success: false,
+			message: "Failed to fetch contacts",
+		};
+	}
 }
 
 export async function updateContactStatus(params: {
-  contactId: string;
-  status: "pending" | "responded" | "archived";
+	contactId: string;
+	status: "pending" | "responded" | "archived";
 }) {
-  try {
-    await connectDB();
+	try {
+		await connectDB();
 
-    const { contactId, status } = params;
+		const { contactId, status } = params;
 
-    const contact = await Contact.findByIdAndUpdate(
-      contactId,
-      { status },
-      { new: true }
-    );
+		const contact = await Contact.findByIdAndUpdate(
+			contactId,
+			{ status },
+			{ new: true },
+		);
 
-    if (!contact) {
-      return {
-        success: false,
-        message: "Contact not found",
-      };
-    }
+		if (!contact) {
+			return {
+				success: false,
+				message: "Contact not found",
+			};
+		}
 
-    return {
-      success: true,
-      contact: JSON.parse(JSON.stringify(contact)),
-    };
-  } catch (error) {
-    console.error("[updateContactStatus] Error:", error);
-    return {
-      success: false,
-      message: "Failed to update contact status",
-    };
-  }
+		return {
+			success: true,
+			contact: JSON.parse(JSON.stringify(contact)),
+		};
+	} catch (error) {
+		console.error("[updateContactStatus] Error:", error);
+		return {
+			success: false,
+			message: "Failed to update contact status",
+		};
+	}
 }
 
 export async function deleteContact(contactId: string) {
-  try {
-    await connectDB();
+	try {
+		await connectDB();
 
-    const contact = await Contact.findByIdAndDelete(contactId);
+		const contact = await Contact.findByIdAndDelete(contactId);
 
-    if (!contact) {
-      return {
-        success: false,
-        message: "Contact not found",
-      };
-    }
+		if (!contact) {
+			return {
+				success: false,
+				message: "Contact not found",
+			};
+		}
 
-    return {
-      success: true,
-      message: "Contact deleted successfully",
-    };
-  } catch (error) {
-    console.error("[deleteContact] Error:", error);
-    return {
-      success: false,
-      message: "Failed to delete contact",
-    };
-  }
+		return {
+			success: true,
+			message: "Contact deleted successfully",
+		};
+	} catch (error) {
+		console.error("[deleteContact] Error:", error);
+		return {
+			success: false,
+			message: "Failed to delete contact",
+		};
+	}
 }

@@ -1,11 +1,10 @@
 "use server";
 
+import nodemailer from "nodemailer";
+import QRCode from "qrcode";
 import Booking from "@/database/booking.model";
 import Event from "@/database/event.model";
 import connectDB from "../mongodb";
-import QRCode from "qrcode";
-import nodemailer from "nodemailer";
-import crypto from "crypto";
 import { encryptData } from "../utils";
 
 interface CreateBookingParams {
@@ -112,6 +111,21 @@ export async function createBooking(params: CreateBookingParams) {
   }
 }
 
+export async function getBookingByEventSlug(slug: string) {
+  try {
+    await connectDB();
+    const event = await Event.findOne({ slug });
+    if (!event) {
+      return null;
+    }
+    const booking = await Booking.find({ eventId: event._id });
+    return booking.length;
+  } catch (error) {
+    console.error("Error getting booking by eventSlug:", error);
+    return null;
+  }
+}
+
 async function sendBookingEmail(params: {
   to: string;
   name: string;
@@ -154,8 +168,8 @@ async function sendBookingEmail(params: {
 
   // Extract the base64 data from the dataURL
   let qrBase64 = qrCodeBase64;
-  let matches = qrCodeBase64.match(/^data:image\/png;base64,(.*)$/);
-  if (matches && matches[1]) {
+  const matches = qrCodeBase64.match(/^data:image\/png;base64,(.*)$/);
+  if (matches?.[1]) {
     qrBase64 = matches[1];
   }
 
