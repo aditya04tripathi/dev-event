@@ -70,7 +70,7 @@ export async function updateAIPreferences(formData: FormData) {
       };
     }
 
-    user.preferences.aiProvider = aiProvider;
+    user.preferences.aiProvider = aiProvider as "gemini" | "openai" | "anthropic";
     await user.save();
 
     revalidatePath("/profile");
@@ -160,25 +160,25 @@ export async function updateAPIKeys(formData: FormData) {
 
     if (!user.apiKeys) {
       user.apiKeys = {
-        gemini: null,
-        openai: null,
-        anthropic: null,
-        groq: null,
+        gemini: undefined,
+        openai: undefined,
+        anthropic: undefined,
+        groq: undefined,
       };
     }
 
     // Only update keys that have values or are empty strings (to clear them)
     if (gemini !== null) {
-      user.apiKeys.gemini = gemini.trim() || null;
+      user.apiKeys.gemini = gemini.trim() || undefined;
     }
     if (openai !== null) {
-      user.apiKeys.openai = openai.trim() || null;
+      user.apiKeys.openai = openai.trim() || undefined;
     }
     if (anthropic !== null) {
-      user.apiKeys.anthropic = anthropic.trim() || null;
+      user.apiKeys.anthropic = anthropic.trim() || undefined;
     }
     if (groq !== null) {
-      user.apiKeys.groq = groq.trim() || null;
+      user.apiKeys.groq = groq.trim() || undefined;
     }
 
     await user.save();

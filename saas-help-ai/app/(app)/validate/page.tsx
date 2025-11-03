@@ -2,14 +2,14 @@
 
 import { Loader2, Sparkles } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { validateStartupIdea } from "@/actions/validation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function ValidatePage() {
+function ValidateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [idea, setIdea] = useState("");
@@ -123,5 +123,17 @@ export default function ValidatePage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ValidatePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    }>
+      <ValidateContent />
+    </Suspense>
   );
 }

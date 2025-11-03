@@ -1037,6 +1037,14 @@ export async function captureSubscription(
       };
     }
 
+    // Ensure we have required values
+    if (!finalTier || !finalPlanType) {
+      return {
+        error: "Could not determine subscription tier or plan type",
+        success: false,
+      };
+    }
+
     const user = await User.findById(session.user.id);
     if (!user) {
       return { error: "User not found", success: false };

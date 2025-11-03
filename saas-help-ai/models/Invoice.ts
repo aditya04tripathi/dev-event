@@ -31,7 +31,6 @@ const InvoiceSchema = new Schema<IInvoice>(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     amount: {
       type: Number,
@@ -87,7 +86,6 @@ const InvoiceSchema = new Schema<IInvoice>(
 );
 
 InvoiceSchema.index({ userId: 1, createdAt: -1 });
-InvoiceSchema.index({ invoiceNumber: 1 });
 
 const Invoice: Model<IInvoice> =
   mongoose.models?.Invoice ||
