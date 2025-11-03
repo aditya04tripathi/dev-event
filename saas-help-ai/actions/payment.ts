@@ -307,9 +307,7 @@ async function getPayPalPlan(planId: string) {
     const errorData = await response.json().catch(() => ({
       message: "Failed to get plan",
     }));
-    throw new Error(
-      `Failed to get PayPal plan: ${JSON.stringify(errorData)}`
-    );
+    throw new Error(`Failed to get PayPal plan: ${JSON.stringify(errorData)}`);
   }
 
   return response.json();
@@ -929,8 +927,10 @@ export async function captureSubscription(
     const subscription = await getPayPalSubscription(subscriptionId);
 
     // Extract tier and planType from subscription or cache
-    let finalTier: SubscriptionTier | undefined = subscriptionDetails?.tier || tier;
-    let finalPlanType: PlanType | undefined = subscriptionDetails?.planType || planType;
+    let finalTier: SubscriptionTier | undefined =
+      subscriptionDetails?.tier || tier;
+    let finalPlanType: PlanType | undefined =
+      subscriptionDetails?.planType || planType;
 
     // If cache is missing, try to get details from PayPal plan
     if (!finalTier || !finalPlanType) {
@@ -953,9 +953,7 @@ export async function captureSubscription(
             const billingCycle = plan.billing_cycles?.[0];
             const frequency = billingCycle?.frequency;
             const pricingScheme = billingCycle?.pricing_scheme;
-            const amount = parseFloat(
-              pricingScheme?.fixed_price?.value || "0"
-            );
+            const amount = parseFloat(pricingScheme?.fixed_price?.value || "0");
 
             // Extract tier from billing cycle frequency
             if (frequency?.interval_unit === "MONTH") {
@@ -986,7 +984,7 @@ export async function captureSubscription(
               // If still not determined, log warning but default to BASIC as fallback
               if (!finalPlanType) {
                 console.warn(
-                  `Could not determine plan type from amount: ${amount}, tier: ${finalTier}`,
+                  `Could not determine plan type from amount: ${amount}, tier: ${finalTier}`
                 );
                 finalPlanType = "BASIC";
               } else {
@@ -1000,7 +998,7 @@ export async function captureSubscription(
             } else if (!finalPlanType) {
               // No amount found, default to BASIC
               console.warn(
-                "Could not determine plan type: no amount found in plan",
+                "Could not determine plan type: no amount found in plan"
               );
               finalPlanType = "BASIC";
             }
@@ -1218,7 +1216,6 @@ export async function capturePayment(subscriptionId: string): Promise<
   // Delegate to captureSubscription without tier/planType (will use cached values)
   return captureSubscription(subscriptionId);
 }
-
 
 /**
  * Gets invoices for the current user from the database
