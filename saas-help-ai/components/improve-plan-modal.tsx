@@ -14,8 +14,6 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { syncUserToRedux } from "@/store/actionWrappers";
-import { useAppDispatch } from "@/store/hooks";
 import type { ProjectPlan } from "@/types";
 
 interface Message {
@@ -38,7 +36,6 @@ export function ImprovePlanModal({
   currentPlan,
   onPlanUpdated,
 }: ImprovePlanModalProps) {
-  const dispatch = useAppDispatch();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -61,14 +58,16 @@ What would you like to improve? You can ask me to:
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: messages.length is not a dependency
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    if (scrollAreaRef.current) {
+    if (scrollAreaRef.current && messages.length > 0) {
       const viewport = scrollAreaRef.current.querySelector(
         "[data-radix-scroll-area-viewport]",
-      );
+      ) as HTMLElement;
       if (viewport) {
-        viewport.scrollTop = viewport.scrollHeight;
+        setTimeout(() => {
+          viewport.scrollTop = viewport.scrollHeight;
+        }, 100);
       }
     }
   }, [messages.length]);
@@ -94,10 +93,6 @@ What would you like to improve? You can ask me to:
           },
         ]);
       } else if (result.improvements) {
-        // Update Redux store with user data (searchesUsed)
-        if (result.user) {
-          syncUserToRedux(dispatch, result.user);
-        }
         setMessages((prev) => [
           ...prev,
           {
@@ -127,8 +122,8 @@ What would you like to improve? You can ask me to:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl h-[600px] flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
+        <DialogHeader className="shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
             Improve Project Plan
@@ -139,11 +134,11 @@ What would you like to improve? You can ask me to:
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
+        <ScrollArea className="flex-1 min-h-0 pr-4" ref={scrollAreaRef}>
           <div className="space-y-4 py-4">
-            {messages.map((message) => (
+            {messages.map((message, idx) => (
               <div
-                key={`${message.role}-${message.content.slice(0, 10)}`}
+                key={`${message.role}-${idx}`}
                 className={`flex ${
                   message.role === "user" ? "justify-end" : "justify-start"
                 }`}
@@ -155,7 +150,7 @@ What would you like to improve? You can ask me to:
                       : "bg-muted"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">
+                  <p className="text-sm whitespace-pre-wrap wrap-break-word">
                     {message.content}
                   </p>
                 </div>
@@ -171,7 +166,7 @@ What would you like to improve? You can ask me to:
           </div>
         </ScrollArea>
 
-        <div className="flex gap-2 pt-4 border-t">
+        <div className="flex gap-2 pt-4 border-t shrink-0">
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -189,7 +184,7 @@ What would you like to improve? You can ask me to:
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
             size="icon"
-            className="self-end"
+            className="self-end shrink-0"
           >
             <Send className="h-4 w-4" />
           </Button>

@@ -9,6 +9,7 @@ import { LogoIcon } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 export default function SignUpWrapper() {
   const router = useRouter();
@@ -35,7 +36,7 @@ export default function SignUpWrapper() {
   };
 
   return (
-    <section className="flex min-h-screen bg-zinc-50 px-4 py-16 md:py-32 dark:bg-transparent">
+    <section className="max-w-2xl mx-auto flex min-h-screen px-4 py-16 md:py-32 dark:bg-transparent">
       <form onSubmit={handleSubmit} className="w-full m-auto h-fit">
         <div className="p-6">
           <div>
@@ -51,11 +52,11 @@ export default function SignUpWrapper() {
           </div>
 
           <div className="my-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-            <hr className="border-dashed" />
+            <Separator className="border-dashed" />
             <span className="text-muted-foreground text-xs">
               Or continue With
             </span>
-            <hr className="border-dashed" />
+            <Separator className="border-dashed" />
           </div>
 
           <div className="space-y-6">

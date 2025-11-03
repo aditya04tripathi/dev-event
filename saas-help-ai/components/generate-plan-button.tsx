@@ -6,15 +6,12 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { generatePlan } from "@/actions/validation";
 import { Button } from "@/components/ui/button";
-import { syncProjectPlanToRedux } from "@/store/actionWrappers";
-import { useAppDispatch } from "@/store/hooks";
 
 interface GeneratePlanButtonProps {
   validationId: string;
 }
 
 export function GeneratePlanButton({ validationId }: GeneratePlanButtonProps) {
-  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -25,14 +22,6 @@ export function GeneratePlanButton({ validationId }: GeneratePlanButtonProps) {
       if (result.error) {
         toast.error(result.error);
       } else if (result.success && result.projectPlanId) {
-        // Sync project plan to Redux store
-        if (result.plan && result.alternativeIdeas) {
-          syncProjectPlanToRedux(dispatch, {
-            id: result.projectPlanId,
-            plan: result.plan,
-            alternativeIdeas: result.alternativeIdeas,
-          });
-        }
         toast.success("Project plan generated!");
         router.push(`/project/${result.projectPlanId}`);
       }

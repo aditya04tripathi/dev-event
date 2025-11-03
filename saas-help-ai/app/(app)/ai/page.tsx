@@ -1,3 +1,4 @@
+import groq from "groq-sdk";
 import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { AISettings } from "@/components/ai-settings";
@@ -13,15 +14,18 @@ export default async function AIPage() {
   const session = await auth();
   await connectDB();
   const user = await User.findById(session?.user?.id).lean();
+  const groqClient = new groq({
+    apiKey: process.env.GROQ_API_KEY,
+  });
 
-  if (!user) {
-    return null;
-  }
+  const groqModels = await groqClient.models.list();
+
+  console.log(groqModels);
 
   return (
     <div className="flex h-full flex-col">
-      <main className="flex-1 py-8">
-        <div className="container mx-auto flex flex-col gap-8 px-4 sm:px-6 lg:px-8">
+      <main className="flex-1">
+        <div className="container mx-auto flex flex-col gap-8">
           {/* Header */}
           <div className="flex flex-col gap-4">
             <div>
@@ -34,7 +38,10 @@ export default async function AIPage() {
             </div>
           </div>
 
-          <AISettings user={JSON.parse(JSON.stringify(user))} />
+          <AISettings
+            groqModels={groqModels.data}
+            user={JSON.parse(JSON.stringify(user))}
+          />
         </div>
       </main>
     </div>

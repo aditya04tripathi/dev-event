@@ -28,7 +28,7 @@ const getRedisClient = () => {
     });
 
     return client;
-  } catch (error) {
+  } catch (_error) {
     // Redis connection failed, return null to disable Redis features
     return null;
   }

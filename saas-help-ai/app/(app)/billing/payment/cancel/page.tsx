@@ -12,7 +12,7 @@ import {
 export default function PaymentCancelPage() {
   return (
     <div className="flex h-full flex-col">
-      <main className="flex flex-1 items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <main className="flex flex-1 items-center justify-center">
         <Card className="w-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

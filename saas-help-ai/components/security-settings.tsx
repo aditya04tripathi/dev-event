@@ -36,7 +36,7 @@ export function SecuritySettings(_props: SecuritySettingsProps) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (formData.newPassword !== formData.confirmPassword) {
       toast.error("New passwords do not match");
       return;
@@ -51,7 +51,7 @@ export function SecuritySettings(_props: SecuritySettingsProps) {
 
     try {
       const result = await updatePassword(formData);
-      
+
       if (result.error) {
         toast.error(result.error);
       } else {
@@ -91,7 +91,9 @@ export function SecuritySettings(_props: SecuritySettingsProps) {
                   id="currentPassword"
                   type={showCurrentPassword ? "text" : "password"}
                   value={formData.currentPassword}
-                  onChange={(e) => handleInputChange("currentPassword", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("currentPassword", e.target.value)
+                  }
                   disabled={isLoading}
                   required
                 />
@@ -118,7 +120,9 @@ export function SecuritySettings(_props: SecuritySettingsProps) {
                   id="newPassword"
                   type={showNewPassword ? "text" : "password"}
                   value={formData.newPassword}
-                  onChange={(e) => handleInputChange("newPassword", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("newPassword", e.target.value)
+                  }
                   disabled={isLoading}
                   required
                   minLength={8}
@@ -149,7 +153,9 @@ export function SecuritySettings(_props: SecuritySettingsProps) {
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("confirmPassword", e.target.value)
+                  }
                   disabled={isLoading}
                   required
                   minLength={8}
@@ -182,18 +188,14 @@ export function SecuritySettings(_props: SecuritySettingsProps) {
       <Card>
         <CardHeader>
           <CardTitle>Active Sessions</CardTitle>
-          <CardDescription>
-            Manage your active login sessions
-          </CardDescription>
+          <CardDescription>Manage your active login sessions</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between py-3 border-b">
               <div>
                 <p className="font-medium">Current Session</p>
-                <p className="text-sm text-muted-foreground">
-                  Chrome on macOS
-                </p>
+                <p className="text-sm text-muted-foreground">Chrome on macOS</p>
               </div>
               <Badge variant="secondary">Active</Badge>
             </div>
@@ -206,4 +208,3 @@ export function SecuritySettings(_props: SecuritySettingsProps) {
     </div>
   );
 }
-

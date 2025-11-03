@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import CallToAction from "@/components/call-to-action";
 import Features12 from "@/components/features-12";
 import Footer from "@/components/footer";
 import HeroSection from "@/components/hero-section";
-import { PricingComponent } from "@/components/pricing-component";
+import PricingComponent from "@/components/pricing";
 import Team from "@/components/team";
 import Testimonials from "@/components/testimonials";
 
@@ -32,7 +31,6 @@ export default function HomePage() {
         <PricingComponent onHomePage />
         <Testimonials />
         <Team />
-        <CallToAction />
       </main>
       <Footer />
     </div>

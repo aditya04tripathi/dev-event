@@ -59,18 +59,21 @@ export default async function ProjectPage({
     redirect("/dashboard");
   }
 
+  // Serialize MongoDB ObjectIds to plain objects for client components
+  const serializedPlan = JSON.parse(JSON.stringify(projectPlan.plan));
+
   // const validation = await Validation.findById(projectPlan.validationId).lean();
 
   return (
     <div className="flex h-full flex-col">
-      <main className="flex-1 py-8">
-        <div className="container mx-auto flex flex-col gap-8 px-4 sm:px-6 lg:px-8">
+      <main className="flex-1">
+        <div className="container mx-auto flex flex-col gap-8">
           {/* Header */}
           <div className="flex flex-col gap-4">
             <Link href="/dashboard">
               <Button variant="ghost">← Back to Dashboard</Button>
             </Link>
-            <ProjectHeader projectPlanId={id} plan={projectPlan.plan} />
+            <ProjectHeader projectPlanId={id} plan={serializedPlan} />
             <p className="text-muted-foreground">
               Created {new Date(projectPlan.createdAt).toLocaleDateString()}
             </p>
@@ -156,6 +159,20 @@ export default async function ProjectPage({
                             <p className="text-sm text-muted-foreground">
                               {idea.reasoning}
                             </p>
+                            <Button
+                              asChild
+                              variant="outline"
+                              size="sm"
+                              className="w-full mt-4"
+                            >
+                              <Link
+                                href={`/validate?idea=${encodeURIComponent(
+                                  idea.description || idea.title,
+                                )}`}
+                              >
+                                Validate This Idea
+                              </Link>
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -177,11 +194,11 @@ export default async function ProjectPage({
               </TabsTrigger>
               <TabsTrigger value="boards" className="flex items-center gap-2">
                 <LayoutGrid className="h-4 w-4" />
-                KANBAN & SCRUM
+                SCRUM
               </TabsTrigger>
             </TabsList>
             <TabsContent value="flowchart" className="mt-6">
-              <Card>
+              <Card className="overflow-hidden">
                 <CardHeader>
                   <CardTitle>Project Flowchart</CardTitle>
                   <CardDescription>
@@ -189,21 +206,23 @@ export default async function ProjectPage({
                     dependencies
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <ProjectFlowchart plan={projectPlan.plan} />
+                <CardContent className="p-0">
+                  <ProjectFlowchart plan={serializedPlan} />
                 </CardContent>
               </Card>
             </TabsContent>
             <TabsContent value="boards" className="mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Project Boards</CardTitle>
+                  <CardTitle className="text-xl font-bold">
+                    SCRUM Boards
+                  </CardTitle>
                   <CardDescription>
-                    Manage your project tasks with KANBAN or SCRUM boards
+                    Manage your project tasks with SCRUM boards
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ProjectBoards projectPlanId={id} plan={projectPlan.plan} />
+                  <ProjectBoards projectPlanId={id} plan={serializedPlan} />
                 </CardContent>
               </Card>
             </TabsContent>

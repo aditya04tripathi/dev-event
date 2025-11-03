@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { signOutAction } from "@/actions/auth";
+import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export function SignOutButton() {
@@ -30,15 +31,16 @@ export function SignOutButton() {
 
   return (
     <DropdownMenuItem asChild>
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={handleSignOut}
-        className="w-full cursor-pointer"
+        className="w-full justify-start cursor-pointer"
         disabled={isLoading}
       >
         <LogOut className="mr-2 h-4 w-4" />
         {isLoading ? "Signing out..." : "Sign out"}
-      </button>
+      </Button>
     </DropdownMenuItem>
   );
 }

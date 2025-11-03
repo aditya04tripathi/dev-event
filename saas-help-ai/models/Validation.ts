@@ -51,7 +51,7 @@ const ValidationSchema = new Schema<IValidation>(
 ValidationSchema.index({ userId: 1, createdAt: -1 });
 
 const Validation: Model<IValidation> =
-  (mongoose.models && mongoose.models.Validation) ||
+  mongoose.models?.Validation ||
   mongoose.model<IValidation>("Validation", ValidationSchema);
 
 export default Validation;

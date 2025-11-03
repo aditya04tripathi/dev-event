@@ -1,4 +1,4 @@
-import { Home, User, Zap } from "lucide-react";
+import { Home, User } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -18,9 +18,8 @@ export async function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center space-x-2">
-          <Zap className="h-6 w-6" />
-          <span className="text-xl font-bold">Startup Validator</span>
+        <Link href="/" className="text-xl font-bold">
+          Startup Validator
         </Link>
 
         <div className="flex items-center gap-4">
@@ -28,6 +27,12 @@ export async function Navbar() {
             <>
               <Link href="/dashboard">
                 <Button variant="ghost">Dashboard</Button>
+              </Link>
+              <Link href="/validate">
+                <Button variant="ghost">Validate</Button>
+              </Link>
+              <Link href="/pricing">
+                <Button variant="ghost">Pricing</Button>
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -71,6 +76,9 @@ export async function Navbar() {
             </>
           ) : (
             <>
+              <Link href="/pricing">
+                <Button variant="ghost">Pricing</Button>
+              </Link>
               <Link href="/auth/signin">
                 <Button variant="ghost">Sign In</Button>
               </Link>

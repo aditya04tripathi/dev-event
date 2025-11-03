@@ -23,7 +23,7 @@ const paymentSlice = createSlice({
     },
     setSelectedTier: (
       state,
-      action: PayloadAction<"MONTHLY" | "YEARLY" | null>
+      action: PayloadAction<"MONTHLY" | "YEARLY" | null>,
     ) => {
       state.selectedTier = action.payload;
     },

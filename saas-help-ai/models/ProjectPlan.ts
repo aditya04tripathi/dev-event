@@ -95,7 +95,7 @@ ProjectPlanSchema.index({ userId: 1, createdAt: -1 });
 ProjectPlanSchema.index({ validationId: 1 });
 
 const ProjectPlanModel: Model<IProjectPlan> =
-  (mongoose.models && mongoose.models.ProjectPlan) ||
+  mongoose.models?.ProjectPlan ||
   mongoose.model<IProjectPlan>("ProjectPlan", ProjectPlanSchema);
 
 export default ProjectPlanModel;

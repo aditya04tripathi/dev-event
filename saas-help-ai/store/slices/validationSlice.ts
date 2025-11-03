@@ -32,19 +32,19 @@ const validationSlice = createSlice({
   reducers: {
     setValidation: (
       state,
-      action: PayloadAction<ValidationState["currentValidation"]>
+      action: PayloadAction<ValidationState["currentValidation"]>,
     ) => {
       state.currentValidation = action.payload;
     },
     setProjectPlan: (
       state,
-      action: PayloadAction<ValidationState["currentProjectPlan"]>
+      action: PayloadAction<ValidationState["currentProjectPlan"]>,
     ) => {
       state.currentProjectPlan = action.payload;
     },
     updateTaskStatus: (
       state,
-      action: PayloadAction<{ taskId: string; status: string }>
+      action: PayloadAction<{ taskId: string; status: string }>,
     ) => {
       if (state.currentProjectPlan?.plan) {
         for (const phase of state.currentProjectPlan.plan.phases) {

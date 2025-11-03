@@ -63,7 +63,7 @@ Be thorough, realistic, and constructive in your analysis.`;
 
 export async function generateProjectPlan(
   idea: string,
-  validationResult: ValidationResult
+  validationResult: ValidationResult,
 ): Promise<ProjectPlan> {
   const prompt = `Based on this startup idea and validation:
 
@@ -134,7 +134,7 @@ Create 4-6 phases covering: Research & Planning, MVP Development, Testing & Iter
 }
 
 export async function generateAlternativeIdeas(
-  idea: string
+  idea: string,
 ): Promise<AlternativeIdea[]> {
   const prompt = `Generate 3-5 alternative startup ideas related to or inspired by this concept:
 

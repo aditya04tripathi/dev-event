@@ -4,27 +4,22 @@ import { capturePayment } from "@/actions/payment";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const subscriptionId = searchParams.get("subscription_id");
-  const updatePayment = searchParams.get("update_payment");
+  // PayPal returns subscription_id in the URL automatically
+  const subscriptionId =
+    searchParams.get("subscription_id") || searchParams.get("token");
 
   if (!subscriptionId) {
     redirect("/billing/payment/error?error=Missing subscription ID");
   }
 
-  // If this is just a payment method update, redirect back
-  if (updatePayment === "true") {
-    revalidatePath("/billing");
-    redirect("/billing?payment_method_updated=true");
-  }
-
-  // Activate the subscription (tier and plan will be retrieved from Redis cache)
+  // Activate the subscription (tier and plan will be retrieved from Redis cache or PayPal API)
   const result = await capturePayment(subscriptionId);
 
   if (result.error || !result.success) {
     redirect(
       `/billing/payment/error?error=${encodeURIComponent(
-        result.error || "Subscription activation failed"
-      )}`
+        result.error || "Subscription activation failed",
+      )}`,
     );
   }
 

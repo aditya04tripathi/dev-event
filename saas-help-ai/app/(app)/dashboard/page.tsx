@@ -70,16 +70,16 @@ export default async function DashboardPage({
 
   return (
     <div className="flex h-full flex-col">
-      <main className="flex-1 py-8">
-        <div className="container mx-auto flex flex-col gap-8 px-4 sm:px-6 lg:px-8">
+      <main className="flex-1">
+        <div className="container mx-auto flex flex-col gap-8">
           {/* Payment Success Message */}
           {paymentSuccess && (
-            <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
-              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <AlertTitle className="text-green-800 dark:text-green-200">
+            <Alert className="border-primary bg-primary/10">
+              <CheckCircle2 className="h-4 w-4 text-primary" />
+              <AlertTitle className="text-primary">
                 Payment Successful!
               </AlertTitle>
-              <AlertDescription className="text-green-700 dark:text-green-300">
+              <AlertDescription className="text-primary/80">
                 Your subscription has been activated. You now have access to all
                 premium features.
               </AlertDescription>

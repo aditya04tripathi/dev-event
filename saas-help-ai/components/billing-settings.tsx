@@ -1,9 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
-import { updatePaymentMethod } from "@/actions/payment";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,34 +19,6 @@ interface BillingSettingsProps {
 }
 
 export function BillingSettings({ user }: BillingSettingsProps) {
-  const [updatingPayment, setUpdatingPayment] = useState(false);
-
-  const handleUpdatePaymentMethod = async () => {
-    if (!user.paypalSubscriptionId) {
-      toast.error("No active subscription found");
-      return;
-    }
-
-    setUpdatingPayment(true);
-    try {
-      const result = await updatePaymentMethod();
-      if (result.error) {
-        toast.error(result.error);
-        return;
-      }
-
-      if (result.approvalUrl) {
-        // Redirect to PayPal to update payment method
-        window.location.href = result.approvalUrl;
-      } else {
-        toast.error("Failed to get payment method update URL");
-      }
-    } catch {
-      toast.error("Failed to update payment method");
-    } finally {
-      setUpdatingPayment(false);
-    }
-  };
 
   const getPlanBadge = (plan: string) => {
     switch (plan) {
@@ -99,36 +68,7 @@ export function BillingSettings({ user }: BillingSettingsProps) {
           )}
         </CardContent>
       </Card>
-
-      {user.subscriptionTier !== "FREE" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Payment Method</CardTitle>
-            <CardDescription>Update your payment information</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between py-3 border-b">
-              <div>
-                <p className="font-medium">PayPal</p>
-                <p className="text-sm text-muted-foreground">
-                  {user.paypalSubscriptionId
-                    ? "Manage through PayPal"
-                    : "No payment method on file"}
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleUpdatePaymentMethod}
-                disabled={updatingPayment || !user.paypalSubscriptionId}
-              >
-                {updatingPayment ? "Redirecting..." : "Update"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
+      {/* 
       <Card>
         <CardHeader>
           <CardTitle>Billing History</CardTitle>
@@ -148,7 +88,7 @@ export function BillingSettings({ user }: BillingSettingsProps) {
             )}
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

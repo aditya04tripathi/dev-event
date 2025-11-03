@@ -71,8 +71,8 @@ export default async function ValidationPage({
 
   return (
     <div className="flex h-full flex-col">
-      <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-8">
+      <main className="flex-1">
+        <div className="container mx-auto flex flex-col gap-8">
           {/* Header */}
           <div className="flex flex-col gap-4">
             <Link href="/dashboard">
@@ -162,7 +162,7 @@ export default async function ValidationPage({
               <Separator />
               <div>
                 <h3 className="mb-2 font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
                   Strengths
                 </h3>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
@@ -174,7 +174,7 @@ export default async function ValidationPage({
               <Separator />
               <div>
                 <h3 className="mb-2 font-semibold flex items-center gap-2">
-                  <XCircle className="h-4 w-4 text-red-500" />
+                  <XCircle className="h-4 w-4 text-destructive" />
                   Weaknesses
                 </h3>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
@@ -186,7 +186,7 @@ export default async function ValidationPage({
               <Separator />
               <div>
                 <h3 className="mb-2 font-semibold flex items-center gap-2">
-                  <Lightbulb className="h-4 w-4 text-yellow-500" />
+                  <Lightbulb className="h-4 w-4 text-accent-foreground" />
                   Suggestions
                 </h3>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">

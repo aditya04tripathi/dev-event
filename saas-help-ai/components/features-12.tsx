@@ -1,10 +1,5 @@
 "use client";
-import {
-  ChartBarIncreasingIcon,
-  Database,
-  Fingerprint,
-  IdCard,
-} from "lucide-react";
+import { Brain, GitBranch, LayoutGrid, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
@@ -14,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { BorderBeam } from "@/components/ui/border-beam";
+import { BorderBeam } from "./ui/border-beam";
 
 export default function Features() {
   type ImageKey = "item-1" | "item-2" | "item-3" | "item-4";
@@ -22,35 +17,35 @@ export default function Features() {
 
   const images = {
     "item-1": {
-      image: "/charts.png",
-      alt: "Database visualization",
+      image: "/mail2.png",
+      alt: "AI-powered validation dashboard",
     },
     "item-2": {
-      image: "/music.png",
-      alt: "Security authentication",
+      image: "/mail2.png",
+      alt: "Interactive flowchart visualization",
     },
     "item-3": {
       image: "/mail2.png",
-      alt: "Identity management",
+      alt: "SCRUM task management board",
     },
     "item-4": {
-      image: "/payments.png",
-      alt: "Analytics dashboard",
+      image: "/mail2.png",
+      alt: "Project planning interface",
     },
   };
 
   return (
-    <section className="container mx-auto py-12 md:py-20 lg:py-32">
-      <div className="bg-linear-to-b absolute inset-0 -z-10 sm:inset-6 sm:rounded-b-3xl dark:block dark:to-[color-mix(in_oklab,var(--color-zinc-900)_75%,var(--color-background))]"></div>
-      <div className="container mx-auto space-y-8 px-6 md:space-y-16 lg:space-y-20 dark:[--color-border:color-mix(in_oklab,var(--color-white)_10%,transparent)]">
-        <div className="relative z-10 mx-auto w-full space-y-6 text-center">
+    <section className="py-12 md:py-20 lg:py-32">
+      <div className="bg-linear-to-b absolute inset-0 -z-10 sm:inset-6 sm:rounded-b-3xl dark:block dark:to-[color-mix(in_oklab,var(--color-muted)_75%,var(--color-background))]"></div>
+      <div className="mx-auto max-w-5xl space-y-8 px-6 md:space-y-16 lg:space-y-20 dark:[--color-border:color-mix(in_oklab,var(--color-foreground)_10%,transparent)]">
+        <div className="relative z-10 mx-auto max-w-2xl space-y-6 text-center">
           <h2 className="text-balance text-4xl font-semibold lg:text-6xl">
-            The foundation for AI
+            Everything You Need to Validate & Build
           </h2>
-          <p>
-            Lyra is evolving to be more than just the models. It supports an
-            entire to the APIs and platforms helping developers and businesses
-            innovate.
+          <p className="text-muted-foreground">
+            Powerful AI-driven tools to validate your startup ideas, create
+            comprehensive project plans, and manage your execution with visual
+            workflows.
           </p>
         </div>
 
@@ -64,53 +59,53 @@ export default function Features() {
             <AccordionItem value="item-1">
               <AccordionTrigger>
                 <div className="flex items-center gap-2 text-base">
-                  <Database className="size-4" />
-                  Database Visualization
+                  <Brain className="size-4" />
+                  AI-Powered Validation
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                Lyra is evolving to be more than just the models. It supports an
-                entire to the APIs and platforms helping developers and
-                businesses innovate.
+                Get comprehensive AI analysis of your startup idea with detailed
+                feedback on strengths, weaknesses, market opportunities, and
+                actionable suggestions to improve your concept.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
               <AccordionTrigger>
                 <div className="flex items-center gap-2 text-base">
-                  <Fingerprint className="size-4" />
-                  Advanced Authentication
+                  <GitBranch className="size-4" />
+                  Interactive Flowcharts
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                Lyra is evolving to be more than just the models. It supports an
-                entire to the APIs and platforms helping developers and
-                businesses innovate.
+                Visualize your project workflow with interactive flowcharts that
+                show phases, tasks, and dependencies, making it easy to
+                understand your project structure at a glance.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3">
               <AccordionTrigger>
                 <div className="flex items-center gap-2 text-base">
-                  <IdCard className="size-4" />
-                  Identity Management
+                  <LayoutGrid className="size-4" />
+                  SCRUM Task Management
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                Lyra is evolving to be more than just the models. It supports an
-                entire to the APIs and platforms helping developers and
-                businesses innovate.
+                Manage your project execution with drag-and-drop SCRUM boards,
+                track task progress, prioritize work, and keep your team aligned
+                with your startup goals.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-4">
               <AccordionTrigger>
                 <div className="flex items-center gap-2 text-base">
-                  <ChartBarIncreasingIcon className="size-4" />
-                  Analytics Dashboard
+                  <Sparkles className="size-4" />
+                  Intelligent Project Planning
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                Lyra is evolving to be more than just the models. It supports an
-                entire to the APIs and platforms helping developers and
-                businesses innovate.
+                Automatically generate detailed project plans with phases,
+                tasks, timelines, and risk assessments. Use AI to improve and
+                refine your plans as your idea evolves.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -125,11 +120,11 @@ export default function Features() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.98 }}
                   transition={{ duration: 0.2 }}
-                  className="size-full overflow-hidden rounded-2xl border bg-zinc-900 shadow-md"
+                  className="size-full overflow-hidden rounded-2xl border bg-card shadow-md"
                 >
                   <Image
                     src={images[activeItem].image}
-                    className="size-full object-cover object-top-left dark:mix-blend-lighten"
+                    className="size-full object-cover object-left-top dark:mix-blend-lighten"
                     alt={images[activeItem].alt}
                     width={1207}
                     height={929}

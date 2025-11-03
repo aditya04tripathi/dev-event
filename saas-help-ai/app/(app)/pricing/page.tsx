@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { auth } from "@/auth";
-import { PricingComponent } from "@/components/pricing-component";
+import PricingComponent from "@/components/pricing";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
 

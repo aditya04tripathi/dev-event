@@ -18,7 +18,7 @@ export const SUBSCRIPTION_PLANS = {
     features: [
       "50 AI validations/month",
       "Advanced project plans",
-      "KANBAN & SCRUM boards",
+      "SCRUM boards",
       "Email support",
     ],
   },
@@ -30,7 +30,7 @@ export const SUBSCRIPTION_PLANS = {
     features: [
       "Unlimited AI validations",
       "Advanced project plans",
-      "KANBAN & SCRUM boards",
+      "SCRUM boards",
       "Priority support",
       "AI plan improvements",
       "Export capabilities",

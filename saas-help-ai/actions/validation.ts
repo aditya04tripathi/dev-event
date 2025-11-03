@@ -17,6 +17,7 @@ import {
 } from "@/lib/groq";
 import { getCache, rateLimit, setCache } from "@/lib/redis";
 import ProjectPlan from "@/models/ProjectPlan";
+import ScrumBoard from "@/models/ScrumBoard";
 import User from "@/models/User";
 import Validation from "@/models/Validation";
 import type { ValidationResult } from "@/types";
@@ -40,13 +41,13 @@ export async function validateStartupIdea(idea: string) {
     const rateLimitResult = await rateLimit(
       `validation:${session.user.id}`,
       RATE_LIMIT.VALIDATION.maxRequests,
-      RATE_LIMIT.VALIDATION.windowMs
+      RATE_LIMIT.VALIDATION.windowMs,
     );
 
     if (!rateLimitResult.allowed) {
       return {
         error: `Rate limit exceeded. Please try again after ${new Date(
-          rateLimitResult.resetAt
+          rateLimitResult.resetAt,
         ).toLocaleTimeString()}`,
       };
     }
@@ -70,15 +71,15 @@ export async function validateStartupIdea(idea: string) {
       user.searchesUsed = 0;
       if (user.subscriptionTier === "FREE") {
         user.searchesResetAt = new Date(
-          now.getTime() + 30 * 24 * 60 * 60 * 1000
+          now.getTime() + 30 * 24 * 60 * 60 * 1000,
         );
       } else if (user.subscriptionTier === "MONTHLY") {
         user.searchesResetAt = new Date(
-          now.getTime() + 30 * 24 * 60 * 60 * 1000
+          now.getTime() + 30 * 24 * 60 * 60 * 1000,
         );
       } else if (user.subscriptionTier === "YEARLY") {
         user.searchesResetAt = new Date(
-          now.getTime() + 365 * 24 * 60 * 60 * 1000
+          now.getTime() + 365 * 24 * 60 * 60 * 1000,
         );
       }
       await user.save();
@@ -122,6 +123,8 @@ export async function validateStartupIdea(idea: string) {
       });
 
       revalidatePath("/dashboard");
+      revalidatePath("/validate");
+      revalidatePath("/usage");
       return {
         success: true,
         validationId: (validation._id as mongoose.Types.ObjectId).toString(),
@@ -152,6 +155,8 @@ export async function validateStartupIdea(idea: string) {
     await setCache(cacheKey, validationResult, CACHE_TTL.VALIDATION);
 
     revalidatePath("/dashboard");
+    revalidatePath("/validate");
+    revalidatePath("/usage");
     return {
       success: true,
       validationId: (validation._id as mongoose.Types.ObjectId).toString(),
@@ -202,7 +207,7 @@ export async function generatePlan(validationId: string) {
     // Generate project plan
     const plan = await generateProjectPlan(
       validation.idea,
-      validation.validationResult
+      validation.validationResult,
     );
 
     // Save project plan
@@ -218,8 +223,10 @@ export async function generatePlan(validationId: string) {
     await validation.save();
 
     revalidatePath(
-      `/project/${(projectPlan._id as mongoose.Types.ObjectId).toString()}`
+      `/project/${(projectPlan._id as mongoose.Types.ObjectId).toString()}`,
     );
+    revalidatePath("/dashboard");
+    revalidatePath(`/validation/${validationId}`);
     return {
       success: true,
       projectPlanId: (projectPlan._id as mongoose.Types.ObjectId).toString(),
@@ -235,7 +242,7 @@ export async function generatePlan(validationId: string) {
 export async function updateTaskStatus(
   projectPlanId: string,
   taskId: string,
-  status: "TODO" | "IN_PROGRESS" | "DONE" | "BLOCKED"
+  status: "TODO" | "IN_PROGRESS" | "DONE" | "BLOCKED",
 ) {
   const session = await auth();
   if (!session?.user) {
@@ -250,18 +257,42 @@ export async function updateTaskStatus(
       return { error: "Project plan not found" };
     }
 
-    // Find and update task
+    // Find and update task in ProjectPlan
+    let taskFound = false;
     for (const phase of projectPlan.plan.phases) {
       const task = phase.tasks.find((t) => t.id === taskId);
       if (task) {
         task.status = status;
-        await projectPlan.save();
-        revalidatePath(`/project/${projectPlanId}`);
-        return { success: true };
+        taskFound = true;
+        break;
       }
     }
 
-    return { error: "Task not found" };
+    if (!taskFound) {
+      return { error: "Task not found" };
+    }
+
+    await projectPlan.save();
+
+    // Update or create SCRUM board entry
+    let scrumBoard = await ScrumBoard.findOne({ projectPlanId });
+    if (!scrumBoard) {
+      scrumBoard = new ScrumBoard({
+        projectPlanId: projectPlan._id,
+        userId: session.user.id,
+        taskStatuses: new Map(),
+      });
+    }
+    scrumBoard.taskStatuses.set(taskId, status);
+    scrumBoard.markModified("taskStatuses");
+    await scrumBoard.save();
+
+    // Revalidate paths
+    revalidatePath(`/project/${projectPlanId}`);
+    revalidatePath("/dashboard");
+    revalidatePath(`/validation/${projectPlan.validationId?.toString()}`);
+
+    return { success: true };
   } catch (error) {
     console.error("Update task error:", error);
     return { error: "Failed to update task" };
@@ -270,7 +301,7 @@ export async function updateTaskStatus(
 
 export async function improveProjectPlan(
   projectPlanId: string,
-  userRequest: string
+  userRequest: string,
 ) {
   const session = await auth();
   if (!session?.user) {
@@ -304,8 +335,12 @@ export async function improveProjectPlan(
 
     // Use Groq to improve the plan
     const Groq = (await import("groq-sdk")).default;
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      return { error: "GROQ API key not configured" };
+    }
     const groqClient = new Groq({
-      apiKey: process.env.GROQ_API_KEY!,
+      apiKey,
     });
 
     const planSummary = JSON.stringify({
@@ -348,6 +383,8 @@ export async function improveProjectPlan(
     await user.save();
 
     revalidatePath(`/project/${projectPlanId}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/usage");
 
     return {
       success: true,

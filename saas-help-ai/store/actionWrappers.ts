@@ -23,12 +23,22 @@ export function syncUserToRedux(
     subscriptionTier?: SubscriptionTier;
     subscriptionPlan?: "BASIC" | "PRO";
     searchesUsed?: number;
-    searchesResetAt?: Date;
+    searchesResetAt?: Date | string;
     name?: string;
-  }
+  },
 ) {
   if (Object.keys(userData).length > 0) {
-    dispatch(updateUser(userData));
+    // Serialize Date objects to ISO strings for Redux
+    const serializedData = {
+      ...userData,
+      ...(userData.searchesResetAt && {
+        searchesResetAt:
+          userData.searchesResetAt instanceof Date
+            ? userData.searchesResetAt.toISOString()
+            : userData.searchesResetAt,
+      }),
+    };
+    dispatch(updateUser(serializedData));
   }
 }
 
@@ -68,7 +78,7 @@ export function syncProjectPlanToRedux(
       score: number;
       reasoning: string;
     }>;
-  }
+  },
 ) {
   dispatch(setProjectPlan(projectPlan));
 }
@@ -80,7 +90,7 @@ export function syncProjectPlanToRedux(
 export function updateTaskStatusReduxWrapper(
   dispatch: AppDispatch,
   taskId: string,
-  status: "TODO" | "IN_PROGRESS" | "DONE" | "BLOCKED"
+  status: "TODO" | "IN_PROGRESS" | "DONE" | "BLOCKED",
 ) {
   dispatch(updateTaskStatusRedux({ taskId, status }));
 }

@@ -1,8 +1,6 @@
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
-import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { JWT_CONFIG } from "@/constants";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
 

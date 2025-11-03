@@ -1,7 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { deleteAccount } from "@/actions/auth";
 import { updateProfile } from "@/actions/profile";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -14,8 +16,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { syncUserToRedux } from "@/store/actionWrappers";
-import { useAppDispatch } from "@/store/hooks";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 interface ProfileSettingsProps {
   user: {
@@ -26,10 +37,27 @@ interface ProfileSettingsProps {
 }
 
 export function ProfileSettings({ user }: ProfileSettingsProps) {
-  const dispatch = useAppDispatch();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState(user.name);
-  const [email] = useState(user.email); // Email is not editable
+  const [email] = useState(user.email);
+
+  const handleDeleteAccount = async () => {
+    setIsLoading(true);
+    try {
+      const result = await deleteAccount();
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Account deleted successfully!");
+        router.replace("/");
+      }
+    } catch {
+      toast.error("Failed to delete account");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,11 +72,8 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
       if (result.error) {
         toast.error(result.error);
       } else {
-        // Update Redux store with user data (name)
-        if (result.user) {
-          syncUserToRedux(dispatch, result.user);
-        }
         toast.success("Profile updated successfully!");
+        router.refresh();
       }
     } catch {
       toast.error("Failed to update profile");
@@ -138,14 +163,44 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
         <CardContent>
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium">Delete Account</h3>
+              <p className="font-medium">Delete Account</p>
               <p className="text-sm text-muted-foreground">
                 Permanently delete your account and all associated data
               </p>
             </div>
-            <Button type="button" variant="destructive">
-              Delete Account
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button type="button" variant="destructive">
+                  Delete Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Account</AlertDialogTitle>
+                  <AlertDialogDescription asChild>
+                    <p>
+                      Are you sure you want to delete your account? This will
+                      permanently delete your account and all associated data,
+                      including all your projects, validations, invoices, and
+                      more.
+                    </p>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>No, keep my account.</AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button
+                      onClick={handleDeleteAccount}
+                      type="button"
+                      variant="destructive"
+                      className="text-destructive-foreground"
+                    >
+                      Yes, delete my account permanently.
+                    </Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </CardContent>
       </Card>

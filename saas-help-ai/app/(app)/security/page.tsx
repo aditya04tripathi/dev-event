@@ -20,8 +20,8 @@ export default async function SecurityPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <main className="flex-1 py-8">
-        <div className="container mx-auto flex flex-col gap-8 px-4 sm:px-6 lg:px-8">
+      <main className="flex-1">
+        <div className="container mx-auto flex flex-col gap-8">
           {/* Header */}
           <div className="flex flex-col gap-4">
             <div>

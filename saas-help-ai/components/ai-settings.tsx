@@ -1,9 +1,11 @@
 "use client";
 
-import { Brain, Sparkles, Zap, Eye, EyeOff, Key } from "lucide-react";
-import { useState } from "react";
+import type groq from "groq-sdk";
+import { Eye, EyeOff, Key } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { updateAIPreferences, updateAPIKeys } from "@/actions/profile";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,16 +14,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
 
 interface AISettingsProps {
   user: {
@@ -31,59 +25,30 @@ interface AISettingsProps {
       theme?: string;
     };
     apiKeys?: {
-      gemini?: string;
-      openai?: string;
-      anthropic?: string;
+      groq?: string;
     };
   };
+  groqModels: groq.Models.Model[];
 }
 
-const aiProviders = [
-  {
-    value: "gemini",
-    label: "Google Gemini",
-    icon: Sparkles,
-    description:
-      "Google's advanced AI model with strong reasoning capabilities",
-  },
-  {
-    value: "openai",
-    label: "OpenAI GPT",
-    icon: Brain,
-    description: "OpenAI's GPT models for general-purpose AI tasks",
-  },
-  {
-    value: "anthropic",
-    label: "Anthropic Claude",
-    icon: Zap,
-    description: "Anthropic's Claude for safe and helpful AI assistance",
-  },
-];
-
-export function AISettings({ user }: AISettingsProps) {
+export function AISettings({ user, groqModels }: AISettingsProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingKeys, setIsLoadingKeys] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(
     user.preferences?.aiProvider || "gemini",
   );
-  const [apiKeys, setApiKeys] = useState({
-    gemini: user.apiKeys?.gemini || "",
-    openai: user.apiKeys?.openai || "",
-    anthropic: user.apiKeys?.anthropic || "",
-  });
-  const [showKeys, setShowKeys] = useState({
-    gemini: false,
-    openai: false,
-    anthropic: false,
-  });
+  const aiProviders = groqModels;
+  const [groqApiKey, setGroqApiKey] = useState(user.apiKeys?.groq || "");
+  const [showGroqKey, setShowGroqKey] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  useEffect(() => {}, []);
+
+  const saveProviderPreference = async (provider: string) => {
     setIsLoading(true);
 
     try {
       const formData = new FormData();
-      formData.append("aiProvider", selectedProvider);
+      formData.append("aiProvider", provider);
 
       const result = await updateAIPreferences(formData);
 
@@ -91,6 +56,7 @@ export function AISettings({ user }: AISettingsProps) {
         toast.error(result.error);
       } else {
         toast.success("AI preferences updated successfully!");
+        setSelectedProvider(provider);
       }
     } catch {
       toast.error("Failed to update AI preferences");
@@ -99,15 +65,18 @@ export function AISettings({ user }: AISettingsProps) {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await saveProviderPreference(selectedProvider);
+  };
+
   const handleAPIKeysSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoadingKeys(true);
 
     try {
       const formData = new FormData();
-      formData.append("gemini", apiKeys.gemini);
-      formData.append("openai", apiKeys.openai);
-      formData.append("anthropic", apiKeys.anthropic);
+      formData.append("groq", groqApiKey);
 
       const result = await updateAPIKeys(formData);
 
@@ -123,10 +92,6 @@ export function AISettings({ user }: AISettingsProps) {
     }
   };
 
-  const handleAPIKeyChange = (provider: string, value: string) => {
-    setApiKeys((prev) => ({ ...prev, [provider]: value }));
-  };
-
   return (
     <div className="space-y-6">
       <Card>
@@ -138,57 +103,30 @@ export function AISettings({ user }: AISettingsProps) {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
-              <Label htmlFor="aiProvider">Current AI Provider</Label>
-              <Select
-                value={selectedProvider}
-                onValueChange={setSelectedProvider}
-                disabled={isLoading}
-              >
-                <SelectTrigger id="aiProvider">
-                  <SelectValue placeholder="Select AI provider" />
-                </SelectTrigger>
-                <SelectContent>
-                  {aiProviders.map((provider) => {
-                    const Icon = provider.icon;
-                    return (
-                      <SelectItem key={provider.value} value={provider.value}>
-                        <div className="flex items-center gap-2">
-                          <Icon className="h-4 w-4" />
-                          <span>{provider.label}</span>
-                        </div>
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Provider Cards */}
             <div className="grid gap-4 md:grid-cols-3">
               {aiProviders.map((provider) => {
-                const Icon = provider.icon;
-                const isSelected = selectedProvider === provider.value;
+                const isSelected = selectedProvider === provider.id;
                 return (
-                  <button
-                    key={provider.value}
+                  <Button
+                    key={provider.id}
                     type="button"
-                    onClick={() => setSelectedProvider(provider.value)}
+                    variant={isSelected ? "outline" : "ghost"}
+                    onClick={() => saveProviderPreference(provider.id)}
                     disabled={isLoading}
-                    className={`p-4 rounded-lg border-2 text-left transition-all ${
+                    className={`h-auto p-4 justify-start text-left transition-all ${
                       isSelected
                         ? "border-primary bg-primary/5"
                         : "border-border hover:border-primary/50"
                     }`}
                   >
-                    <div className="flex items-center gap-3 mb-2">
-                      <Icon className="h-5 w-5" />
-                      <span className="font-medium">{provider.label}</span>
+                    <div className="w-full">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="font-medium">
+                          {provider.id} ({provider.owned_by})
+                        </span>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {provider.description}
-                    </p>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -215,7 +153,8 @@ export function AISettings({ user }: AISettingsProps) {
             <div className="flex items-center justify-between py-2 border-b">
               <span className="text-sm font-medium">Current Provider</span>
               <span className="text-sm text-muted-foreground">
-                {aiProviders.find((p) => p.value === selectedProvider)?.label}
+                {aiProviders.find((p) => p.id === selectedProvider)?.id ||
+                  selectedProvider}
               </span>
             </div>
             <div className="flex items-center justify-between py-2 border-b">
@@ -247,47 +186,51 @@ export function AISettings({ user }: AISettingsProps) {
           <form onSubmit={handleAPIKeysSubmit} className="space-y-6">
             <Alert>
               <AlertDescription>
-                Your API keys are encrypted and stored securely. Leaving a key empty will use our default keys.
+                Your API keys are encrypted and stored securely. Leaving a key
+                empty will use our default keys.
               </AlertDescription>
             </Alert>
 
-            {aiProviders.map((provider) => {
-              const Icon = provider.icon;
-              const providerKey = apiKeys[provider.value as keyof typeof apiKeys];
-              const showKey = showKeys[provider.value as keyof typeof showKeys];
-              
-              return (
-                <div key={provider.value} className="space-y-2">
-                  <Label htmlFor={`key-${provider.value}`} className="flex items-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    {provider.label} API Key
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id={`key-${provider.value}`}
-                      type={showKey ? "text" : "password"}
-                      placeholder={`Enter your ${provider.label} API key`}
-                      value={providerKey}
-                      onChange={(e) => handleAPIKeyChange(provider.value, e.target.value)}
-                      disabled={isLoadingKeys}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-0 top-0 h-full"
-                      onClick={() => setShowKeys((prev) => ({ ...prev, [provider.value]: !showKey }))}
-                    >
-                      {showKey ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
+            <div className="space-y-2">
+              <Label htmlFor="groq-api-key" className="flex items-center gap-2">
+                Groq API Key
+              </Label>
+              <CardDescription className="text-sm text-muted-foreground mb-2">
+                This API key works for all Groq models. Get your key from{" "}
+                <a
+                  href="https://console.groq.com/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Groq Console
+                </a>
+                .
+              </CardDescription>
+              <div className="relative">
+                <Input
+                  id="groq-api-key"
+                  type={showGroqKey ? "text" : "password"}
+                  placeholder="Enter your Groq API key"
+                  value={groqApiKey}
+                  onChange={(e) => setGroqApiKey(e.target.value)}
+                  disabled={isLoadingKeys}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full"
+                  onClick={() => setShowGroqKey(!showGroqKey)}
+                >
+                  {showGroqKey ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
 
             <div className="flex justify-end gap-4">
               <Button type="submit" disabled={isLoadingKeys}>

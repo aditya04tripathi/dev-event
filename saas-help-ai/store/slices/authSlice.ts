@@ -38,9 +38,9 @@ const authSlice = createSlice({
         subscriptionTier?: SubscriptionTier;
         subscriptionPlan?: "BASIC" | "PRO";
         searchesUsed?: number;
-        searchesResetAt?: Date;
+        searchesResetAt?: Date | string;
         name?: string;
-      }>
+      }>,
     ) => {
       if (state.user) {
         if (action.payload.name !== undefined) {
@@ -69,7 +69,7 @@ const authSlice = createSlice({
             0,
             searchesPerMonth === Infinity
               ? Infinity
-              : searchesPerMonth - action.payload.searchesUsed
+              : searchesPerMonth - action.payload.searchesUsed,
           );
         }
       }

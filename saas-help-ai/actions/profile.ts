@@ -30,6 +30,7 @@ export async function updateProfile(formData: FormData) {
     await user.save();
 
     revalidatePath("/profile");
+    revalidatePath("/dashboard");
     return {
       success: true,
       user: {
@@ -73,6 +74,8 @@ export async function updateAIPreferences(formData: FormData) {
     await user.save();
 
     revalidatePath("/profile");
+    revalidatePath("/dashboard");
+    revalidatePath("/ai");
     return { success: true };
   } catch (error) {
     console.error("Update AI preferences error:", error);
@@ -115,7 +118,7 @@ export async function updatePassword(formData: {
     // Verify current password
     const isCurrentPasswordValid = await bcrypt.compare(
       currentPassword,
-      user.password
+      user.password,
     );
 
     if (!isCurrentPasswordValid) {
@@ -128,6 +131,7 @@ export async function updatePassword(formData: {
     await user.save();
 
     revalidatePath("/profile");
+    revalidatePath("/security");
     return { success: true };
   } catch (error) {
     console.error("Update password error:", error);
@@ -144,6 +148,7 @@ export async function updateAPIKeys(formData: FormData) {
   const gemini = (formData.get("gemini") as string) || null;
   const openai = (formData.get("openai") as string) || null;
   const anthropic = (formData.get("anthropic") as string) || null;
+  const groq = (formData.get("groq") as string) || null;
 
   try {
     await connectDB();
@@ -158,6 +163,7 @@ export async function updateAPIKeys(formData: FormData) {
         gemini: null,
         openai: null,
         anthropic: null,
+        groq: null,
       };
     }
 
@@ -171,10 +177,15 @@ export async function updateAPIKeys(formData: FormData) {
     if (anthropic !== null) {
       user.apiKeys.anthropic = anthropic.trim() || null;
     }
+    if (groq !== null) {
+      user.apiKeys.groq = groq.trim() || null;
+    }
 
     await user.save();
 
     revalidatePath("/profile");
+    revalidatePath("/dashboard");
+    revalidatePath("/ai");
     return { success: true };
   } catch (error) {
     console.error("Update API keys error:", error);

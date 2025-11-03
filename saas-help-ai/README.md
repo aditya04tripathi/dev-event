@@ -7,7 +7,7 @@ An AI-powered startup idea validation platform built with Next.js 16, featuring 
 - 🤖 **AI-Powered Validation**: Validate startup ideas using Groq's LLM with detailed feedback
 - 📊 **Project Planning**: Generate comprehensive project plans with phases, tasks, and timelines
 - 📈 **Flowcharts**: Interactive visual flowcharts using xyflow to visualize project workflows
-- 📋 **KANBAN & SCRUM Boards**: Toggleable task management boards for project execution
+- 📋 **SCRUM Boards**: Toggleable task management boards for project execution
 - 💰 **Subscription Plans**: Free (5 searches), Basic, Pro with monthly or yearly billing options
 - 🔐 **Authentication**: Secure JWT-based authentication with NextAuth
 - ⚡ **Rate Limiting**: Built-in rate limiting with Redis
@@ -148,11 +148,9 @@ pnpm dev
   - Visual workflow representation
   - Drag-and-drop capability
 
-### KANBAN & SCRUM Boards
+### SCRUM Boards
 
-- Toggleable views:
-  - **KANBAN**: 4 columns (TODO, IN_PROGRESS, DONE, BLOCKED)
-  - **SCRUM**: Sprint-based view with TODO, IN_PROGRESS, DONE columns
+- SCRUM: Sprint-based view with TODO, IN_PROGRESS, DONE columns
 - Task management:
   - Update task status
   - Priority levels

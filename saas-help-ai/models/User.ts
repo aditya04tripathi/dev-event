@@ -19,6 +19,7 @@ export interface IUser extends Document {
     gemini?: string;
     openai?: string;
     anthropic?: string;
+    groq?: string;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -92,17 +93,19 @@ const UserSchema = new Schema<IUser>(
         gemini: { type: String, default: null },
         openai: { type: String, default: null },
         anthropic: { type: String, default: null },
+        groq: { type: String, default: null },
       },
       default: {
         gemini: null,
         openai: null,
         anthropic: null,
+        groq: null,
       },
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const User: Model<IUser> =

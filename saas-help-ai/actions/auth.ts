@@ -2,9 +2,13 @@
 
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
-import { signOut as authSignOut, signIn } from "@/auth";
+import { auth, signOut as authSignOut, signIn } from "@/auth";
 import connectDB from "@/lib/db";
+import Invoice from "@/models/Invoice";
+import ProjectPlanModel from "@/models/ProjectPlan";
+import ScrumBoard from "@/models/ScrumBoard";
 import User from "@/models/User";
+import Validation from "@/models/Validation";
 
 export async function signUp(formData: FormData) {
   const email = formData.get("email") as string;
@@ -44,6 +48,8 @@ export async function signUp(formData: FormData) {
     });
 
     revalidatePath("/");
+    revalidatePath("/dashboard");
+    revalidatePath("/pricing");
     return { success: true, redirectTo: "/dashboard" };
   } catch (error) {
     console.error("Sign up error:", error);
@@ -67,6 +73,8 @@ export async function signInAction(formData: FormData) {
     });
 
     revalidatePath("/");
+    revalidatePath("/dashboard");
+    revalidatePath("/pricing");
     return { success: true, redirectTo: "/dashboard" };
   } catch (error) {
     console.error("Sign in error:", error);
@@ -77,5 +85,33 @@ export async function signInAction(formData: FormData) {
 export async function signOutAction() {
   await authSignOut();
   revalidatePath("/");
+  revalidatePath("/dashboard");
+  revalidatePath("/pricing");
   return { success: true, redirectTo: "/auth/signin" };
+}
+
+export async function deleteAccount() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    await connectDB();
+
+    await User.findOneAndDelete({ _id: session.user.id });
+    await Validation.deleteMany({ userId: session.user.id });
+    await ScrumBoard.deleteMany({ userId: session.user.id });
+    await ProjectPlanModel.deleteMany({ userId: session.user.id });
+    await Invoice.deleteMany({ userId: session.user.id });
+
+    revalidatePath("/");
+    revalidatePath("/dashboard");
+    revalidatePath("/pricing");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Delete account error:", error);
+    return { error: "Failed to delete account" };
+  }
 }
