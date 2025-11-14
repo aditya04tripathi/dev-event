@@ -21,10 +21,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-	getBookingByEventId,
-	getBookingByEventSlug,
-} from "@/lib/actions/booking.action";
+import { getBookingByEventSlug } from "@/lib/actions/booking.action";
 import { getEventBySlug } from "@/lib/actions/event.action";
 
 type RouteParams = {
