@@ -75,9 +75,9 @@ export async function getEvents(
     // Get total count
     const totalEvents = await Event.countDocuments(query);
 
-    // Get events
+    // Get events sorted by date (upcoming first)
     const events = await Event.find(query)
-      .sort({ createdAt: -1 })
+      .sort({ date: 1 })
       .skip(skip)
       .limit(limit)
       .lean();
