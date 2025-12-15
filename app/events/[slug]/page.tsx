@@ -99,8 +99,6 @@ const EventDetailsPage = async ({ params }: RouteParams) => {
 	const event = await getEventBySlug(slug);
 	const booking = (await getBookingByEventSlug(slug)) ?? 0;
 
-	console.log(booking, "bookings");
-
 	if (!event) {
 		return notFound();
 	}

@@ -32,6 +32,7 @@ const EventSchema = new Schema<IEvent>(
 			unique: true,
 			lowercase: true,
 			trim: true,
+			index: true,
 		},
 		description: {
 			type: String,
@@ -63,6 +64,7 @@ const EventSchema = new Schema<IEvent>(
 		date: {
 			type: String,
 			required: [true, "Date is required"],
+			index: true,
 		},
 		time: {
 			type: String,
@@ -75,6 +77,7 @@ const EventSchema = new Schema<IEvent>(
 				values: ["online", "offline", "hybrid"],
 				message: "Mode must be either online, offline, or hybrid",
 			},
+			index: true,
 		},
 		audience: {
 			type: String,
@@ -173,7 +176,6 @@ function normalizeTime(timeString: string): string {
 	return `${hours.toString().padStart(2, "0")}:${minutes}`;
 }
 
-EventSchema.index({ slug: 1 }, { unique: true });
 EventSchema.index({ date: 1, mode: 1 });
 
 const Event = models.Event || model<IEvent>("Event", EventSchema);

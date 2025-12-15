@@ -33,10 +33,18 @@ async function connectDB(): Promise<typeof mongoose> {
     }
     const options = {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 10000, // 10 seconds timeout for Railway
+      socketTimeoutMS: 45000, // 45 seconds socket timeout
+      connectTimeoutMS: 10000, // 10 seconds connection timeout
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, options).then((mongoose) => {
+      console.info("MongoDB connected successfully");
       return mongoose;
+    }).catch((error) => {
+      console.error("MongoDB connection error:", error);
+      cached.promise = null;
+      throw error;
     });
   }
 

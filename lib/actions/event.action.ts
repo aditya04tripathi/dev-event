@@ -42,7 +42,9 @@ export async function getEvents(
 	params: GetEventsParams = {},
 ): Promise<PaginatedEventsResponse> {
 	try {
+		console.info("[getEvents] Starting with params:", params);
 		await connectDB();
+		console.info("[getEvents] Database connected");
 
 		const { page = 1, limit = 9, search = "", tags = [], mode } = params;
 
@@ -101,7 +103,12 @@ export async function getEvents(
 			hasPrevPage: page > 1,
 		};
 	} catch (error) {
-		console.error("Error fetching events:", error);
+		console.error("[getEvents] Error fetching events:", error);
+		// Log more details for debugging on Railway
+		if (error instanceof Error) {
+			console.error("[getEvents] Error message:", error.message);
+			console.error("[getEvents] Error stack:", error.stack);
+		}
 		return {
 			events: [],
 			totalEvents: 0,
