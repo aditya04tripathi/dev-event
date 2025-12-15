@@ -4,7 +4,7 @@ import type { IEvent } from "@/database/event.model";
 import { getEvents } from "@/lib/actions/event.action";
 
 export async function FeaturedEvents() {
-	const { events } = await getEvents({ page: 1, limit: 12 });
+	const { events } = await getEvents({ page: 1, limit: 6 });
 
 	return (
 		<>
