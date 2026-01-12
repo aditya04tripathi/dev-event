@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/mongodb";
-import Event from "@/database/event.model";
+import { type NextRequest, NextResponse } from "next/server";
 import type { IEvent } from "@/database/event.model";
+import Event from "@/database/event.model";
+import connectDB from "@/lib/mongodb";
 
 export interface PaginatedEventsResponse {
 	events: IEvent[];

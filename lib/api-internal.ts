@@ -1,6 +1,6 @@
-import connectDB from "@/lib/mongodb";
-import Event from "@/database/event.model";
 import type { IEvent } from "@/database/event.model";
+import Event from "@/database/event.model";
+import connectDB from "@/lib/mongodb";
 
 export interface PaginatedEventsResponse {
 	events: IEvent[];
@@ -66,7 +66,9 @@ export async function getEventsInternal(
 	};
 }
 
-export async function getEventBySlugInternal(slug: string): Promise<IEvent | null> {
+export async function getEventBySlugInternal(
+	slug: string,
+): Promise<IEvent | null> {
 	await connectDB();
 
 	const mongoose = await import("mongoose");

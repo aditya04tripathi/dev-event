@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/mongodb";
+import { type NextRequest, NextResponse } from "next/server";
 import Event from "@/database/event.model";
+import connectDB from "@/lib/mongodb";
 
 export async function GET(
 	request: NextRequest,
@@ -15,10 +15,7 @@ export async function GET(
 		}).lean();
 
 		if (!event) {
-			return NextResponse.json(
-				{ error: "Event not found" },
-				{ status: 404 },
-			);
+			return NextResponse.json({ error: "Event not found" }, { status: 404 });
 		}
 
 		return NextResponse.json(JSON.parse(JSON.stringify(event)));

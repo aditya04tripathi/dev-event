@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
-import connectDB from "@/lib/mongodb";
+import { type NextRequest, NextResponse } from "next/server";
 import Event from "@/database/event.model";
+import connectDB from "@/lib/mongodb";
 
 if (
 	process.env.CLOUDINARY_CLOUD_NAME &&

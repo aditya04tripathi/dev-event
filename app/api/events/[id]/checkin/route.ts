@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/mongodb";
+import { type NextRequest, NextResponse } from "next/server";
 import Booking from "@/database/booking.model";
 import Event from "@/database/event.model";
+import connectDB from "@/lib/mongodb";
 import { decryptData } from "@/lib/utils";
 
 export async function POST(
@@ -108,7 +108,9 @@ export async function POST(
 			{
 				success: false,
 				message:
-					error instanceof Error ? error.message : "Failed to validate check-in",
+					error instanceof Error
+						? error.message
+						: "Failed to validate check-in",
 			},
 			{ status: 500 },
 		);
