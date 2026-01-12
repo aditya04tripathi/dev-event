@@ -1,6 +1,9 @@
 "use server";
 
 import { apiRequest } from "../api-client";
+import { getEventBySlugInternal } from "../api-internal";
+import connectDB from "../mongodb";
+import Booking from "@/database/booking.model";
 
 interface CreateBookingParams {
   eventId: string;
@@ -38,11 +41,13 @@ export async function createBooking(params: CreateBookingParams) {
 
 export async function getBookingByEventSlug(slug: string) {
   try {
-    const event = await apiRequest<{ _id: string }>(`/api/events/${slug}`);
+    await connectDB();
+    const event = await getEventBySlugInternal(slug);
     if (!event) {
       return null;
     }
-    return 0;
+    const bookingCount = await Booking.countDocuments({ eventId: event._id });
+    return bookingCount;
   } catch (error) {
     console.error("Error getting booking by eventSlug:", error);
     return null;

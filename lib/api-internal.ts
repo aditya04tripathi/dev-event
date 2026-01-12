@@ -69,9 +69,14 @@ export async function getEventsInternal(
 export async function getEventBySlugInternal(slug: string): Promise<IEvent | null> {
 	await connectDB();
 
-	const event = await Event.findOne({
-		$or: [{ _id: slug }, { slug }],
-	}).lean();
+	const mongoose = await import("mongoose");
+	const isValidObjectId = mongoose.default.Types.ObjectId.isValid(slug);
+
+	const query: any = isValidObjectId
+		? { $or: [{ _id: slug }, { slug }] }
+		: { slug };
+
+	const event = await Event.findOne(query).lean();
 
 	if (!event) {
 		return null;
