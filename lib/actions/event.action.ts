@@ -1,22 +1,8 @@
 "use server";
 
-import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
-import Event, { type IEvent } from "@/database/event.model";
-import connectDB from "../mongodb";
-
-// Configure Cloudinary
-if (
-	process.env.CLOUDINARY_CLOUD_NAME &&
-	process.env.CLOUDINARY_API_KEY &&
-	process.env.CLOUDINARY_API_SECRET
-) {
-	cloudinary.config({
-		cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-		api_key: process.env.CLOUDINARY_API_KEY,
-		api_secret: process.env.CLOUDINARY_API_SECRET,
-	});
-}
+import type { IEvent } from "@/database/event.model";
+import { apiRequest, apiRequestFormData } from "../api-client";
 
 export interface PaginatedEventsResponse {
 	events: IEvent[];
@@ -43,68 +29,24 @@ export async function getEvents(
 ): Promise<PaginatedEventsResponse> {
 	try {
 		console.info("[getEvents] Starting with params:", params);
-		await connectDB();
-		console.info("[getEvents] Database connected");
 
 		const { page = 1, limit = 9, search = "", tags = [], mode } = params;
 
-		// Build query
-		const query: any = {};
+		const searchParams = new URLSearchParams();
+		searchParams.set("page", page.toString());
+		searchParams.set("limit", limit.toString());
+		if (search) searchParams.set("search", search);
+		if (tags.length > 0) searchParams.set("tags", tags.join(","));
+		if (mode) searchParams.set("mode", mode);
 
-		// Search in title, description, location, and organizer
-		if (search) {
-			query.$or = [
-				{ title: { $regex: search, $options: "i" } },
-				{ description: { $regex: search, $options: "i" } },
-				{ location: { $regex: search, $options: "i" } },
-				{ organizer: { $regex: search, $options: "i" } },
-			];
-		}
+		const response = await apiRequest<PaginatedEventsResponse>(
+			`/api/events?${searchParams.toString()}`,
+		);
 
-		// Filter by tags
-		if (tags.length > 0) {
-			query.tags = { $in: tags };
-		}
-
-		// Filter by mode
-		if (mode) {
-			query.mode = mode;
-		}
-
-		// Calculate pagination
-		const skip = (page - 1) * limit;
-
-		// Get total count
-		const totalEvents = await Event.countDocuments(query);
-
-		// Get events sorted by date (upcoming first)
-		const events = await Event.find(query)
-			.sort({ date: 1 })
-			.skip(skip)
-			.limit(limit)
-			.lean();
-
-		const totalPages = Math.ceil(totalEvents / limit);
-
-		console.info("Fetched events.", {
-			events: JSON.parse(JSON.stringify(events)),
-			totalEvents,
-			totalPages,
-			currentPage: page,
-			hasNextPage: page < totalPages,
-			hasPrevPage: page > 1,
-		});
-		return {
-			events: JSON.parse(JSON.stringify(events)),
-			totalEvents,
-			totalPages,
-			currentPage: page,
-			hasNextPage: page < totalPages,
-			hasPrevPage: page > 1,
-		};
+		console.info("Fetched events.", response);
+		return response;
 	} catch (error) {
 		console.error("[getEvents] Error fetching events:", error);
-		// Log more details for debugging on Railway
 		if (error instanceof Error) {
 			console.error("[getEvents] Error message:", error.message);
 			console.error("[getEvents] Error stack:", error.stack);
@@ -125,15 +67,8 @@ export async function getEvents(
  */
 export async function getEventBySlug(slug: string) {
 	try {
-		await connectDB();
-
-		const event = await Event.findOne({ slug }).lean();
-
-		if (!event) {
-			return null;
-		}
-
-		return JSON.parse(JSON.stringify(event));
+		const event = await apiRequest<IEvent>(`/api/events/${slug}`);
+		return event;
 	} catch (error) {
 		console.error("Error fetching event:", error);
 		return null;
@@ -145,19 +80,18 @@ export async function getEventBySlug(slug: string) {
  */
 export async function getSimilarEventsBySlug(slug: string) {
 	try {
-		await connectDB();
-
-		const event = await Event.findOne({ slug });
+		const event = await apiRequest<IEvent>(`/api/events/${slug}`);
 		if (!event) return [];
 
-		const similarEvents = await Event.find({
-			_id: { $ne: event._id },
-			tags: { $in: event.tags },
-		})
-			.limit(6)
-			.lean();
+		const eventsResponse = await apiRequest<PaginatedEventsResponse>(
+			`/api/events?tags=${event.tags.join(",")}&limit=7`,
+		);
 
-		return JSON.parse(JSON.stringify(similarEvents));
+		const similarEvents = eventsResponse.events.filter(
+			(e) => e.slug !== slug,
+		);
+
+		return similarEvents.slice(0, 6);
 	} catch (error) {
 		console.error("Error fetching similar events:", error);
 		return [];
@@ -169,117 +103,21 @@ export async function getSimilarEventsBySlug(slug: string) {
  */
 export async function createEvent(formData: FormData) {
 	try {
-		await connectDB();
+		const response = await apiRequestFormData<{
+			success: boolean;
+			message: string;
+			event?: IEvent;
+		}>("/api/events/create", formData);
 
-		// Extract form data
-		const title = formData.get("title") as string;
-		const slug = formData.get("slug") as string;
-		const description = formData.get("description") as string;
-		const overview = formData.get("overview") as string;
-		const venue = formData.get("venue") as string;
-		const location = formData.get("location") as string;
-		const date = formData.get("date") as string;
-		const time = formData.get("time") as string;
-		const mode = formData.get("mode") as string;
-		const audience = formData.get("audience") as string;
-		const organizer = formData.get("organizer") as string;
-		const file = formData.get("image") as File;
-		const tagsString = formData.get("tags") as string;
-		const agendaString = formData.get("agenda") as string;
-
-		// Validate required fields
-		if (!title || !slug || !description || !overview || !venue || !location) {
-			return {
-				success: false,
-				message: "Please fill in all required fields",
-			};
+		if (response.success) {
+			revalidatePath("/");
+			revalidatePath("/events");
+			if (response.event) {
+				revalidatePath(`/events/${response.event.slug}`);
+			}
 		}
 
-		if (!file) {
-			return {
-				success: false,
-				message: "Image is required",
-			};
-		}
-
-		// Check if slug already exists
-		const existingEvent = await Event.findOne({ slug });
-		if (existingEvent) {
-			return {
-				success: false,
-				message: "An event with this slug already exists",
-			};
-		}
-
-		// Parse tags and agenda
-		const tags = JSON.parse(tagsString);
-		const agenda = JSON.parse(agendaString);
-
-		// Upload image to Cloudinary
-		let imageUrl: string;
-
-		if (
-			!process.env.CLOUDINARY_CLOUD_NAME ||
-			!process.env.CLOUDINARY_API_KEY ||
-			!process.env.CLOUDINARY_API_SECRET
-		) {
-			// Cloudinary not configured - use placeholder or return error
-			return {
-				success: false,
-				message:
-					"Cloudinary is not configured. Please add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET to your environment variables.",
-			};
-		}
-
-		const arrayBuffer = await file.arrayBuffer();
-		const buffer = Buffer.from(arrayBuffer);
-
-		const uploadResult = await new Promise<{ secure_url: string }>(
-			(resolve, reject) => {
-				cloudinary.uploader
-					.upload_stream(
-						{
-							resource_type: "image",
-							folder: "DevEvent/events",
-						},
-						(error, result) => {
-							if (error) reject(error);
-							else resolve(result as { secure_url: string });
-						},
-					)
-					.end(buffer);
-			},
-		);
-
-		imageUrl = uploadResult.secure_url;
-
-		// Create event
-		const event = await Event.create({
-			title,
-			slug,
-			description,
-			overview,
-			image: imageUrl,
-			venue,
-			location,
-			date,
-			time,
-			mode,
-			audience,
-			organizer,
-			tags,
-			agenda,
-		});
-
-		revalidatePath("/");
-		revalidatePath("/events");
-		revalidatePath(`/events/${slug}`);
-
-		return {
-			success: true,
-			message: "Event created successfully",
-			event: JSON.parse(JSON.stringify(event)),
-		};
+		return response;
 	} catch (error) {
 		console.error("Error creating event:", error);
 		return {
@@ -295,21 +133,15 @@ export async function createEvent(formData: FormData) {
  */
 export async function searchEvents(query: string) {
 	try {
-		await connectDB();
+		const searchParams = new URLSearchParams();
+		searchParams.set("search", query);
+		searchParams.set("limit", "10");
 
-		const events = await Event.find({
-			$or: [
-				{ title: { $regex: query, $options: "i" } },
-				{ description: { $regex: query, $options: "i" } },
-				{ location: { $regex: query, $options: "i" } },
-				{ organizer: { $regex: query, $options: "i" } },
-				{ tags: { $regex: query, $options: "i" } },
-			],
-		})
-			.limit(10)
-			.lean();
+		const response = await apiRequest<PaginatedEventsResponse>(
+			`/api/events?${searchParams.toString()}`,
+		);
 
-		return JSON.parse(JSON.stringify(events));
+		return response.events;
 	} catch (error) {
 		console.error("Error searching events:", error);
 		return [];
@@ -321,11 +153,16 @@ export async function searchEvents(query: string) {
  */
 export async function getAllTags() {
 	try {
-		await connectDB();
+		const response = await apiRequest<PaginatedEventsResponse>(
+			"/api/events?limit=1000",
+		);
 
-		const tags = await Event.distinct("tags");
+		const allTags = new Set<string>();
+		response.events.forEach((event) => {
+			event.tags.forEach((tag) => allTags.add(tag));
+		});
 
-		return tags.sort();
+		return Array.from(allTags).sort();
 	} catch (error) {
 		console.error("Error fetching tags:", error);
 		return [];

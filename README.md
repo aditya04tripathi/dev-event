@@ -1,636 +1,253 @@
-# 🎉 DevEvent
-
-<div align="center">
-
-![DevEvent Banner](public/og-image.png)
+# DevEvent
 
 **The Hub for Every Dev Event You Can't Miss**
 
 Discover hackathons, meetups, and conferences all in one place. Join amazing tech events and connect with the developer community.
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.2-blue?style=for-the-badge&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Latest-green?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-38bdf8?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+## Overview
 
-[Live Demo](https://dev-event.up.railway.app) | [Report Bug](https://github.com/aditya04tripathi/dev-event/issues) | [Request Feature](https://github.com/aditya04tripathi/dev-event/issues)
+DevEvent is a modern, full-stack event management platform designed specifically for the developer community. Built with Next.js 16, React 19, and TypeScript, DevEvent provides a seamless experience for discovering, booking, and managing developer-focused events.
 
-</div>
+The platform enables event organizers to create and publish events, while attendees can discover events through advanced search and filtering, book tickets, and receive QR code confirmations for easy check-in.
 
----
+## Key Features
 
-## 📋 Table of Contents
+- **Event Discovery**: Browse events with pagination, search, and filtering by mode (online/offline/hybrid) and tags
+- **Event Booking**: Simple booking process with email confirmations and QR code generation
+- **QR Code Check-In**: Encrypted QR codes for secure event check-in validation
+- **Event Management**: Create events with image uploads via Cloudinary integration
+- **REST API**: Complete API endpoints for mobile application integration
+- **Contact Forms**: Submit inquiries with automated email notifications
+- **Responsive Design**: Optimized for mobile, tablet, and desktop devices
+- **Dark Mode**: Beautiful dark theme support
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Getting Started](#-getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Variables](#environment-variables)
-  - [Running the Application](#running-the-application)
-- [Project Structure](#-project-structure)
-- [Database Models](#-database-models)
-- [Actions](#-actions)
-- [Key Features Explained](#-key-features-explained)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Contact](#-contact)
-- [Acknowledgments](#-acknowledgments)
+## Tech Stack
 
----
+- **Framework**: Next.js 16 (App Router)
+- **UI Library**: React 19
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4.1
+- **UI Components**: shadcn/ui (Radix UI primitives)
+- **Database**: MongoDB with Mongoose ODM
+- **Image Hosting**: Cloudinary
+- **Email**: Nodemailer (SMTP)
+- **QR Codes**: QRCode library with AES-256-CBC encryption
+- **Form Management**: React Hook Form with Zod validation
+- **Animations**: GSAP
 
-## 🌟 Overview
+## Architecture Overview
 
-**DevEvent** is a modern, full-stack event management platform designed specifically for the developer community. Whether you're looking for hackathons to compete in, meetups to network at, or conferences to learn from, DevEvent brings them all together in one beautiful, easy-to-use interface.
+DevEvent follows a server-client architecture:
 
-Built with Next.js 16, React 19, and the latest web technologies, DevEvent offers a seamless experience for both event organizers and attendees.
+- **Frontend**: Next.js App Router with Server Components and Client Components
+- **Backend**: Next.js API Routes and Server Actions
+- **Data Layer**: MongoDB with Mongoose schemas and validation
+- **External Services**: Cloudinary (images), SMTP (email), MongoDB Atlas (database)
 
-### Why DevEvent?
+The application uses a hybrid approach:
 
-- 🔍 **Discover Events**: Browse through a curated list of developer events with advanced search and filtering
-- 📅 **Never Miss Out**: Get instant booking confirmations with QR codes sent directly to your email
-- 🎯 **Smart Recommendations**: Find similar events based on your interests
-- 📱 **Responsive Design**: Perfect experience across all devices
-- 🎨 **Beautiful UI**: Modern dark theme with smooth animations and transitions
-- ⚡ **Lightning Fast**: Built with Next.js 16 for optimal performance
+- Server Actions for direct database operations (legacy, being migrated)
+- REST API endpoints for mobile app integration and future client-server separation
+- Server Components for initial page rendering
+- Client Components for interactive features
 
----
+### API Endpoints
 
-## ✨ Features
+- `GET /api/events` - List events with pagination and filters
+- `GET /api/events/[id]` - Get event details by ID or slug
+- `POST /api/events/[id]/book` - Create event booking
+- `POST /api/events/[id]/checkin` - Validate QR code check-in
+- `POST /api/events/create` - Create new event
+- `POST /api/auth/login` - Authentication (placeholder)
+- `GET /api/user/profile` - User profile (placeholder)
+- `GET /api/user/events` - User events (placeholder)
 
-### For Event Attendees
-
-- 🔎 **Advanced Search & Filters**: Search events by name, filter by mode (online/offline/hybrid), and tags
-- 📖 **Detailed Event Pages**: View comprehensive information including agenda, location, time, and organizer details
-- 🎫 **Easy Booking**: Book events with a simple form and receive instant confirmation
-- 📧 **Email Confirmations**: Get booking confirmations with QR codes for easy check-in
-- 🔗 **Similar Events**: Discover related events based on tags and categories
-- ⭐ **Featured Events**: Highlighted events on the homepage
-- 📄 **Pagination**: Browse through events efficiently with paginated results
-
-### For Event Organizers
-
-- ➕ **Create Events**: User-friendly form to create and publish events
-- 🖼️ **Image Upload**: Upload event images via Cloudinary integration
-- 📝 **Rich Details**: Add comprehensive event information including agenda items
-- 🏷️ **Tagging System**: Categorize events with multiple tags
-- 🌐 **Multiple Modes**: Support for online, offline, and hybrid events
-
-### General Features
-
-- 🌙 **Dark Mode**: Beautiful dark theme for comfortable viewing
-- 🎨 **Modern UI**: Built with shadcn/ui components and Tailwind CSS
-- ♿ **Accessible**: WCAG compliant with keyboard navigation support
-- 📱 **Responsive**: Optimized for mobile, tablet, and desktop
-- 🚀 **SEO Optimized**: Meta tags, Open Graph, and Twitter Cards
-- 💫 **Smooth Animations**: GSAP-powered animations for enhanced UX
-- 📞 **Contact Form**: Easy way to reach out with inquiries
-- ℹ️ **Informational Pages**: About, Terms of Service, and Privacy Policy
-
----
-
-## 🛠 Tech Stack
-
-### Core Framework
-
-- **[Next.js 16](https://nextjs.org/)** - React framework with App Router
-- **[React 19.2](https://react.dev/)** - UI library
-- **[TypeScript](https://www.typescriptlang.org/)** - Type safety
-
-### Styling & UI
-
-- **[Tailwind CSS 4.1](https://tailwindcss.com/)** - Utility-first CSS framework
-- **[shadcn/ui](https://ui.shadcn.com/)** - Re-usable component library
-- **[Radix UI](https://www.radix-ui.com/)** - Accessible component primitives
-- **[Lucide Icons](https://lucide.dev/)** - Beautiful icon library
-- **[GSAP](https://greensock.com/gsap/)** - Animation library
-- **[next-themes](https://github.com/pacocoursey/next-themes)** - Theme management
-
-### Backend & Database
-
-- **[MongoDB](https://www.mongodb.com/)** - NoSQL database
-- **[Mongoose](https://mongoosejs.com/)** - MongoDB ODM
-- **[Cloudinary](https://cloudinary.com/)** - Image hosting and optimization
-- **[Nodemailer](https://nodemailer.com/)** - Email sending
-
-### Form & Validation
-
-- **[React Hook Form](https://react-hook-form.com/)** - Form management
-- **[Zod](https://zod.dev/)** - Schema validation
-- **[@hookform/resolvers](https://github.com/react-hook-form/resolvers)** - Validation integration
-
-### Utilities
-
-- **[date-fns](https://date-fns.org/)** - Date manipulation
-- **[QRCode](https://github.com/soldair/node-qrcode)** - QR code generation
-- **[clsx](https://github.com/lukeed/clsx)** - Conditional className utility
-- **[use-debounce](https://github.com/xnimorz/use-debounce)** - Debounce hook
-
----
-
-## 🚀 Getting Started
+## Setup and Installation
 
 ### Prerequisites
 
-Before you begin, ensure you have the following installed:
-
-- **Node.js** (v18 or higher)
-- **pnpm** (recommended) / npm / yarn / bun
-- **MongoDB** (local installation or MongoDB Atlas account)
-- **Cloudinary Account** (for image uploads)
-- **Email Service** (for nodemailer - Gmail, SendGrid, etc.)
+- Node.js 18 or higher
+- pnpm (recommended), npm, yarn, or bun
+- MongoDB database (local or MongoDB Atlas)
+- Cloudinary account (for image uploads)
+- SMTP email service (Gmail, SendGrid, or compatible)
 
 ### Installation
 
-1. **Clone the repository**
+1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/aditya04tripathi/dev-event.git
-   cd dev-event
-   ```
+```bash
+git clone https://github.com/aditya04tripathi/dev-event.git
+cd dev-event
+```
 
-2. **Install dependencies**
+2. Install dependencies:
 
-   ```bash
-   # Using pnpm (recommended)
-   pnpm install
+```bash
+pnpm install
+```
 
-   # Or using npm
-   npm install
-
-   # Or using yarn
-   yarn install
-   ```
-
-### Environment Variables
-
-Create a `.env.local` file in the root directory and add the following variables:
+3. Create `.env.local` file in the root directory:
 
 ```env
 # MongoDB Connection
-MONGODB_URI=mongodb+srv://your-username:your-password@cluster.mongodb.net/dev-event
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dev-event
 
 # Cloudinary Configuration
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_CLOUD_NAME=your-cloud-name
 CLOUDINARY_API_KEY=your-api-key
 CLOUDINARY_API_SECRET=your-api-secret
 
-# Email Configuration (Nodemailer)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
+# Email Configuration
 EMAIL_USER=your-email@gmail.com
-EMAIL_PASSWORD=your-app-specific-password
-EMAIL_FROM=DevEvent <noreply@dev-event.com>
+EMAIL_PASS=your-app-password
 
-# Site Configuration
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# QR Code Encryption (optional, has default)
+QR_SALT=your-secret-salt
+
+# Site URL (for API client)
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
-#### Setting Up Services
+4. Run the development server:
 
-**MongoDB Atlas:**
-
-1. Create a free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create a new cluster
-3. Create a database user
-4. Whitelist your IP address
-5. Get your connection string and add it to `MONGODB_URI`
-
-**Cloudinary:**
-
-1. Sign up at [Cloudinary](https://cloudinary.com/)
-2. Go to Dashboard
-3. Copy your Cloud Name, API Key, and API Secret
-4. Add them to the environment variables
-
-**Email (Gmail example):**
-
-1. Enable 2-Step Verification on your Google Account
-2. Generate an [App Password](https://myaccount.google.com/apppasswords)
-3. Use the app password in `EMAIL_PASSWORD`
-
-### Running the Application
-
-1. **Development Mode**
-
-   ```bash
-   pnpm dev
-   ```
-
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-2. **Build for Production**
-
-   ```bash
-   pnpm build
-   ```
-
-3. **Start Production Server**
-
-   ```bash
-   pnpm start
-   ```
-
-4. **Lint Code**
-   ```bash
-   pnpm lint
-   ```
-
----
-
-## 📁 Project Structure
-
-```
-dev-event/
-├── app/                          # Next.js App Router
-│   ├── about/                    # About page
-│   ├── contact/                  # Contact form page
-│   ├── events/                   # Events routes
-│   │   ├── [slug]/              # Dynamic event details page
-│   │   │   ├── page.tsx         # Event details
-│   │   │   └── loading.tsx      # Loading state
-│   │   ├── new/                 # Create new event
-│   │   │   └── page.tsx
-│   │   └── page.tsx             # Events listing page
-│   ├── privacy/                  # Privacy policy
-│   ├── terms/                    # Terms of service
-│   ├── layout.tsx                # Root layout
-│   ├── page.tsx                  # Homepage
-│   ├── globals.css               # Global styles
-│   └── favicon.ico               # Site favicon
-│
-├── components/                   # React components
-│   ├── ui/                      # shadcn/ui components
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   ├── input.tsx
-│   │   └── ...                  # 40+ reusable UI components
-│   ├── book-event.tsx           # Event booking component
-│   ├── contact-form.tsx         # Contact form
-│   ├── event-card.tsx           # Event card component
-│   ├── event-filters.tsx        # Filters (mode, tags)
-│   ├── events-list.tsx          # Events grid/list
-│   ├── events-list-skeleton.tsx # Loading skeleton
-│   ├── featured-events.tsx      # Featured events section
-│   ├── search-bar.tsx           # Search component
-│   ├── similar-events.tsx       # Similar events recommendations
-│   ├── pagination.tsx           # Pagination component
-│   ├── Navbar.tsx               # Navigation bar
-│   ├── Footer.tsx               # Footer
-│   ├── DarkVeil.jsx             # Background animation
-│   └── ElectricBorder.jsx       # Border animation
-│
-├── database/                     # Database models
-│   ├── event.model.ts           # Event schema
-│   ├── booking.model.ts         # Booking schema
-│   └── contact.model.ts         # Contact schema
-│
-├── lib/                          # Utility functions
-│   ├── actions/                 # Server actions
-│   │   ├── event.action.ts     # Event CRUD operations
-│   │   ├── booking.action.ts   # Booking operations
-│   │   └── contact.action.ts   # Contact form handling
-│   ├── mongodb.ts               # MongoDB connection
-│   ├── constants.ts             # App constants
-│   ├── site-constants.ts        # Site information
-│   └── utils.ts                 # Utility functions
-│
-├── hooks/                        # Custom React hooks
-│   └── use-mobile.ts            # Mobile detection hook
-│
-├── public/                       # Static assets
-│   ├── icons/                   # SVG icons
-│   ├── images/                  # Event images
-│   └── og-image.png             # Open Graph image
-│
-├── .env.local                    # Environment variables (create this)
-├── components.json               # shadcn/ui config
-├── next.config.ts                # Next.js configuration
-├── tsconfig.json                 # TypeScript config
-├── tailwind.config.ts            # Tailwind CSS config
-├── package.json                  # Dependencies
-└── README.md                     # This file
+```bash
+pnpm dev
 ```
 
----
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🗄 Database Models
+## Usage
 
-### Event Model
+### Development
 
-```typescript
+```bash
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+
+# Run linter
+pnpm lint
+```
+
+### Creating Events
+
+1. Navigate to `/events/new`
+2. Fill in event details (title, description, image, venue, date, time, etc.)
+3. Add tags and agenda items
+4. Submit to create the event
+
+### Booking Events
+
+1. Browse events on `/events`
+2. Click on an event to view details
+3. Fill in booking form (name and email)
+4. Receive email confirmation with QR code
+
+### API Usage
+
+The API endpoints can be consumed by mobile applications or external services:
+
+```bash
+# Get events with filters
+GET /api/events?page=1&limit=9&search=react&mode=online&tags=javascript,frontend
+
+# Get single event
+GET /api/events/react-conf-2024
+
+# Book event
+POST /api/events/react-conf-2024/book
+Content-Type: application/json
 {
-  title: string;           // Event title (max 100 chars)
-  slug: string;            // URL-friendly slug (auto-generated)
-  description: string;     // Detailed description (max 1000 chars)
-  overview: string;        // Short overview (max 500 chars)
-  image: string;           // Cloudinary image URL
-  venue: string;           // Venue name
-  location: string;        // City/address
-  date: string;            // Event date (ISO format)
-  time: string;            // Event time (24-hour format)
-  mode: "online" | "offline" | "hybrid";
-  audience: string;        // Target audience
-  agenda: string[];        // Array of agenda items
-  organizer: string;       // Organizer name
-  tags: string[];          // Event tags/categories
-  createdAt: Date;
-  updatedAt: Date;
+  "name": "John Doe",
+  "email": "john@example.com"
+}
+
+# Check-in with QR code
+POST /api/events/react-conf-2024/checkin
+Content-Type: application/json
+{
+  "qrData": "encrypted-qr-code-data"
 }
 ```
 
-**Features:**
+## Configuration
 
-- Automatic slug generation from title
-- Date and time normalization
-- Unique slug index for fast lookups
-- Compound index on date and mode
+### Environment Variables
 
-### Booking Model
+- `MONGODB_URI`: MongoDB connection string (required)
+- `CLOUDINARY_CLOUD_NAME`: Cloudinary cloud name (required for event creation)
+- `CLOUDINARY_API_KEY`: Cloudinary API key (required for event creation)
+- `CLOUDINARY_API_SECRET`: Cloudinary API secret (required for event creation)
+- `EMAIL_USER`: SMTP email address (required for email notifications)
+- `EMAIL_PASS`: SMTP email password/app password (required for email notifications)
+- `QR_SALT`: Encryption salt for QR codes (optional, has default)
+- `NEXT_PUBLIC_API_URL`: Base URL for API client (optional, auto-detected)
+- `VERCEL_URL`: Vercel deployment URL (auto-set in Vercel)
 
-```typescript
-{
-  eventId: ObjectId; // Reference to Event
-  name: string; // Attendee name
-  email: string; // Attendee email (validated)
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
+### Database Models
 
-**Features:**
+- **Event**: Title, slug, description, image, venue, location, date, time, mode, tags, agenda, organizer
+- **Booking**: Event reference, attendee name, email, timestamps
+- **Contact**: Name, email, reason, subject, message, status
 
-- Email validation with regex
-- Event existence validation
-- Unique constraint on eventId + email (prevent duplicate bookings)
-- Indexes for efficient queries
+## Deployment
 
-### Contact Model
+DevEvent can be deployed to any Node.js-compatible hosting platform:
 
-```typescript
-{
-  name: string; // Contact name
-  email: string; // Contact email (validated)
-  reason: string; // Inquiry reason
-  message: string; // Message content
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
+### Vercel (Recommended)
 
----
+1. Connect GitHub repository to Vercel
+2. Configure environment variables in Vercel dashboard
+3. Deploy automatically on push
 
-## 🔌 Actions
+### Railway
 
-### Event Actions (`lib/actions/event.action.ts`)
+1. Create new project on Railway
+2. Connect GitHub repository
+3. Add MongoDB service
+4. Configure environment variables
+5. Deploy
 
-- `getAllEvents(params)` - Get paginated, filtered, and searched events
-- `getEventBySlug(slug)` - Get single event details
-- `getFeaturedEvents()` - Get featured events for homepage
-- `getSimilarEvents(eventId, tags)` - Get related events
-- `getAllTags()` - Get all unique event tags
-- `createEvent(data)` - Create new event (with image upload)
+### Other Platforms
 
-### Booking Actions (`lib/actions/booking.action.ts`)
+The application can be deployed to any platform supporting:
 
-- `createBooking(data)` - Book an event
-- `sendBookingEmail(booking, event)` - Send confirmation email with QR code
-- `checkDuplicateBooking(eventId, email)` - Prevent duplicate bookings
+- Node.js 18+
+- Serverless functions (for API routes)
+- Environment variable configuration
 
-### Contact Actions (`lib/actions/contact.action.ts`)
+## Limitations and Assumptions
 
-- `submitContact(data)` - Submit contact form
-- `sendContactEmail(data)` - Send contact inquiry email
+- Email delivery depends on SMTP service availability and configuration
+- Image uploads require Cloudinary account and valid credentials
+- QR code decryption requires the same encryption salt on scanning devices
+- Database connection pooling optimized for serverless environments
+- Authentication endpoints are placeholders and require future implementation
+- User profile endpoints are placeholders and require future implementation
 
-All actions include:
+## Documentation
 
-- ✅ Input validation with Zod schemas
-- ✅ Error handling with descriptive messages
-- ✅ Type safety with TypeScript
-- ✅ Async/await patterns
-- ✅ Database connection management
+- [Software Requirements Specification](./SRS.md) - Complete system requirements and specifications
 
----
+## License
 
-## 🎯 Key Features Explained
+This project is licensed under the terms described in [LICENSE](./LICENSE).
 
-### 1. Search & Filtering System
-
-The events page includes a powerful search and filtering system:
-
-- **Search**: Real-time search with debouncing (searches title, description, overview)
-- **Mode Filter**: Filter by online, offline, or hybrid events
-- **Tag Filter**: Multi-select tag filtering
-- **URL Sync**: All filters sync with URL params for shareable links
-- **Pagination**: Efficient pagination with page numbers
-
-**Implementation:**
-
-- Uses URL search params for state management
-- Server-side filtering for better performance
-- Debounced search input to reduce API calls
-- Skeleton loaders for better UX
-
-### 2. Event Booking with QR Codes
-
-When a user books an event:
-
-1. Form validation with React Hook Form + Zod
-2. Duplicate booking check
-3. Booking saved to database
-4. QR code generated with booking details
-5. Email sent with:
-   - Booking confirmation
-   - Event details
-   - QR code attachment
-   - Calendar integration option
-
-**Technologies:**
-
-- Nodemailer for email sending
-- QRCode library for QR generation
-- MongoDB transactions for data integrity
-
-### 3. Image Upload with Cloudinary
-
-Event creation includes image upload:
-
-1. User selects image file
-2. File uploaded to Cloudinary
-3. Optimized URL returned
-4. URL saved in database
-5. Automatic transformations applied
-
-**Features:**
-
-- Format conversion (WebP)
-- Quality optimization
-- Responsive images
-- CDN delivery
-
-### 4. Similar Events Recommendation
-
-Uses a tag-based recommendation system:
-
-1. Get tags from current event
-2. Find events with matching tags
-3. Sort by number of matching tags
-4. Exclude current event
-5. Limit to top results
-
-**Algorithm:**
-
-```typescript
-// Simplified logic
-const similarEvents = await Event.find({
-  tags: { $in: currentEventTags },
-  _id: { $ne: currentEventId },
-})
-  .limit(3)
-  .sort({ createdAt: -1 });
-```
-
-### 5. SEO Optimization
-
-Every page includes:
-
-- Dynamic meta tags
-- Open Graph tags for social sharing
-- Twitter Card support
-- Structured data (JSON-LD)
-- Semantic HTML
-- Sitemap generation
-- Robots.txt
-
-### 6. Responsive Design
-
-Mobile-first approach with:
-
-- Responsive grid layouts
-- Touch-friendly interactions
-- Optimized images
-- Adaptive typography
-- Hamburger menu on mobile
-- Bottom navigation support
-
-### 7. Performance Optimizations
-
-- **Next.js 16 Features**:
-
-  - Server Components by default
-  - Streaming with Suspense
-  - Image optimization
-  - Font optimization
-  - Code splitting
-
-- **Custom Optimizations**:
-  - Debounced search
-  - Lazy loading
-  - Skeleton loaders
-  - Efficient database queries
-  - Index optimization
-  - CDN for static assets
-
----
-
-## 🤝 Contributing
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-### How to Contribute
-
-1. **Fork the Project**
-
-   ```bash
-   git clone https://github.com/aditya04tripathi/dev-event.git
-   ```
-
-2. **Create your Feature Branch**
-
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-
-3. **Commit your Changes**
-
-   ```bash
-   git commit -m 'Add some AmazingFeature'
-   ```
-
-4. **Push to the Branch**
-
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
-
-5. **Open a Pull Request**
-
-### Contribution Guidelines
-
-- Follow the existing code style
-- Write meaningful commit messages
-- Add comments for complex logic
-- Update documentation if needed
-- Test your changes thoroughly
-- Ensure no linting errors
-
-### Areas for Contribution
-
-- 🐛 Bug fixes
-- ✨ New features
-- 📝 Documentation improvements
-- 🎨 UI/UX enhancements
-- ♿ Accessibility improvements
-- 🌐 Internationalization (i18n)
-- 🧪 Test coverage
-- ⚡ Performance optimizations
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**. You are free to use, modify, and distribute this software as per the license terms.
-
----
-
-## 📧 Contact
+## Contact
 
 **Aditya Tripathi**
 
 - Email: [adityatripathi.at04@gmail.com](mailto:adityatripathi.at04@gmail.com)
 - LinkedIn: [Aditya Tripathi](https://www.linkedin.com/in/aditya-tripathi-887586379)
 - GitHub: [@aditya04tripathi](https://github.com/aditya04tripathi)
-- Portfolio: [dev-event.up.railway.app](https://dev-event.up.railway.app)
 
-**Project Links:**
+**Project Links**
 
 - Live Demo: [https://dev-event.up.railway.app](https://dev-event.up.railway.app)
 - Repository: [https://github.com/aditya04tripathi/dev-event](https://github.com/aditya04tripathi/dev-event)
-- Issues: [https://github.com/aditya04tripathi/dev-event/issues](https://github.com/aditya04tripathi/dev-event/issues)
-
----
-
-## 🙏 Acknowledgments
-
-- **[Next.js Team](https://nextjs.org/)** - For the amazing React framework
-- **[Vercel](https://vercel.com/)** - For hosting and deployment solutions
-- **[shadcn](https://twitter.com/shadcn)** - For the beautiful UI component library
-- **[Radix UI](https://www.radix-ui.com/)** - For accessible component primitives
-- **[Railway](https://railway.app/)** - For deployment and hosting
-- **[MongoDB](https://www.mongodb.com/)** - For the powerful database
-- **[Cloudinary](https://cloudinary.com/)** - For image hosting and optimization
-- **Open Source Community** - For the amazing tools and libraries
-
----
-
-## 🌟 Star History
-
-If you find this project helpful, please consider giving it a ⭐ on GitHub!
-
-<div align="center">
-
-**Made with ❤️ by [Aditya Tripathi](https://github.com/aditya04tripathi)**
-
-</div>
