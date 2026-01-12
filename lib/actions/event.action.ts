@@ -2,24 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import type { IEvent } from "@/database/event.model";
-import { apiRequest, apiRequestFormData } from "../api-client";
+import { apiRequestFormData } from "../api-client";
+import {
+	getEventsInternal,
+	getEventBySlugInternal,
+	type PaginatedEventsResponse,
+	type GetEventsParams,
+} from "../api-internal";
 
-export interface PaginatedEventsResponse {
-	events: IEvent[];
-	totalEvents: number;
-	totalPages: number;
-	currentPage: number;
-	hasNextPage: boolean;
-	hasPrevPage: boolean;
-}
-
-export interface GetEventsParams {
-	page?: number;
-	limit?: number;
-	search?: string;
-	tags?: string[];
-	mode?: string;
-}
+export type { PaginatedEventsResponse, GetEventsParams } from "../api-internal";
 
 /**
  * Get all events with pagination and search
@@ -29,22 +20,7 @@ export async function getEvents(
 ): Promise<PaginatedEventsResponse> {
 	try {
 		console.info("[getEvents] Starting with params:", params);
-
-		const { page = 1, limit = 9, search = "", tags = [], mode } = params;
-
-		const searchParams = new URLSearchParams();
-		searchParams.set("page", page.toString());
-		searchParams.set("limit", limit.toString());
-		if (search) searchParams.set("search", search);
-		if (tags.length > 0) searchParams.set("tags", tags.join(","));
-		if (mode) searchParams.set("mode", mode);
-
-		const response = await apiRequest<PaginatedEventsResponse>(
-			`/api/events?${searchParams.toString()}`,
-		);
-
-		console.info("Fetched events.", response);
-		return response;
+		return await getEventsInternal(params);
 	} catch (error) {
 		console.error("[getEvents] Error fetching events:", error);
 		if (error instanceof Error) {
@@ -67,8 +43,7 @@ export async function getEvents(
  */
 export async function getEventBySlug(slug: string) {
 	try {
-		const event = await apiRequest<IEvent>(`/api/events/${slug}`);
-		return event;
+		return await getEventBySlugInternal(slug);
 	} catch (error) {
 		console.error("Error fetching event:", error);
 		return null;
@@ -80,12 +55,13 @@ export async function getEventBySlug(slug: string) {
  */
 export async function getSimilarEventsBySlug(slug: string) {
 	try {
-		const event = await apiRequest<IEvent>(`/api/events/${slug}`);
+		const event = await getEventBySlugInternal(slug);
 		if (!event) return [];
 
-		const eventsResponse = await apiRequest<PaginatedEventsResponse>(
-			`/api/events?tags=${event.tags.join(",")}&limit=7`,
-		);
+		const eventsResponse = await getEventsInternal({
+			tags: event.tags,
+			limit: 7,
+		});
 
 		const similarEvents = eventsResponse.events.filter(
 			(e) => e.slug !== slug,
@@ -133,13 +109,10 @@ export async function createEvent(formData: FormData) {
  */
 export async function searchEvents(query: string) {
 	try {
-		const searchParams = new URLSearchParams();
-		searchParams.set("search", query);
-		searchParams.set("limit", "10");
-
-		const response = await apiRequest<PaginatedEventsResponse>(
-			`/api/events?${searchParams.toString()}`,
-		);
+		const response = await getEventsInternal({
+			search: query,
+			limit: 10,
+		});
 
 		return response.events;
 	} catch (error) {
@@ -153,9 +126,9 @@ export async function searchEvents(query: string) {
  */
 export async function getAllTags() {
 	try {
-		const response = await apiRequest<PaginatedEventsResponse>(
-			"/api/events?limit=1000",
-		);
+		const response = await getEventsInternal({
+			limit: 1000,
+		});
 
 		const allTags = new Set<string>();
 		response.events.forEach((event) => {
