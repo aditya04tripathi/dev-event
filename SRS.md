@@ -28,7 +28,6 @@ DevEvent operates as a standalone web application that integrates with:
 
 - **MongoDB**: Primary data storage for events, bookings, and contact submissions
 - **Cloudinary**: Image hosting and optimization service
-- **Email Service Provider**: SMTP-based email delivery (Nodemailer-compatible)
 - **Mobile Applications**: External mobile clients consuming REST API endpoints
 
 ### 2.2 User Types
@@ -73,6 +72,7 @@ DevEvent operates as a standalone web application that integrates with:
 **FR-10**: The system shall generate a QR code containing encrypted booking information upon successful booking.
 
 **FR-11**: The system shall send an email confirmation to the attendee containing:
+
 - Booking confirmation message
 - Event details (title, date, time, location)
 - QR code image attachment
@@ -84,6 +84,7 @@ DevEvent operates as a standalone web application that integrates with:
 ### 3.3 Event Management
 
 **FR-14**: The system shall allow authorized users to create new events with the following required fields:
+
 - Title (max 100 characters)
 - Description (max 1000 characters)
 - Overview (max 500 characters)
@@ -275,8 +276,6 @@ DevEvent operates as a standalone web application that integrates with:
 ### 6.4 External Service Interfaces
 
 **EI-13**: The system shall integrate with Cloudinary API for image upload and optimization.
-
-**EI-14**: The system shall integrate with SMTP email service via Nodemailer.
 
 **EI-15**: The system shall use environment variables for Cloudinary credentials (cloud name, API key, API secret).
 

@@ -30,7 +30,6 @@ The platform enables event organizers to create and publish events, while attend
 - **UI Components**: shadcn/ui (Radix UI primitives)
 - **Database**: MongoDB with Mongoose ODM
 - **Image Hosting**: Cloudinary
-- **Email**: Nodemailer (SMTP)
 - **QR Codes**: QRCode library with AES-256-CBC encryption
 - **Form Management**: React Hook Form with Zod validation
 - **Animations**: GSAP
