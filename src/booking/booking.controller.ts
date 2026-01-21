@@ -19,6 +19,11 @@ import { BookingService } from './booking.service';
 import { CheckInDto } from './dto/check-in.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { ResendQRCodeDto } from './dto/resend-qr.dto';
+import {
+	BookingResponseDto,
+	CheckInResponseDto,
+	PaginatedParticipantResponseDto,
+} from './dto/booking-response.dto';
 import { JwtGuard, RolesGuard, OrganizerGuard } from 'src/utils/guards';
 import { Roles } from 'src/utils/decorators';
 import { Role } from 'src/user/enums/role.enum';
@@ -31,7 +36,11 @@ export class BookingController {
 
 	@Post('book')
 	@ApiOperation({ summary: 'Book an event ticket' })
-	@ApiResponse({ status: 201, description: 'Booking confirmed' })
+	@ApiResponse({
+		status: 201,
+		description: 'Booking confirmed',
+		type: BookingResponseDto,
+	})
 	async bookEvent(
 		@Param('id') id: string,
 		@Body() createBookingDto: CreateBookingDto,
@@ -44,7 +53,11 @@ export class BookingController {
 	@Roles(Role.ORGANIZER)
 	@ApiBearerAuth()
 	@ApiOperation({ summary: 'Check-in attendee (ORGANIZER only)' })
-	@ApiResponse({ status: 200, description: 'Check-in successful' })
+	@ApiResponse({
+		status: 200,
+		description: 'Check-in successful',
+		type: CheckInResponseDto,
+	})
 	async checkIn(@Param('id') id: string, @Body() checkInDto: CheckInDto) {
 		return await this.bookingService.checkIn(id, checkInDto);
 	}
@@ -55,6 +68,11 @@ export class BookingController {
 	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'Get all participants for an event (ORGANIZER only)',
+	})
+	@ApiResponse({
+		status: 200,
+		description: 'List of participants',
+		type: PaginatedParticipantResponseDto,
 	})
 	async getParticipants(
 		@Req() req: Request,
@@ -78,6 +96,7 @@ export class BookingController {
 	@ApiOperation({
 		summary: 'Remove a participant from an event (ORGANIZER only)',
 	})
+	@ApiResponse({ status: 200, description: 'Participant removed' })
 	async removeParticipant(
 		@Req() req: Request,
 		@Param('id') id: string,
@@ -93,6 +112,11 @@ export class BookingController {
 	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'Resend QR code ticket to participant (ORGANIZER only)',
+	})
+	@ApiResponse({
+		status: 200,
+		description: 'QR code resent',
+		type: BookingResponseDto,
 	})
 	async resendQRCode(
 		@Req() req: Request,

@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { LoginUserDto, RegisterUserDto } from './dto';
+
 import { User, UserDocument } from 'src/user/user.schema';
 import { Model } from 'mongoose';
 import * as argon2 from 'argon2';
@@ -26,7 +27,9 @@ export class AuthService {
 		throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
 	}
 
-	async signUp(userData: RegisterUserDto): Promise<UserDocument> {
+	async signUp(
+		userData: RegisterUserDto,
+	): Promise<{ token: string; user: UserDocument }> {
 		try {
 			const userExists = await this.userModel.findOne({
 				username: userData.username,
@@ -61,7 +64,11 @@ export class AuthService {
 				);
 			}
 
-			return newUser;
+			const token = this.jwtService.generateToken(newUser);
+			return {
+				token,
+				user: newUser,
+			};
 		} catch (error) {
 			throw new HttpException(
 				(error as Error).message || 'An error occurred during registration',
@@ -100,6 +107,7 @@ export class AuthService {
 			const token = this.jwtService.generateToken(user);
 			return {
 				token,
+				user,
 			};
 		} catch (error) {
 			throw new HttpException(

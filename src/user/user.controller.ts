@@ -10,7 +10,7 @@ import { Roles } from 'src/utils/decorators';
 import { JwtGuard, RolesGuard } from 'src/utils/guards';
 import { Role } from './enums/role.enum';
 import { UserService } from './user.service';
-import { User } from './user.schema';
+import { UserResponseDto } from './dto/user-response.dto';
 import { EventService } from '../event/event.service';
 import { GetEventsDto } from '../event/dto/get-events.dto';
 import { PaginatedEventResponseDto } from '../event/dto/event-response.dto';
@@ -30,7 +30,7 @@ export class UserController {
 	@ApiResponse({
 		status: 200,
 		description: 'The current user profile',
-		type: User,
+		type: UserResponseDto,
 	})
 	getCurrentUser(@Req() req: Request) {
 		return req.user;
@@ -42,7 +42,7 @@ export class UserController {
 	@ApiResponse({
 		status: 200,
 		description: 'The current user profile',
-		type: User,
+		type: UserResponseDto,
 	})
 	getProfile(@Req() req: Request) {
 		return req.user;
@@ -68,7 +68,7 @@ export class UserController {
 	@ApiResponse({
 		status: 200,
 		description: 'List of all users',
-		type: [User],
+		type: [UserResponseDto],
 	})
 	getAllUsers() {
 		return this.userService.findAll();

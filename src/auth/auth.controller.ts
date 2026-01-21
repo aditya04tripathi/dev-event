@@ -2,7 +2,6 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { RegisterUserDto, LoginUserDto } from './dto';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/user/user.schema';
 import { AuthResponseDto } from './dto/auth-response.dto';
 
 @ApiTags('Auth')
@@ -18,7 +17,7 @@ export class AuthController {
 	@ApiResponse({
 		status: 201,
 		description: 'The user has been successfully created.',
-		type: User,
+		type: AuthResponseDto,
 	})
 	signUp(@Body() userData: RegisterUserDto) {
 		return this.authService.signUp(userData);

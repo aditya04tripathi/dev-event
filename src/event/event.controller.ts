@@ -29,10 +29,12 @@ import { Roles } from 'src/utils/decorators';
 import { Role } from 'src/user/enums/role.enum';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { PaginatedEventResponseDto } from './dto/event-response.dto';
+import {
+	EventResponseDto,
+	PaginatedEventResponseDto,
+} from './dto/event-response.dto';
 import { GetEventsDto } from './dto/get-events.dto';
 import { EventService } from './event.service';
-import { Event } from './event.schema';
 
 @ApiTags('Events')
 @Controller('event')
@@ -55,7 +57,7 @@ export class EventController {
 	@ApiResponse({
 		status: 200,
 		description: 'The event details',
-		type: Event,
+		type: EventResponseDto,
 	})
 	@ApiResponse({ status: 404, description: 'Event not found' })
 	async findOne(@Param('id') id: string) {
@@ -79,7 +81,7 @@ export class EventController {
 	@ApiResponse({
 		status: 201,
 		description: 'The event has been successfully created.',
-		type: Event,
+		type: EventResponseDto,
 	})
 	@ApiResponse({ status: 409, description: 'Event with slug already exists' })
 	@ApiResponse({
@@ -116,7 +118,7 @@ export class EventController {
 	@ApiResponse({
 		status: 200,
 		description: 'The event has been successfully updated.',
-		type: Event,
+		type: EventResponseDto,
 	})
 	@ApiResponse({ status: 404, description: 'Event not found' })
 	@ApiResponse({
