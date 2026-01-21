@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Martian_Mono, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import Providers from "@/components/shared/providers";
 import DarkVeil from "@/components/ui/DarkVeil";
 
 const schibstedGrotesk = Schibsted_Grotesk({
@@ -73,15 +72,12 @@ export default function RootLayout({
 			<body
 				className={`dark ${schibstedGrotesk.variable} ${martianMono.variable} antialiased`}
 			>
-				<div className="w-full h-screen left-0 fixed top-0 inset-0 -z-1!">
-					<DarkVeil />
-				</div>
-
-				<Navbar />
-
-				<main className="min-h-[calc(100vh-4rem)]">{children}</main>
-
-				<Footer />
+				<Providers>
+					<div className="w-full h-screen left-0 fixed top-0 inset-0 -z-1!">
+						<DarkVeil />
+					</div>
+					<main className="min-h-[calc(100vh-4rem)]">{children}</main>
+				</Providers>
 			</body>
 		</html>
 	);

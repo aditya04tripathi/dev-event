@@ -1,6 +1,6 @@
 import { ClockIcon, GithubIcon, LinkedinIcon, MailIcon } from "lucide-react";
 import Link from "next/link";
-import ContactForm from "@/components/contact-form";
+import ContactForm from "@/components/forms/contact-form";
 import {
 	Accordion,
 	AccordionContent,
@@ -266,11 +266,7 @@ export default function ContactPage() {
 								I specialize in modern web development with Next.js, React,
 								TypeScript, and Node.js. I&apos;m experienced with MongoDB,
 								Cloudinary for media management, and building responsive UIs
-								with Tailwind CSS and shadcn/ui. Check out the{" "}
-								<Link href="/about" className="underline hover:text-foreground">
-									About page
-								</Link>{" "}
-								for a complete list of my skills.
+								with Tailwind CSS and shadcn/ui.
 							</p>
 						</AccordionContent>
 					</AccordionItem>
