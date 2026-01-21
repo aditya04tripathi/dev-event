@@ -29,16 +29,24 @@ export class MinioService implements OnModuleInit {
 	}
 
 	async uploadFile(file: Express.Multer.File): Promise<string> {
+		return this.uploadBuffer(file.buffer, file.originalname, file.mimetype);
+	}
+
+	async uploadBuffer(
+		buffer: Buffer,
+		originalname: string,
+		mimetype: string,
+	): Promise<string> {
 		const bucketName = this.envService.MinioBucketName;
-		const fileName = `${Date.now()}-${file.originalname}`;
+		const fileName = `${Date.now()}-${originalname}`;
 
 		await this.minioClient.putObject(
 			bucketName,
 			fileName,
-			file.buffer,
-			file.size,
+			buffer,
+			buffer.length,
 			{
-				'Content-Type': file.mimetype,
+				'Content-Type': mimetype,
 			},
 		);
 

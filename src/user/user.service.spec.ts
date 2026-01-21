@@ -69,4 +69,24 @@ describe('UserService', () => {
 			expect(mockUserModel.find).toHaveBeenCalled();
 		});
 	});
+
+	describe('findAllOrganizers', () => {
+		it('should return all organizers without passwords', async () => {
+			const mockOrganizers = [
+				{
+					_id: 'org1',
+					username: 'org1',
+					roles: ['organizer'],
+				},
+			];
+			const mockSelect = jest.fn().mockResolvedValue(mockOrganizers);
+			mockUserModel.find.mockReturnValue({ select: mockSelect });
+
+			const result = await service.findAllOrganizers();
+
+			expect(result).toEqual(mockOrganizers);
+			expect(mockUserModel.find).toHaveBeenCalledWith({ roles: 'organizer' });
+			expect(mockSelect).toHaveBeenCalledWith('-password');
+		});
+	});
 });

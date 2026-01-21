@@ -55,4 +55,11 @@ export class GetEventsDto {
 	@IsOptional()
 	@IsEnum(['online', 'offline', 'hybrid'])
 	mode?: 'online' | 'offline' | 'hybrid';
+
+	@ApiPropertyOptional({
+		description: 'Filter by organizer ID',
+	})
+	@IsOptional()
+	@IsString()
+	organizerId?: string;
 }

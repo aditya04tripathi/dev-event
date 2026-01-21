@@ -31,12 +31,14 @@ describe('BookingService', () => {
 		name: 'Test User',
 		email: 'test@example.com',
 		createdAt: new Date(),
+		save: jest.fn().mockResolvedValue(true),
 		toObject: jest.fn().mockReturnThis(),
 	};
 
 	const mockBookingModel = {
 		findOne: jest.fn(),
 		findById: jest.fn(),
+		find: jest.fn(), // Added find
 		create: jest.fn(),
 	};
 
@@ -110,7 +112,10 @@ describe('BookingService', () => {
 
 		it('should throw ConflictException if booking already exists', async () => {
 			mockEventService.getEventById.mockResolvedValue(mockEvent);
-			mockBookingModel.findOne.mockResolvedValue(mockBooking);
+			mockBookingModel.findOne.mockResolvedValue({
+				...mockBooking,
+				createdAt: new Date(),
+			});
 
 			await expect(
 				service.createBooking('event123', createBookingDto),
@@ -217,6 +222,7 @@ describe('BookingService', () => {
 			mockBookingModel.findById.mockResolvedValue({
 				...mockBooking,
 				eventId: 'different-event',
+				checkedInAt: undefined, // Ensure not checked in
 			});
 
 			await expect(service.checkIn('event123', checkInDto)).rejects.toThrow(
@@ -232,11 +238,35 @@ describe('BookingService', () => {
 			mockBookingModel.findById.mockResolvedValue({
 				...mockBooking,
 				email: 'different@example.com',
+				checkedInAt: undefined, // Ensure not checked in
 			});
 
 			await expect(service.checkIn('event123', checkInDto)).rejects.toThrow(
 				BadRequestException,
 			);
+		});
+	});
+
+	describe('getUserBookings', () => {
+		it('should returns list of bookings', async () => {
+			const mockBookings = [
+				{
+					...mockBooking,
+					eventId: mockEvent, // Populate event
+				},
+			];
+
+			mockBookingModel.find = jest.fn().mockReturnValue({
+				populate: jest.fn().mockReturnValue({
+					sort: jest.fn().mockReturnValue({
+						exec: jest.fn().mockResolvedValue(mockBookings),
+					}),
+				}),
+			} as any);
+
+			const result = await service.getUserBookings('test@example.com');
+			expect(result).toHaveLength(1);
+			expect(result[0]).toHaveProperty('eventId');
 		});
 	});
 });

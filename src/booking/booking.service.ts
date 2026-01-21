@@ -129,11 +129,6 @@ export class BookingService {
 			throw new NotFoundException('Event not found');
 		}
 
-		// Authorization is handled by OrganizerGuard in controller, but double check
-		if (event.organizerId?.toString() !== userId) {
-			throw new ConflictException('Unauthorized access to participants');
-		}
-
 		const pageNum = Math.max(1, Number(query.page) || 1);
 		const limitNum = Math.max(1, Number(query.limit) || 10);
 		const skip = (pageNum - 1) * limitNum;
@@ -167,10 +162,6 @@ export class BookingService {
 		const event = await this.eventService.getEventById(eventId);
 		if (!event) throw new NotFoundException('Event not found');
 
-		if (event.organizerId?.toString() !== userId) {
-			throw new ConflictException('Unauthorized action');
-		}
-
 		const booking = await this.bookingModel.findOne({
 			_id: bookingId,
 			eventId: event._id,
@@ -188,10 +179,6 @@ export class BookingService {
 		const event = await this.eventService.getEventById(eventId);
 		if (!event) throw new NotFoundException('Event not found');
 
-		if (event.organizerId?.toString() !== userId) {
-			throw new ConflictException('Unauthorized action');
-		}
-
 		const booking = await this.bookingModel.findOne({
 			eventId: event._id,
 			email: email.toLowerCase(),
@@ -207,5 +194,102 @@ export class BookingService {
 			...booking.toObject(),
 			qrCode: qrCodeBase64,
 		};
+	}
+
+	async getUserBookings(email: string) {
+		const bookings = await this.bookingModel
+			.find({ email: email.toLowerCase() })
+			.populate('eventId', 'title date location slug image')
+			.sort({ createdAt: -1 })
+			.exec();
+
+		return bookings.filter((b) => b.eventId); // Filter out bookings where event might be deleted
+	}
+
+	async getBookingTicket(bookingId: string, email: string) {
+		const booking = await this.bookingModel
+			.findOne({ _id: bookingId, email: email.toLowerCase() })
+			.populate('eventId', 'title date location slug')
+			.exec();
+
+		if (!booking) {
+			throw new NotFoundException('Booking not found');
+		}
+
+		if (!booking.eventId) {
+			throw new NotFoundException('Event not found');
+		}
+
+		const event = booking.eventId as any;
+		const qrCodeBase64 = await this.generateQRCode(booking, event);
+
+		return {
+			...booking.toObject(),
+			qrCode: qrCodeBase64,
+			eventTitle: event.title,
+			eventDate: event.date,
+			eventLocation: event.location,
+		};
+	}
+
+	async generateIcsFile(bookingId: string, email: string) {
+		const booking = await this.bookingModel
+			.findOne({ _id: bookingId, email: email.toLowerCase() })
+			.populate('eventId', 'title date location description')
+			.exec();
+
+		if (!booking || !booking.eventId) {
+			throw new NotFoundException('Booking or Event not found');
+		}
+
+		const event = booking.eventId as any;
+		const startDate = new Date(event.date);
+		const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // Default 1 hour duration
+
+		const formatDate = (date: Date) => {
+			return date.toISOString().replace(/-|:|\.\d+/g, '');
+		};
+
+		const icsContent = [
+			'BEGIN:VCALENDAR',
+			'VERSION:2.0',
+			'PRODID:-//DevEvent//NONSGML Event//EN',
+			'BEGIN:VEVENT',
+			`UID:${booking._id}@devevent.com`,
+			`DTSTAMP:${formatDate(new Date())}`,
+			`DTSTART:${formatDate(startDate)}`,
+			`DTEND:${formatDate(endDate)}`,
+			`SUMMARY:${event.title}`,
+			`DESCRIPTION:${event.description || 'Join us for this amazing event!'}`,
+			`LOCATION:${event.location}`,
+			'END:VEVENT',
+			'END:VCALENDAR',
+		].join('\r\n');
+
+		return icsContent;
+	}
+
+	async exportBookingsCsv(eventId: string, userId: string) {
+		const event = await this.eventService.getEventById(eventId);
+		if (!event) throw new NotFoundException('Event not found');
+
+		if (event.organizerId?.toString() !== userId) {
+			throw new ConflictException('Unauthorized action');
+		}
+
+		const bookings = await this.bookingModel
+			.find({ eventId: event._id })
+			.sort({ createdAt: -1 });
+
+		const header = 'Name,Email,Checked In,Registration Date\n';
+		const rows = bookings
+			.map((b) => {
+				const checkedIn = b.checkedInAt ? 'Yes' : 'No';
+				const date = new Date(b.createdAt).toLocaleDateString();
+				return `"${b.name}","${b.email}",${checkedIn},${date}`;
+			})
+			.join('\n');
+
+		return header + rows;
 	}
 }

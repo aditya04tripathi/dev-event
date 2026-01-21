@@ -25,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { JwtGuard, OrganizerGuard, RolesGuard } from 'src/utils/guards';
-import { Roles } from 'src/utils/decorators';
+import { Roles, ApiWrappedResponse } from 'src/utils/decorators';
 import { Role } from 'src/user/enums/role.enum';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -43,22 +43,35 @@ export class EventController {
 
 	@Get()
 	@ApiOperation({ summary: 'Get all events with pagination and filtering' })
-	@ApiResponse({
-		status: 200,
-		description: 'The list of events',
-		type: PaginatedEventResponseDto,
-	})
+	@ApiWrappedResponse(PaginatedEventResponseDto, 200, 'The list of events')
 	async findAll(@Query() query: GetEventsDto) {
 		return await this.eventService.getAllEvents(query);
 	}
 
+	@Get('seed')
+	@ApiOperation({ summary: 'Seed initial events data' })
+	async seedEvents() {
+		return await this.eventService.seedEvents();
+	}
+
+	@Get('organizer/my-events')
+	@UseGuards(JwtGuard, RolesGuard)
+	@Roles(Role.ORGANIZER)
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Get all events created by the organizer' })
+	@ApiWrappedResponse(
+		PaginatedEventResponseDto,
+		200,
+		'The list of organizer events',
+	)
+	async getMyEvents(@Req() req: Request, @Query() query: GetEventsDto) {
+		const userId = (req.user as any)._id || (req.user as any).id;
+		return await this.eventService.getEventsByUser(userId, query);
+	}
+
 	@Get(':id')
 	@ApiOperation({ summary: 'Get event by ID or Slug' })
-	@ApiResponse({
-		status: 200,
-		description: 'The event details',
-		type: EventResponseDto,
-	})
+	@ApiWrappedResponse(EventResponseDto, 200, 'The event details')
 	@ApiResponse({ status: 404, description: 'Event not found' })
 	async findOne(@Param('id') id: string) {
 		const event = await this.eventService.getEventById(id);
@@ -78,11 +91,11 @@ export class EventController {
 		description: 'Event creation data with image',
 		type: CreateEventDto,
 	})
-	@ApiResponse({
-		status: 201,
-		description: 'The event has been successfully created.',
-		type: EventResponseDto,
-	})
+	@ApiWrappedResponse(
+		EventResponseDto,
+		201,
+		'The event has been successfully created.',
+	)
 	@ApiResponse({ status: 409, description: 'Event with slug already exists' })
 	@ApiResponse({
 		status: 403,
@@ -115,11 +128,11 @@ export class EventController {
 		description: 'Event update data with optional image',
 		type: UpdateEventDto,
 	})
-	@ApiResponse({
-		status: 200,
-		description: 'The event has been successfully updated.',
-		type: EventResponseDto,
-	})
+	@ApiWrappedResponse(
+		EventResponseDto,
+		200,
+		'The event has been successfully updated.',
+	)
 	@ApiResponse({ status: 404, description: 'Event not found' })
 	@ApiResponse({
 		status: 403,
@@ -158,20 +171,5 @@ export class EventController {
 	async remove(@Req() req: Request, @Param('id') id: string) {
 		const userId = (req.user as any)._id || (req.user as any).id;
 		return await this.eventService.deleteEvent(id, userId);
-	}
-
-	@Get('organizer/my-events')
-	@UseGuards(JwtGuard, RolesGuard)
-	@Roles(Role.ORGANIZER)
-	@ApiBearerAuth()
-	@ApiOperation({ summary: 'Get all events created by the organizer' })
-	@ApiResponse({
-		status: 200,
-		description: 'The list of organizer events',
-		type: PaginatedEventResponseDto,
-	})
-	async getMyEvents(@Req() req: Request, @Query() query: GetEventsDto) {
-		const userId = (req.user as any)._id || (req.user as any).id;
-		return await this.eventService.getEventsByUser(userId, query);
 	}
 }

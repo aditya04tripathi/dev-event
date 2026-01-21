@@ -5,9 +5,11 @@ import { userProviders } from './user.providers';
 import { DatabaseModule } from '../database/database.module';
 import { EventModule } from '../event/event.module';
 
+import { OrganizerController } from './organizer.controller';
+
 @Module({
 	imports: [DatabaseModule, EventModule],
-	controllers: [UserController],
+	controllers: [UserController, OrganizerController],
 	providers: [UserService, ...userProviders],
 	exports: [UserService],
 })

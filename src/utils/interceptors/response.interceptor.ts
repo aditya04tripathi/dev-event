@@ -6,16 +6,16 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ApiResponse } from 'src/types';
+import { ApiResponseWrapper } from 'src/types';
 
 @Injectable()
 export class ResponseInterceptor<T>
-	implements NestInterceptor<T, ApiResponse<T, string>>
+	implements NestInterceptor<T, ApiResponseWrapper<T, string>>
 {
 	intercept(
 		context: ExecutionContext,
 		next: CallHandler,
-	): Observable<ApiResponse<T, string>> {
+	): Observable<ApiResponseWrapper<T, string>> {
 		return next.handle().pipe(
 			map((data) => {
 				const response = context.switchToHttp().getResponse();

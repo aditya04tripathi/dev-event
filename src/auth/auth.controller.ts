@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { RegisterUserDto, LoginUserDto } from './dto';
 import { AuthService } from './auth.service';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
+import { ApiWrappedResponse } from 'src/utils/decorators';
 import { AuthResponseDto } from './dto/auth-response.dto';
 
 @ApiTags('Auth')
@@ -14,11 +15,11 @@ export class AuthController {
 	@ApiBody({
 		type: RegisterUserDto,
 	})
-	@ApiResponse({
-		status: 201,
-		description: 'The user has been successfully created.',
-		type: AuthResponseDto,
-	})
+	@ApiWrappedResponse(
+		AuthResponseDto,
+		201,
+		'The user has been successfully created.',
+	)
 	signUp(@Body() userData: RegisterUserDto) {
 		return this.authService.signUp(userData);
 	}
@@ -28,11 +29,7 @@ export class AuthController {
 	@ApiBody({
 		type: LoginUserDto,
 	})
-	@ApiResponse({
-		status: 200,
-		description: 'User successfully logged in.',
-		type: AuthResponseDto,
-	})
+	@ApiWrappedResponse(AuthResponseDto, 200, 'User successfully logged in.')
 	signIn(@Body() loginData: LoginUserDto) {
 		return this.authService.signIn(loginData);
 	}

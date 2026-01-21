@@ -4,13 +4,17 @@ import {
 	ArgumentsHost,
 	HttpException,
 	HttpStatus,
+	Logger,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { ApiResponse } from 'src/types';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+	private readonly logger = new Logger(GlobalExceptionFilter.name);
+
 	catch(exception: unknown, host: ArgumentsHost): void {
+		this.logger.error(exception);
 		const ctx = host.switchToHttp();
 		const response = ctx.getResponse<Response>();
 

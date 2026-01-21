@@ -8,6 +8,7 @@ import {
 	Query,
 	Req,
 	UseGuards,
+	Res,
 } from '@nestjs/common';
 import {
 	ApiBearerAuth,
@@ -25,9 +26,9 @@ import {
 	PaginatedParticipantResponseDto,
 } from './dto/booking-response.dto';
 import { JwtGuard, RolesGuard, OrganizerGuard } from 'src/utils/guards';
-import { Roles } from 'src/utils/decorators';
+import { Roles, ApiWrappedResponse } from 'src/utils/decorators';
 import { Role } from 'src/user/enums/role.enum';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 
 @ApiTags('Booking')
 @Controller('event/:id')
@@ -36,11 +37,7 @@ export class BookingController {
 
 	@Post('book')
 	@ApiOperation({ summary: 'Book an event ticket' })
-	@ApiResponse({
-		status: 201,
-		description: 'Booking confirmed',
-		type: BookingResponseDto,
-	})
+	@ApiWrappedResponse(BookingResponseDto, 201, 'Booking confirmed')
 	async bookEvent(
 		@Param('id') id: string,
 		@Body() createBookingDto: CreateBookingDto,
@@ -53,27 +50,22 @@ export class BookingController {
 	@Roles(Role.ORGANIZER)
 	@ApiBearerAuth()
 	@ApiOperation({ summary: 'Check-in attendee (ORGANIZER only)' })
-	@ApiResponse({
-		status: 200,
-		description: 'Check-in successful',
-		type: CheckInResponseDto,
-	})
+	@ApiWrappedResponse(CheckInResponseDto, 200, 'Check-in successful')
 	async checkIn(@Param('id') id: string, @Body() checkInDto: CheckInDto) {
 		return await this.bookingService.checkIn(id, checkInDto);
 	}
 
 	@Get('participants')
-	@UseGuards(JwtGuard, RolesGuard, OrganizerGuard)
-	@Roles(Role.ORGANIZER)
+	@UseGuards(JwtGuard, OrganizerGuard)
 	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'Get all participants for an event (ORGANIZER only)',
 	})
-	@ApiResponse({
-		status: 200,
-		description: 'List of participants',
-		type: PaginatedParticipantResponseDto,
-	})
+	@ApiWrappedResponse(
+		PaginatedParticipantResponseDto,
+		200,
+		'List of participants',
+	)
 	async getParticipants(
 		@Req() req: Request,
 		@Param('id') id: string,
@@ -96,7 +88,7 @@ export class BookingController {
 	@ApiOperation({
 		summary: 'Remove a participant from an event (ORGANIZER only)',
 	})
-	@ApiResponse({ status: 200, description: 'Participant removed' })
+	@ApiWrappedResponse(undefined, 200, 'Participant removed')
 	async removeParticipant(
 		@Req() req: Request,
 		@Param('id') id: string,
@@ -113,11 +105,7 @@ export class BookingController {
 	@ApiOperation({
 		summary: 'Resend QR code ticket to participant (ORGANIZER only)',
 	})
-	@ApiResponse({
-		status: 200,
-		description: 'QR code resent',
-		type: BookingResponseDto,
-	})
+	@ApiWrappedResponse(BookingResponseDto, 200, 'QR code resent')
 	async resendQRCode(
 		@Req() req: Request,
 		@Param('id') id: string,
@@ -125,5 +113,28 @@ export class BookingController {
 	) {
 		const userId = (req.user as any)._id || (req.user as any).id;
 		return await this.bookingService.resendQRCode(id, resendDto.email, userId);
+	}
+
+	@Get('export-csv')
+	@UseGuards(JwtGuard, RolesGuard, OrganizerGuard)
+	@Roles(Role.ORGANIZER)
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Export participants as CSV (ORGANIZER only)',
+	})
+	async exportCsv(
+		@Req() req: Request,
+		@Param('id') id: string,
+		@Res() res: Response,
+	) {
+		const userId = (req.user as any)._id || (req.user as any).id;
+		const csvData = await this.bookingService.exportBookingsCsv(id, userId);
+
+		res.setHeader('Content-Type', 'text/csv');
+		res.setHeader(
+			'Content-Disposition',
+			`attachment; filename="participants-${id}.csv"`,
+		);
+		res.send(csvData);
 	}
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import {
 	ApiBearerAuth,
@@ -6,7 +6,7 @@ import {
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { Roles } from 'src/utils/decorators';
+import { Roles, ApiWrappedResponse } from 'src/utils/decorators';
 import { JwtGuard, RolesGuard } from 'src/utils/guards';
 import { Role } from './enums/role.enum';
 import { UserService } from './user.service';
@@ -27,11 +27,7 @@ export class UserController {
 	@UseGuards(JwtGuard, RolesGuard)
 	@Get('me')
 	@ApiOperation({ summary: 'Get current user profile' })
-	@ApiResponse({
-		status: 200,
-		description: 'The current user profile',
-		type: UserResponseDto,
-	})
+	@ApiWrappedResponse(UserResponseDto, 200, 'The current user profile')
 	getCurrentUser(@Req() req: Request) {
 		return req.user;
 	}
@@ -39,11 +35,7 @@ export class UserController {
 	@UseGuards(JwtGuard, RolesGuard)
 	@Get('profile')
 	@ApiOperation({ summary: 'Get current user profile (Alias)' })
-	@ApiResponse({
-		status: 200,
-		description: 'The current user profile',
-		type: UserResponseDto,
-	})
+	@ApiWrappedResponse(UserResponseDto, 200, 'The current user profile')
 	getProfile(@Req() req: Request) {
 		return req.user;
 	}
@@ -51,26 +43,23 @@ export class UserController {
 	@UseGuards(JwtGuard)
 	@Get('events')
 	@ApiOperation({ summary: 'Get events created by current user' })
-	@ApiResponse({
-		status: 200,
-		description: 'The list of user events',
-		type: PaginatedEventResponseDto,
-	})
+	@ApiWrappedResponse(PaginatedEventResponseDto, 200, 'The list of user events')
 	async getMyEvents(@Req() req: Request, @Query() query: GetEventsDto) {
 		const userId = (req.user as any)._id || (req.user as any).id;
 		return this.eventService.getEventsByUser(userId, query);
 	}
 
-	@UseGuards(JwtGuard, RolesGuard)
-	@Roles(Role.ADMIN)
 	@Get('all')
 	@ApiOperation({ summary: 'Get all users (Admin only)' })
-	@ApiResponse({
-		status: 200,
-		description: 'List of all users',
-		type: [UserResponseDto],
-	})
+	@ApiWrappedResponse(UserResponseDto, 200, 'List of all users', true)
 	getAllUsers() {
 		return this.userService.findAll();
+	}
+
+	@Get(':id')
+	@ApiOperation({ summary: 'Get user info by ID' })
+	@ApiWrappedResponse(UserResponseDto, 200, 'User profile')
+	async getUser(@Param('id') id: string) {
+		return this.userService.findById(id);
 	}
 }

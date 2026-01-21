@@ -9,4 +9,12 @@ export class UserService {
 	async findAll() {
 		return this.userModel.find().select('-password');
 	}
+
+	async findById(id: string) {
+		return this.userModel.findById(id).select('-password');
+	}
+
+	async findAllOrganizers() {
+		return this.userModel.find({ roles: 'organizer' }).select('-password');
+	}
 }
