@@ -39,11 +39,20 @@ export class AuthService {
 				);
 			}
 
+			const assignedRole = userData.role || 'user';
+			if (assignedRole === 'admin') {
+				throw new HttpException(
+					'Cannot assign admin role through registration',
+					HttpStatus.FORBIDDEN,
+				);
+			}
+
 			const newUser = await this.userModel.create({
 				username: userData.username,
 				email: userData.email,
 				fullName: userData.fullName,
 				password: userData.password,
+				roles: [assignedRole],
 			});
 			if (!newUser) {
 				throw new HttpException(

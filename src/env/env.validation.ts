@@ -31,6 +31,9 @@ export class EnvironmentVariables {
 
 	@IsString()
 	MINIO_BUCKET_NAME: string;
+
+	@IsString()
+	API_BASE_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {

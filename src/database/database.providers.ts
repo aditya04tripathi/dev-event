@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { EnvService } from '../env/env.service';
+import { EnvService } from 'src/env/env.service';
 
 export const databaseProviders = [
 	{

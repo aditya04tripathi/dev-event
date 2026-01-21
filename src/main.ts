@@ -13,8 +13,10 @@ async function bootstrap() {
 	app.useGlobalInterceptors(new ResponseInterceptor());
 
 	const config = new DocumentBuilder()
-		.setTitle('API Documentation')
-		.setDescription('The API description')
+		.setTitle('DevEvent RESTful API')
+		.setDescription(
+			'This is the API for DevEvent website and the mobile application.',
+		)
 		.setVersion('1.0')
 		.addBearerAuth()
 		.build();

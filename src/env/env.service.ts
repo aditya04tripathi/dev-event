@@ -51,4 +51,8 @@ export class EnvService {
 	get MinioBucketName(): string {
 		return this.get<string>('MINIO_BUCKET_NAME');
 	}
+
+	get ApiUrl(): string {
+		return this.get<string>('API_BASE_URL');
+	}
 }

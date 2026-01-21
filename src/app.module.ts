@@ -9,6 +9,8 @@ import { EnvModule } from './env/env.module';
 import { DatabaseModule } from './database/database.module';
 import { MinioModule } from './minio/minio.module';
 import { EventModule } from './event/event.module';
+import { BookingModule } from './booking/booking.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
 	imports: [
@@ -19,7 +21,10 @@ import { EventModule } from './event/event.module';
 		AuthModule,
 		UserModule,
 		EventModule,
+		BookingModule,
+		AnalyticsModule,
 	],
+
 	controllers: [AppController],
 	providers: [AppService],
 })
