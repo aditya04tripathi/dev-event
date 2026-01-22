@@ -1,64 +1,91 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { FeaturedEvents } from "@/components/event/featured-events";
 import { FeaturedEventsSkeleton } from "@/components/event/featured-events-skeleton";
-import ExploreButton from "@/components/shared/explore-btn";
+import { HeroSection } from "@/components/home/hero-section";
+import { StatsSection } from "@/components/home/stats-section";
+import { ValuePropSection } from "@/components/home/value-prop-section";
+import { CTASection } from "@/components/home/cta-section";
+import { Button } from "@/components/ui/button";
+import { BlurFade } from "@/components/ui/blur-fade";
 
 export const metadata: Metadata = {
-	title: "DevEvent - The Hub for Every Dev Event You Can't Miss",
-	description:
-		"Discover hackathons, meetups, and conferences all in one place. Join amazing tech events and connect with the developer community.",
-	keywords: [
-		"developer events",
-		"hackathons",
-		"tech meetups",
-		"conferences",
-		"coding events",
-		"tech community",
-	],
-	openGraph: {
-		title: "DevEvent - The Hub for Every Dev Event You Can't Miss",
-		description:
-			"Discover hackathons, meetups, and conferences all in one place.",
-		type: "website",
-		images: [
-			{
-				url: "/og-image.png",
-				width: 1200,
-				height: 630,
-				alt: "DevEvent - The Hub for Every Dev Event You Can't Miss",
-			},
-		],
-	},
+  title: "DevEvent - The Hub for Every Dev Event You Can't Miss",
+  description:
+    "Discover hackathons, meetups, and conferences all in one place. Join amazing tech events and connect with the developer community.",
+  keywords: [
+    "developer events",
+    "hackathons",
+    "tech meetups",
+    "conferences",
+    "coding events",
+    "tech community",
+  ],
+  openGraph: {
+    title: "DevEvent - The Hub for Every Dev Event You Can't Miss",
+    description:
+      "Discover hackathons, meetups, and conferences all in one place.",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "DevEvent - The Hub for Every Dev Event You Can't Miss",
+      },
+    ],
+  },
 };
 
 const HomePage = () => {
-	return (
-		<section className="container mx-auto w-full px-4">
-			<div className="min-h-[400px] sm:min-h-[500px] md:h-[600px] flex gap-3 sm:gap-4 flex-col justify-center items-center py-12 sm:py-16 md:py-0">
-				<h1 className="text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight">
-					The Hub for Every Dev <br /> Event You Can't Miss
-				</h1>
+  return (
+    <>
+      <HeroSection />
+      <StatsSection />
 
-				<p className="text-center mt-3 sm:mt-4 md:mt-5 text-base sm:text-lg px-4">
-					Hackathons, Meetups, and Conferences, All in One Place
-				</p>
+      {/* Featured Events Section */}
+      <section className="section border-t border-border">
+        <div className="container-wide">
+          <BlurFade delay={0.1} inView>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-2">
+                  Featured Events
+                </h2>
+                <p className="text-muted-foreground">
+                  Curated events from communities around the globe
+                </p>
+              </div>
+              <Link href="/events" className="hidden md:block">
+                <Button variant="outline">
+                  View all events
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </BlurFade>
 
-				<ExploreButton />
-			</div>
+          <Suspense fallback={<FeaturedEventsSkeleton />}>
+            <FeaturedEvents />
+          </Suspense>
 
-			<div
-				id="events"
-				className="mt-12 sm:mt-16 md:mt-20 space-y-5 sm:space-y-6 md:space-y-7"
-			>
-				<h2 className="text-2xl sm:text-3xl md:text-4xl">Featured Events</h2>
+          <div className="md:hidden mt-8">
+            <Link href="/events">
+              <Button variant="outline" className="w-full">
+                View all events
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
-				<Suspense fallback={<FeaturedEventsSkeleton />}>
-					<FeaturedEvents />
-				</Suspense>
-			</div>
-		</section>
-	);
+      <ValuePropSection />
+      <CTASection />
+    </>
+  );
 };
 
 export default HomePage;

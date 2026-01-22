@@ -2,135 +2,303 @@
 
 import { useEventContext } from "@/context/event-context";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusIcon, UsersIcon, EditIcon, TrashIcon, CalendarIcon, MapPinIcon, Loader2Icon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { BlurFade } from "@/components/ui/blur-fade";
+import Pagination from "@/components/shared/pagination";
+import { useSearchParams } from "next/navigation";
+import {
+  PlusIcon,
+  UsersIcon,
+  EditIcon,
+  TrashIcon,
+  CalendarIcon,
+  MapPinIcon,
+  CalendarX,
+  MoreVertical,
+  ExternalLink,
+  Video,
+  Building2,
+  Globe,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardStats } from "./components";
+import { cn } from "@/lib/utils";
+
+function getModeIcon(mode: string) {
+  switch (mode.toLowerCase()) {
+    case "online":
+      return Video;
+    case "offline":
+    case "in-person":
+      return Building2;
+    default:
+      return Globe;
+  }
+}
+
+function getModeColor(mode: string) {
+  switch (mode.toLowerCase()) {
+    case "online":
+      return "bg-blue-500/10 text-blue-600 dark:text-blue-400";
+    case "offline":
+    case "in-person":
+      return "bg-green-500/10 text-green-600 dark:text-green-400";
+    default:
+      return "bg-purple-500/10 text-purple-600 dark:text-purple-400";
+  }
+}
 
 export default function OrganizerDashboard() {
-    const { useMyEvents, deleteEvent } = useEventContext();
-    const { data, isLoading } = useMyEvents();
-    const deleteMutation = deleteEvent;
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const { useMyEvents, deleteEvent } = useEventContext();
+  const { data, isLoading } = useMyEvents({ page, limit: 9 });
+  const deleteMutation = deleteEvent;
 
-    const handleDelete = async (id: string) => {
-        if (confirm("Are you sure you want to delete this event?")) {
-            deleteMutation.mutate(id, {
-                onSuccess: () => {
-                    toast.success("Event deleted successfully");
-                },
-                onError: (error: any) => {
-                    toast.error(error.response?.data?.message || "Failed to delete event");
-                },
-            });
-        }
-    };
-
-    if (isLoading) {
-        return (
-            <div className="container mx-auto py-8 px-4 max-w-7xl">
-                <div className="flex justify-between items-center mb-8">
-                    <Skeleton className="h-10 w-48" />
-                    <Skeleton className="h-10 w-32" />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[1, 2, 3].map((i) => (
-                        <Skeleton key={i} className="h-64 w-full" />
-                    ))}
-                </div>
-            </div>
-        );
+  const handleDelete = async (id: string) => {
+    if (
+      confirm(
+        "Are you sure you want to delete this event? This action cannot be undone.",
+      )
+    ) {
+      deleteMutation.mutate(id, {
+        onSuccess: () => {
+          toast.success("Event deleted successfully");
+        },
+        onError: (error: any) => {
+          toast.error(
+            error.response?.data?.message || "Failed to delete event",
+          );
+        },
+      });
     }
+  };
 
-    const events = data?.events || [];
-
+  if (isLoading) {
     return (
-        <div className="container mx-auto py-8 px-4 max-w-7xl">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold">Organizer Dashboard</h1>
-                    <p className="text-muted-foreground mt-1">Manage your events and participants</p>
-                </div>
+      <div className="section-sm">
+        <div className="container-wide">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <Skeleton className="h-9 w-48 mb-2" />
+              <Skeleton className="h-5 w-72" />
+            </div>
+            <Skeleton className="h-10 w-36" />
+          </div>
+          <div className="grid sm:grid-cols-3 gap-4 mb-8">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-28 w-full rounded-xl" />
+            ))}
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-72 w-full rounded-xl" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const events = data?.events || [];
+
+  return (
+    <div className="section-sm">
+      <div className="container-wide">
+        {/* Header */}
+        <BlurFade delay={0.05}>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+                Organizer Dashboard
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Manage your events and track participant engagement
+              </p>
+            </div>
+            <Button asChild size="lg">
+              <Link href="/dashboard/events/new">
+                <PlusIcon className="mr-2 size-4" />
+                Create Event
+              </Link>
+            </Button>
+          </div>
+        </BlurFade>
+
+        {/* Stats */}
+        <BlurFade delay={0.1}>
+          <DashboardStats />
+        </BlurFade>
+
+        {/* Section Header */}
+        <BlurFade delay={0.15}>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold">Your Events</h2>
+            <p className="text-sm text-muted-foreground">
+              {data?.totalEvents || 0}{" "}
+              {data?.totalEvents === 1 ? "event" : "events"}
+            </p>
+          </div>
+        </BlurFade>
+
+        {/* Events Grid */}
+        {events.length === 0 ? (
+          <BlurFade delay={0.2}>
+            <div className="flex flex-col items-center justify-center py-20 border border-dashed border-border rounded-xl bg-card/50">
+              <div className="rounded-full bg-muted p-4 mb-4">
+                <CalendarX className="size-8 text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold mb-1">No events yet</h3>
+              <p className="text-sm text-muted-foreground mb-6 text-center max-w-sm">
+                Start by creating your first developer event and share it with
+                the community.
+              </p>
+              <Button asChild>
                 <Link href="/dashboard/events/new">
-                    <Button>
-                        <PlusIcon className="mr-2 h-4 w-4" />
-                        Create New Event
-                    </Button>
+                  <PlusIcon className="mr-2 size-4" />
+                  Create Your First Event
                 </Link>
+              </Button>
+            </div>
+          </BlurFade>
+        ) : (
+          <>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {events.map((event, index) => {
+                const ModeIcon = getModeIcon(event.mode);
+                return (
+                  <BlurFade key={event._id} delay={0.2 + index * 0.05}>
+                    <div className="border border-border rounded-xl overflow-hidden bg-card group hover:shadow-lg transition-shadow">
+                      {/* Image */}
+                      <div className="relative h-44 w-full overflow-hidden bg-muted">
+                        <Image
+                          src={event.image || "/placeholder-event.png"}
+                          alt={event.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <Badge
+                          className={cn(
+                            "absolute top-3 right-3 gap-1",
+                            getModeColor(event.mode),
+                          )}
+                        >
+                          <ModeIcon className="size-3" />
+                          {event.mode}
+                        </Badge>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-4">
+                        <h3 className="font-semibold line-clamp-1 mb-2">
+                          {event.title}
+                        </h3>
+                        <div className="space-y-1.5 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <CalendarIcon className="size-3.5 shrink-0" />
+                            <span>
+                              {new Date(event.date).toLocaleDateString(
+                                "en-US",
+                                {
+                                  weekday: "short",
+                                  month: "short",
+                                  day: "numeric",
+                                },
+                              )}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <MapPinIcon className="size-3.5 shrink-0" />
+                            <span className="line-clamp-1">
+                              {event.location}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="px-4 pb-4 flex items-center gap-2">
+                        <Button
+                          asChild
+                          variant="default"
+                          size="sm"
+                          className="flex-1"
+                        >
+                          <Link
+                            href={`/dashboard/events/${event._id}/participants`}
+                          >
+                            <UsersIcon className="size-4 mr-1.5" />
+                            Participants
+                          </Link>
+                        </Button>
+
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="size-9"
+                            >
+                              <MoreVertical className="size-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild>
+                              <Link href={`/events/${event.slug}`}>
+                                <ExternalLink className="size-4 mr-2" />
+                                View Event
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <Link
+                                href={`/dashboard/events/edit/${event._id}`}
+                              >
+                                <EditIcon className="size-4 mr-2" />
+                                Edit Event
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              onClick={() => handleDelete(event._id)}
+                              disabled={deleteMutation.isPending}
+                            >
+                              <TrashIcon className="size-4 mr-2" />
+                              Delete Event
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  </BlurFade>
+                );
+              })}
             </div>
 
-            <DashboardStats />
-
-            {events.length === 0 ? (
-                <Card className="flex flex-col items-center justify-center p-12 bg-muted/50 border-dashed">
-                    <CalendarIcon className="h-12 w-12 text-muted-foreground mb-4" />
-                    <CardTitle>No events yet</CardTitle>
-                    <CardDescription className="mb-6">Start by creating your first awesome developer event.</CardDescription>
-                    <Link href="/dashboard/events/new">
-                        <Button variant="outline">Create Event</Button>
-                    </Link>
-                </Card>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {events.map((event) => (
-                        <Card key={event._id} className="overflow-hidden group hover:shadow-lg transition-all duration-300 border-primary/10">
-                            <div className="relative h-40 w-full overflow-hidden">
-                                <Image
-                                    src={event.image || "/placeholder-event.png"}
-                                    alt={event.title}
-                                    fill
-                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                />
-                                <div className="absolute top-2 right-2 flex gap-2">
-                                    <span className="bg-background/80 backdrop-blur-md text-[10px] px-2 py-1 rounded-full font-semibold uppercase tracking-wider border border-primary/10">
-                                        {event.mode}
-                                    </span>
-                                </div>
-                            </div>
-                            <CardHeader className="p-4">
-                                <CardTitle className="line-clamp-1">{event.title}</CardTitle>
-                                <CardDescription className="flex items-center gap-1.5 mt-1">
-                                    <CalendarIcon className="h-3 w-3" />
-                                    {new Date(event.date).toLocaleDateString()}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-4 pt-0 space-y-2">
-                                <div className="flex items-center text-sm text-muted-foreground">
-                                    <MapPinIcon className="h-3 w-3 mr-1.5 shrink-0" />
-                                    <span className="line-clamp-1">{event.location}</span>
-                                </div>
-                            </CardContent>
-                            <CardFooter className="p-4 pt-0 flex justify-between gap-2">
-                                <Link href={`/dashboard/events/${event._id}/participants`} className="flex-1">
-                                    <Button variant="outline" size="sm" className="w-full">
-                                        <UsersIcon className="h-3.5 w-3.5 mr-1.5" />
-                                        Participants
-                                    </Button>
-                                </Link>
-                                <div className="flex gap-2">
-                                    {/* Edit logic would go to a new edit page */}
-                                    <Link href={`/dashboard/events/edit/${event._id}`}>
-                                        <Button variant="ghost" size="icon" className="h-9 w-9">
-                                            <EditIcon className="h-4 w-4" />
-                                        </Button>
-                                    </Link>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-9 w-9 text-destructive hover:text-destructive hover:bg-destructive/10"
-                                        onClick={() => handleDelete(event._id)}
-                                        disabled={deleteMutation.isPending}
-                                    >
-                                        {deleteMutation.isPending ? <Loader2Icon className="h-4 w-4 animate-spin" /> : <TrashIcon className="h-4 w-4" />}
-                                    </Button>
-                                </div>
-                            </CardFooter>
-                        </Card>
-                    ))}
-                </div>
+            {/* Pagination */}
+            {data && data.totalPages > 1 && (
+              <div className="flex justify-center pt-8">
+                <Pagination
+                  currentPage={data.currentPage}
+                  totalPages={data.totalPages}
+                  hasNextPage={data.currentPage < data.totalPages}
+                  hasPrevPage={data.currentPage > 1}
+                />
+              </div>
             )}
-        </div>
-    );
+          </>
+        )}
+      </div>
+    </div>
+  );
 }

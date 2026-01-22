@@ -1,131 +1,140 @@
-import { GithubIcon, LinkedinIcon, MailIcon } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter } from "lucide-react";
 import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
+
+const FOOTER_SECTIONS = {
+  discover: {
+    title: "Discover",
+    links: [
+      { href: "/events", label: "Browse Events" },
+      { href: "/events?mode=online", label: "Online Events" },
+      { href: "/organizers", label: "Organizers" },
+    ],
+  },
+  organize: {
+    title: "Organize",
+    links: [
+      { href: "/auth/signup?role=organizer", label: "Host an Event" },
+      { href: "/dashboard", label: "Dashboard" },
+      { href: "/contact", label: "Support" },
+    ],
+  },
+  legal: {
+    title: "Legal",
+    links: [
+      { href: "/privacy", label: "Privacy Policy" },
+      { href: "/terms", label: "Terms of Service" },
+    ],
+  },
+};
+
+const SOCIAL_LINKS = [
+  {
+    href: "https://github.com/aditya04tripathi",
+    icon: Github,
+    label: "GitHub",
+  },
+  {
+    href: "https://linkedin.com/in/aditya-tripathi-887586379",
+    icon: Linkedin,
+    label: "LinkedIn",
+  },
+  {
+    href: "https://twitter.com",
+    icon: Twitter,
+    label: "Twitter",
+  },
+  {
+    href: "mailto:adityatripathi.at04@gmail.com",
+    icon: Mail,
+    label: "Email",
+  },
+];
 
 export default function Footer() {
-	const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear();
 
-	return (
-		<footer className="mt-10 border-t bg-background">
-			<div className="container mx-auto px-4 py-12 max-w-7xl">
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-					<div className="space-y-4">
-						<h3 className="text-lg font-bold">DevEvent</h3>
-						<p className="text-sm text-muted-foreground">
-							Discover and join amazing tech events. Connect with developers,
-							learn new skills, and grow your network.
-						</p>
-						<div className="flex gap-4">
-							<Link
-								href="https://github.com/aditya04tripathi"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="text-muted-foreground hover:text-foreground transition-colors"
-							>
-								<GithubIcon className="size-5" />
-								<span className="sr-only">GitHub</span>
-							</Link>
-							<Link
-								href="https://linkedin.com/in/aditya-tripathi-887586379"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="text-muted-foreground hover:text-foreground transition-colors"
-							>
-								<LinkedinIcon className="size-5" />
-								<span className="sr-only">LinkedIn</span>
-							</Link>
-							<Link
-								href="mailto:adityatripathi.at04@gmail.com"
-								className="text-muted-foreground hover:text-foreground transition-colors"
-							>
-								<MailIcon className="size-5" />
-								<span className="sr-only">Email</span>
-							</Link>
-						</div>
-					</div>
+  return (
+    <footer className="border-t border-border bg-surface">
+      <div className="container-wide py-16 lg:py-20">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
+          {/* Brand Column */}
+          <div className="col-span-2 md:col-span-1">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2.5 transition-opacity hover:opacity-80"
+            >
+              <div className="flex size-9 items-center justify-center rounded-lg bg-primary shadow-sm">
+                <span className="text-sm font-bold text-primary-foreground">
+                  D
+                </span>
+              </div>
+              <span className="text-lg font-semibold tracking-tight">
+                DevEvent
+              </span>
+            </Link>
+            <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">
+              The platform for discovering and organizing developer events.
+              Connect, learn, and grow.
+            </p>
 
-					<div className="space-y-4">
-						<h4 className="font-semibold">Events</h4>
-						<ul className="space-y-2 text-sm">
-							<li>
-								<Link
-									href="/events"
-									className="text-muted-foreground hover:text-foreground transition-colors"
-								>
-									Browse Events
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/events/new"
-									className="text-muted-foreground hover:text-foreground transition-colors"
-								>
-									Create Event
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/events?mode=online"
-									className="text-muted-foreground hover:text-foreground transition-colors"
-								>
-									Online Events
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/events?mode=offline"
-									className="text-muted-foreground hover:text-foreground transition-colors"
-								>
-									In-Person Events
-								</Link>
-							</li>
-						</ul>
-					</div>
+            {/* Social Links */}
+            <div className="mt-6 flex items-center gap-3">
+              {SOCIAL_LINKS.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex size-9 items-center justify-center rounded-lg bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                  aria-label={link.label}
+                >
+                  <link.icon className="size-4" />
+                </Link>
+              ))}
+            </div>
+          </div>
 
-					<div className="space-y-4">
-						<h4 className="font-semibold">Company</h4>
-						<ul className="space-y-2 text-sm">
-							<li>
-								<Link
-									href="/contact"
-									className="text-muted-foreground hover:text-foreground transition-colors"
-								>
-									Contact
-								</Link>
-							</li>
-						</ul>
-					</div>
+          {/* Link Sections */}
+          {Object.entries(FOOTER_SECTIONS).map(([key, section]) => (
+            <div key={key}>
+              <h4 className="text-sm font-semibold text-foreground mb-4">
+                {section.title}
+              </h4>
+              <ul className="space-y-3">
+                {section.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
 
-					<div className="space-y-4">
-						<h4 className="font-semibold">Legal</h4>
-						<ul className="space-y-2 text-sm">
-							<li>
-								<Link
-									href="/privacy"
-									className="text-muted-foreground hover:text-foreground transition-colors"
-								>
-									Privacy Policy
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/terms"
-									className="text-muted-foreground hover:text-foreground transition-colors"
-								>
-									Terms of Service
-								</Link>
-							</li>
-						</ul>
-					</div>
-				</div>
-
-				<Separator className="my-8" />
-
-				<div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-					<p>© {currentYear} DevEvent. All rights reserved.</p>
-					<p>Made with ❤️ by developers, for developers</p>
-				</div>
-			</div>
-		</footer>
-	);
+        {/* Bottom Bar */}
+        <div className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            © {currentYear} DevEvent. All rights reserved.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Built with ♥ by{" "}
+            <Link
+              href="https://github.com/aditya04tripathi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground hover:text-primary transition-colors"
+            >
+              Aditya Tripathi
+            </Link>
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
 }

@@ -1,341 +1,232 @@
-import { ClockIcon, GithubIcon, LinkedinIcon, MailIcon } from "lucide-react";
+import {
+  ClockIcon,
+  GithubIcon,
+  LinkedinIcon,
+  MailIcon,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
 import ContactForm from "@/components/forms/contact-form";
 import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-	HoverCard,
-	HoverCardContent,
-	HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { Separator } from "@/components/ui/separator";
+import { GridPattern } from "@/components/ui/grid-pattern";
+import { BlurFade } from "@/components/ui/blur-fade";
+import { cn } from "@/lib/utils";
 import { CREATOR_INFO } from "@/lib/site-constants";
 
 export const metadata = {
-	title: "Contact",
-	description:
-		"Get in touch with Aditya Tripathi. Have questions, suggestions, or want to collaborate? Reach out for general inquiries, technical support, or career opportunities.",
-	keywords: [
-		"contact",
-		"get in touch",
-		"developer contact",
-		"collaboration",
-		"support",
-	],
-	openGraph: {
-		title: "Contact | DevEvent",
-		description:
-			"Get in touch for questions, suggestions, or collaboration opportunities.",
-		type: "website",
-		images: [
-			{
-				url: "/og-image.png",
-				width: 1200,
-				height: 630,
-				alt: "Contact | DevEvent",
-			},
-		],
-	},
+  title: "Contact",
+  description:
+    "Get in touch with Aditya Tripathi. Have questions, suggestions, or want to collaborate? Reach out for general inquiries, technical support, or career opportunities.",
+  keywords: [
+    "contact",
+    "get in touch",
+    "developer contact",
+    "collaboration",
+    "support",
+  ],
+  openGraph: {
+    title: "Contact | DevEvent",
+    description:
+      "Get in touch for questions, suggestions, or collaboration opportunities.",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Contact | DevEvent",
+      },
+    ],
+  },
 };
 
+const CONTACT_INFO = [
+  {
+    icon: MailIcon,
+    label: "Email",
+    value: CREATOR_INFO.email,
+    href: `mailto:${CREATOR_INFO.email}` as string | undefined,
+  },
+  {
+    icon: ClockIcon,
+    label: "Response Time",
+    value: "Within 24-48 hours",
+    href: undefined as string | undefined,
+  },
+] as const;
+
+const SOCIAL_LINKS = [
+  {
+    icon: LinkedinIcon,
+    label: "LinkedIn",
+    description: "Professional profile",
+    href: CREATOR_INFO.linkedin,
+  },
+  {
+    icon: GithubIcon,
+    label: "GitHub",
+    description: "View my projects",
+    href: CREATOR_INFO.github,
+  },
+] as const;
+
+const FAQ_ITEMS = [
+  {
+    question: "How quickly will I receive a response?",
+    answer:
+      "I typically respond to all inquiries within 24-48 hours during business days. For urgent matters, please indicate this in your message and I'll prioritize your request.",
+  },
+  {
+    question: "Can I suggest features for DevEvent?",
+    answer:
+      'Absolutely! I\'m always looking for ways to improve the platform. Use the contact form and select "Feature Request" as your reason for contacting. I review all suggestions and consider them for future updates.',
+  },
+  {
+    question: "Are you available for collaboration?",
+    answer:
+      "Yes! I'm open to collaboration opportunities, whether it's for projects, events, or partnerships. Reach out via the form or email to discuss your ideas.",
+  },
+  {
+    question: "How do I report a technical issue?",
+    answer:
+      'Please use the contact form and select "Bug Report" or "Technical Support". Include as much detail as possible about the issue: what you were doing, what you expected to happen, and steps to reproduce it.',
+  },
+] as const;
+
+const HELP_TOPICS = [
+  { title: "General Inquiries", description: "Questions about DevEvent" },
+  { title: "Technical Support", description: "Help with platform issues" },
+  { title: "Collaboration", description: "Projects and partnerships" },
+  { title: "Feature Requests", description: "Suggestions for improvements" },
+  { title: "Career Opportunities", description: "Job offers or internships" },
+  { title: "Feedback", description: "Share your thoughts" },
+] as const;
+
 export default function ContactPage() {
-	return (
-		<div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-4xl">
-			<div className="mb-8 sm:mb-10 md:mb-12">
-				<h1 className="font-bold tracking-tight mb-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
-					Get in Touch
-				</h1>
-				<p className="text-base sm:text-lg md:text-xl text-muted-foreground">
-					Have questions, suggestions, or want to collaborate? I&apos;d love to
-					hear from you!
-				</p>
-			</div>
+  return (
+    <div className="relative section-sm">
+      <GridPattern
+        width={40}
+        height={40}
+        className={cn(
+          "absolute inset-0 -z-10 opacity-30 [mask-image:radial-gradient(800px_circle_at_center,white,transparent)]",
+        )}
+      />
+      <div className="container-tight relative">
+        {/* Header */}
+        <BlurFade delay={0.05}>
+          <header className="mb-12 text-center max-w-2xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-4">
+              Get in Touch
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Have questions, suggestions, or want to collaborate? I&apos;d love
+              to hear from you.
+            </p>
+          </header>
+        </BlurFade>
 
-			<div className="grid md:grid-cols-3 gap-8 sm:gap-10 md:gap-12 mb-8 sm:mb-10 md:mb-12">
-				<div className="md:col-span-1 space-y-6 sm:space-y-8">
-					<section>
-						<h3 className="font-semibold mb-3 sm:mb-4 text-base sm:text-lg">
-							Contact
-						</h3>
-						<div className="space-y-3 sm:space-y-4">
-							<article className="flex items-start gap-3">
-								<div className="flex flex-col">
-									<div className="flex gap-2 items-center">
-										<MailIcon
-											size={18}
-											className="text-primary mt-0.5 shrink-0"
-										/>
-										<h6 className="font-semibold">Email</h6>
-									</div>
-									<Link
-										href={`mailto:${CREATOR_INFO.email}`}
-										className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-									>
-										{CREATOR_INFO.email}
-									</Link>
-								</div>
-							</article>
+        <div className="flex flex-col gap-12">
+          {/* Form */}
+          <BlurFade delay={0.1}>
+            <div className="w-full">
+              <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
+                <h2 className="text-xl font-semibold tracking-tight mb-6">
+                  Send a Message
+                </h2>
+                <ContactForm />
+              </div>
+            </div>
+          </BlurFade>
 
-							<article className="flex items-start gap-3">
-								<div className="flex flex-col">
-									<div className="flex gap-2 items-center">
-										<ClockIcon
-											size={18}
-											className="text-primary mt-0.5 shrink-0"
-										/>
-										<h6 className="font-semibold">Response Time</h6>
-									</div>
-									<p className="text-sm text-muted-foreground">
-										Within 24-48 hours
-									</p>
-								</div>
-							</article>
-						</div>
-					</section>
+          {/* Info Cards */}
+          <BlurFade delay={0.15}>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
+              {/* Social links */}
+              <div className="rounded-xl border border-border bg-card p-6">
+                <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
+                  Connect
+                </h2>
+                <div className="space-y-2">
+                  {SOCIAL_LINKS.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 -mx-1 rounded-lg hover:bg-muted/50 transition-colors group"
+                    >
+                      <div className="p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors">
+                        <link.icon className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{link.label}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {link.description}
+                        </p>
+                      </div>
+                      <ArrowRight className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
 
-					<Separator />
+              {/* Help topics */}
+              <div className="rounded-xl border border-border bg-card p-6">
+                <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
+                  I Can Help With
+                </h2>
+                <div className="space-y-3">
+                  {HELP_TOPICS.map((topic) => (
+                    <div key={topic.title} className="flex items-start gap-3">
+                      <div className="size-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium">{topic.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {topic.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </BlurFade>
+        </div>
 
-					<section>
-						<h3 className="font-semibold mb-3 sm:mb-4 text-base sm:text-lg">
-							Socials
-						</h3>
-						<div className="space-y-2 sm:space-y-3">
-							<HoverCard>
-								<HoverCardTrigger asChild>
-									<Link
-										href={CREATOR_INFO.linkedin}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors"
-									>
-										<LinkedinIcon className="size-5 text-primary" />
-										<div>
-											<h5 className="font-semibold">LinkedIn</h5>
-											<p className="text-xs text-muted-foreground">
-												Professional profile
-											</p>
-										</div>
-									</Link>
-								</HoverCardTrigger>
-								<HoverCardContent className="w-80" align="start">
-									<div className="space-y-2">
-										<h6 className="font-semibold">Connect on LinkedIn</h6>
-										<p className="text-sm text-muted-foreground">
-											View my professional experience, skills, and connect with
-											me on LinkedIn.
-										</p>
-									</div>
-								</HoverCardContent>
-							</HoverCard>
-
-							<HoverCard>
-								<HoverCardTrigger asChild>
-									<Link
-										href={CREATOR_INFO.github}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors"
-									>
-										<GithubIcon className="size-5 text-primary" />
-										<div>
-											<h5 className="font-semibold">GitHub</h5>
-											<p className="text-xs text-muted-foreground">
-												View my projects
-											</p>
-										</div>
-									</Link>
-								</HoverCardTrigger>
-								<HoverCardContent className="w-80" align="start">
-									<div className="space-y-2">
-										<h6 className="font-semibold">Check Out My GitHub</h6>
-										<p className="text-sm text-muted-foreground">
-											Explore my open-source projects, contributions, and code
-											repositories.
-										</p>
-									</div>
-								</HoverCardContent>
-							</HoverCard>
-						</div>
-					</section>
-				</div>
-
-				<section className="md:col-span-2">
-					<h3 className="font-bold tracking-tight mb-4 sm:mb-6 text-xl sm:text-2xl md:text-3xl">
-						Send a Message
-					</h3>
-					<ContactForm />
-				</section>
-			</div>
-
-			<Separator className="my-8 sm:my-10 md:my-12" />
-
-			<section className="space-y-5 sm:space-y-6 mb-8 sm:mb-10 md:mb-12">
-				<h2 className="font-bold tracking-tight text-2xl sm:text-3xl md:text-4xl">
-					Frequently Asked Questions
-				</h2>
-				<Accordion type="single" collapsible className="w-full">
-					<AccordionItem value="item-1">
-						<AccordionTrigger>
-							<h3 className="text-left">
-								How quickly will I receive a response?
-							</h3>
-						</AccordionTrigger>
-						<AccordionContent>
-							<p className="text-muted-foreground">
-								I typically respond to all inquiries within 24-48 hours during
-								business days. For urgent matters, please indicate this in your
-								message and I&apos;ll prioritize your request.
-							</p>
-						</AccordionContent>
-					</AccordionItem>
-
-					<AccordionItem value="item-2">
-						<AccordionTrigger>
-							<h3 className="text-left">
-								Can I suggest features for DevEvent?
-							</h3>
-						</AccordionTrigger>
-						<AccordionContent>
-							<p className="text-muted-foreground">
-								Absolutely! I&apos;m always looking for ways to improve the
-								platform. Use the contact form and select &quot;Feature
-								Request&quot; as your reason for contacting. I review all
-								suggestions and consider them for future updates.
-							</p>
-						</AccordionContent>
-					</AccordionItem>
-
-					<AccordionItem value="item-3">
-						<AccordionTrigger>
-							<h3 className="text-left">
-								Are you available for collaboration?
-							</h3>
-						</AccordionTrigger>
-						<AccordionContent>
-							<p className="text-muted-foreground">
-								Yes! I&apos;m open to collaboration opportunities, whether
-								it&apos;s for projects, events, or partnerships. Reach out via
-								the form or email to discuss your ideas. I&apos;m particularly
-								interested in projects that involve full-stack development and
-								modern web technologies.
-							</p>
-						</AccordionContent>
-					</AccordionItem>
-
-					<AccordionItem value="item-4">
-						<AccordionTrigger>
-							<h3 className="text-left">How do I report a technical issue?</h3>
-						</AccordionTrigger>
-						<AccordionContent>
-							<p className="text-muted-foreground">
-								Please use the contact form and select &quot;Bug Report&quot; or
-								&quot;Technical Support&quot;. Include as much detail as
-								possible about the issue: what you were doing, what you expected
-								to happen, what actually happened, and steps to reproduce it.
-								Screenshots are helpful too!
-							</p>
-						</AccordionContent>
-					</AccordionItem>
-
-					<AccordionItem value="item-5">
-						<AccordionTrigger>
-							<h3 className="text-left">Do you offer freelance services?</h3>
-						</AccordionTrigger>
-						<AccordionContent>
-							<p className="text-muted-foreground">
-								I&apos;m currently focused on my studies at Monash University,
-								but I&apos;m open to discussing part-time opportunities that
-								align with my schedule. Feel free to reach out with your project
-								details and timeline.
-							</p>
-						</AccordionContent>
-					</AccordionItem>
-
-					<AccordionItem value="item-6">
-						<AccordionTrigger>
-							<h3 className="text-left">
-								What&apos;s your tech stack expertise?
-							</h3>
-						</AccordionTrigger>
-						<AccordionContent>
-							<p className="text-muted-foreground">
-								I specialize in modern web development with Next.js, React,
-								TypeScript, and Node.js. I&apos;m experienced with MongoDB,
-								Cloudinary for media management, and building responsive UIs
-								with Tailwind CSS and shadcn/ui.
-							</p>
-						</AccordionContent>
-					</AccordionItem>
-				</Accordion>
-			</section>
-
-			<Separator className="my-8 sm:my-10 md:my-12" />
-
-			<section className="space-y-5 sm:space-y-6">
-				<h2 className="font-bold tracking-tight text-2xl sm:text-3xl md:text-4xl">
-					What I Can Help With
-				</h2>
-				<div className="grid sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
-					<article className="flex items-start gap-2">
-						<div className="size-1.5 rounded-full bg-primary mt-2 shrink-0" />
-						<div>
-							<h5 className="font-semibold">General Inquiries</h5>
-							<p className="text-muted-foreground">
-								Questions about DevEvent or my work
-							</p>
-						</div>
-					</article>
-					<article className="flex items-start gap-2">
-						<div className="size-1.5 rounded-full bg-primary mt-2 shrink-0" />
-						<div>
-							<h5 className="font-semibold">Technical Support</h5>
-							<p className="text-muted-foreground">
-								Help with platform issues or bugs
-							</p>
-						</div>
-					</article>
-					<article className="flex items-start gap-2">
-						<div className="size-1.5 rounded-full bg-primary mt-2 shrink-0" />
-						<div>
-							<h5 className="font-semibold">Collaboration Opportunities</h5>
-							<p className="text-muted-foreground">
-								Projects, partnerships, or joint ventures
-							</p>
-						</div>
-					</article>
-					<article className="flex items-start gap-2">
-						<div className="size-1.5 rounded-full bg-primary mt-2 shrink-0" />
-						<div>
-							<h5 className="font-semibold">Feature Requests</h5>
-							<p className="text-muted-foreground">
-								Suggestions for new features or improvements
-							</p>
-						</div>
-					</article>
-					<article className="flex items-start gap-2">
-						<div className="size-1.5 rounded-full bg-primary mt-2 shrink-0" />
-						<div>
-							<h5 className="font-semibold">Career Opportunities</h5>
-							<p className="text-muted-foreground">
-								Job offers or internship opportunities
-							</p>
-						</div>
-					</article>
-					<article className="flex items-start gap-2">
-						<div className="size-1.5 rounded-full bg-primary mt-2 shrink-0" />
-						<div>
-							<h5 className="font-semibold">Feedback</h5>
-							<p className="text-muted-foreground">
-								Share your thoughts and suggestions
-							</p>
-						</div>
-					</article>
-				</div>
-			</section>
-		</div>
-	);
+        {/* FAQ Section */}
+        <BlurFade delay={0.2}>
+          <section className="mt-20 pt-12 border-t border-border">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-semibold tracking-tight mb-2">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-muted-foreground">
+                Find quick answers to common questions
+              </p>
+            </div>
+            <div className="max-w-2xl mx-auto">
+              <Accordion type="single" collapsible className="w-full">
+                {FAQ_ITEMS.map((item, index) => (
+                  <AccordionItem key={index} value={`item-${index}`}>
+                    <AccordionTrigger className="text-left">
+                      {item.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground">
+                      {item.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </section>
+        </BlurFade>
+      </div>
+    </div>
+  );
 }
