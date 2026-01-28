@@ -72,6 +72,48 @@ export class BookingService {
 		});
 	}
 
+	async scanTicket(eventIdOrSlug: string, checkInDto: CheckInDto) {
+		const event = await this.eventService.getEventById(eventIdOrSlug);
+		if (!event) {
+			throw new NotFoundException('Event not found');
+		}
+
+		let decryptedData: any;
+		try {
+			const decrypted = decryptData(checkInDto.qrData);
+			decryptedData = JSON.parse(decrypted);
+		} catch {
+			throw new BadRequestException('Invalid QR code format');
+		}
+
+		if (decryptedData.eventId !== event._id.toString()) {
+			throw new BadRequestException('QR code does not match this event');
+		}
+
+		const booking = await this.bookingModel.findById(decryptedData.bookingId);
+		if (!booking) {
+			throw new NotFoundException('Booking not found');
+		}
+
+		if ((booking.eventId as any).toString() !== event._id.toString()) {
+			throw new BadRequestException('Booking does not match this event');
+		}
+
+		if (booking.email !== decryptedData.email) {
+			throw new BadRequestException('Email mismatch');
+		}
+
+		return {
+			id: booking._id.toString(),
+			name: booking.name,
+			email: booking.email,
+			eventTitle: event.title,
+			isAlreadyCheckedIn: !!booking.checkedInAt,
+			checkedInAt: booking.checkedInAt?.toISOString(),
+			bookedAt: booking.createdAt.toISOString(),
+		};
+	}
+
 	async checkIn(eventIdOrSlug: string, checkInDto: CheckInDto) {
 		const event = await this.eventService.getEventById(eventIdOrSlug);
 		if (!event) {
@@ -155,6 +197,32 @@ export class BookingService {
 			totalParticipants,
 			currentPage: pageNum,
 			totalPages: Math.ceil(totalParticipants / limitNum),
+		};
+	}
+
+	async getBookingById(eventIdOrSlug: string, bookingId: string) {
+		const event = await this.eventService.getEventById(eventIdOrSlug);
+		if (!event) {
+			throw new NotFoundException('Event not found');
+		}
+
+		const booking = await this.bookingModel.findOne({
+			_id: bookingId,
+			eventId: event._id,
+		});
+
+		if (!booking) {
+			throw new NotFoundException('Booking not found for this event');
+		}
+
+		return {
+			id: booking._id.toString(),
+			name: booking.name,
+			email: booking.email,
+			eventTitle: event.title,
+			isAlreadyCheckedIn: !!booking.checkedInAt,
+			checkedInAt: booking.checkedInAt?.toISOString(),
+			bookedAt: booking.createdAt.toISOString(),
 		};
 	}
 

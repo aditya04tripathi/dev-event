@@ -23,6 +23,7 @@ import { ResendQRCodeDto } from './dto/resend-qr.dto';
 import {
 	BookingResponseDto,
 	CheckInResponseDto,
+	ScanTicketResponseDto,
 	PaginatedParticipantResponseDto,
 } from './dto/booking-response.dto';
 import { JwtGuard, RolesGuard, OrganizerGuard } from 'src/utils/guards';
@@ -43,6 +44,18 @@ export class BookingController {
 		@Body() createBookingDto: CreateBookingDto,
 	) {
 		return await this.bookingService.createBooking(id, createBookingDto);
+	}
+
+	@Post('scan-ticket')
+	@UseGuards(JwtGuard, RolesGuard, OrganizerGuard)
+	@Roles(Role.ORGANIZER)
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Scan and verify ticket without checking in (ORGANIZER only)',
+	})
+	@ApiWrappedResponse(ScanTicketResponseDto, 200, 'Ticket verified')
+	async scanTicket(@Param('id') id: string, @Body() checkInDto: CheckInDto) {
+		return await this.bookingService.scanTicket(id, checkInDto);
 	}
 
 	@Post('checkin')
@@ -79,6 +92,20 @@ export class BookingController {
 			limit,
 			search,
 		});
+	}
+
+	@Get('booking/:bookingId')
+	@UseGuards(JwtGuard, OrganizerGuard)
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Get booking details by ID (ORGANIZER only)',
+	})
+	@ApiWrappedResponse(ScanTicketResponseDto, 200, 'Booking details')
+	async getBookingById(
+		@Param('id') id: string,
+		@Param('bookingId') bookingId: string,
+	) {
+		return await this.bookingService.getBookingById(id, bookingId);
 	}
 
 	@Delete('participants/:bookingId')

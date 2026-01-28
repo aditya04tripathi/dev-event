@@ -46,6 +46,29 @@ export class CheckInResponseDto {
 	checkedInAt: string;
 }
 
+export class ScanTicketResponseDto {
+	@ApiProperty({ example: '60d0fe4f5311236168a109ca' })
+	id: string;
+
+	@ApiProperty({ example: 'John Doe' })
+	name: string;
+
+	@ApiProperty({ example: 'john@example.com' })
+	email: string;
+
+	@ApiProperty({ example: 'Tech Conference 2024' })
+	eventTitle: string;
+
+	@ApiProperty({ example: true })
+	isAlreadyCheckedIn: boolean;
+
+	@ApiProperty({ required: false })
+	checkedInAt?: string;
+
+	@ApiProperty()
+	bookedAt: string;
+}
+
 export class ParticipantResponseDto {
 	@ApiProperty({ example: '60d0fe4f5311236168a109ca' })
 	_id: string;
