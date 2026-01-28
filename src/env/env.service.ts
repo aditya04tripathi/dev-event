@@ -52,7 +52,11 @@ export class EnvService {
 		return this.get<string>('MINIO_BUCKET_NAME');
 	}
 
-	get ApiUrl(): string {
-		return this.get<string>('API_BASE_URL');
+	get MinioRootUser(): string {
+		return this.get<string>('MINIO_ROOT_USER');
+	}
+
+	get MinioRootPassword(): string {
+		return this.get<string>('MINIO_ROOT_PASSWORD');
 	}
 }

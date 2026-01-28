@@ -9,7 +9,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
 		cors: {
-			origin: ['http://localhost:3001', 'http://localhost:3000'],
+			origin: ['https://dev-event.adityatripathi.dev'],
 		},
 	});
 
@@ -35,7 +35,7 @@ async function bootstrap() {
 	);
 
 	const envService = app.get(EnvService);
-	await app.listen(envService.Port);
+	await app.listen(envService.Port, '::');
 }
 
 bootstrap();

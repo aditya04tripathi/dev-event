@@ -8,12 +8,33 @@ export class MinioService implements OnModuleInit {
 	private logger = new Logger(MinioService.name);
 
 	constructor(private readonly envService: EnvService) {
+		let endpoint = this.envService.MinioEndpoint;
+		let useSSL = false;
+		if (endpoint.startsWith('http://')) {
+			endpoint = endpoint.replace('http://', '');
+			useSSL = false;
+		} else if (endpoint.startsWith('https://')) {
+			endpoint = endpoint.replace('https://', '');
+			useSSL = true;
+		}
+		let host = endpoint;
+		let port = 9000;
+		if (endpoint.includes(':')) {
+			const parts = endpoint.split(':');
+			host = parts[0];
+			port = parseInt(parts[1], 10);
+		}
+		// Prefer MINIO_ACCESS_KEY/SECRET_KEY, fallback to ROOT_USER/ROOT_PASSWORD
+		const accessKey =
+			this.envService.MinioAccessKey || this.envService.MinioRootUser;
+		const secretKey =
+			this.envService.MinioSecretKey || this.envService.MinioRootPassword;
 		this.minioClient = new Minio.Client({
-			endPoint: this.envService.MinioEndpoint,
-			port: 9000,
-			useSSL: false,
-			accessKey: this.envService.MinioAccessKey,
-			secretKey: this.envService.MinioSecretKey,
+			endPoint: host,
+			port,
+			useSSL,
+			accessKey,
+			secretKey,
 		});
 	}
 

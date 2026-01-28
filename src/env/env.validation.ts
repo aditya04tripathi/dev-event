@@ -1,5 +1,11 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
+import {
+	IsEnum,
+	IsNumber,
+	IsOptional,
+	IsString,
+	validateSync,
+} from 'class-validator';
 
 export enum Environment {
 	Development = 'development',
@@ -23,9 +29,11 @@ export class EnvironmentVariables {
 	@IsString()
 	MINIO_ENDPOINT: string;
 
+	@IsOptional()
 	@IsString()
 	MINIO_ACCESS_KEY: string;
 
+	@IsOptional()
 	@IsString()
 	MINIO_SECRET_KEY: string;
 
@@ -33,7 +41,10 @@ export class EnvironmentVariables {
 	MINIO_BUCKET_NAME: string;
 
 	@IsString()
-	API_BASE_URL: string;
+	MINIO_ROOT_USER: string;
+
+	@IsString()
+	MINIO_ROOT_PASSWORD: string;
 }
 
 export function validate(config: Record<string, unknown>) {
