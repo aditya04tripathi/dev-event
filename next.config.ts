@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
         hostname: "127.0.0.1",
         port: "9000",
       },
+      {
+        protocol: "http",
+        hostname: "bucket.railway.internal",
+        port: "9000",
+        pathname: "/dev-event-bucket/**",
+      },
     ],
   },
 
