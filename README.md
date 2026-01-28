@@ -105,7 +105,7 @@ EMAIL_PASS=your-app-password
 QR_SALT=your-secret-salt
 
 # Site URL (for API client)
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:6474
 ```
 
 4. Run the development server:
@@ -114,7 +114,7 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 pnpm dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. Open [http://localhost:8563](http://localhost:8563) in your browser.
 
 ## Usage
 

@@ -14,11 +14,16 @@ export function FeaturedEvents() {
   const { data } = useSuspenseQuery({
     queryKey: queryKeys.events.list({ limit: 6 }),
     queryFn: async () => {
-      const { data } = await api.get<ApiResponse<PaginatedEventResponse>>(
-        "/event",
-        { params: { limit: 6 } },
-      );
-      return data.data;
+      try {
+        const { data } = await api.get<ApiResponse<PaginatedEventResponse>>(
+          "/event",
+          { params: { limit: 6 } },
+        );
+        return data.data;
+      } catch (e) {
+        // Return fallback data if API fails (for build/prerender)
+        return { events: [] };
+      }
     },
   });
 
