@@ -3,14 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ==========================================================================
-   DESIGN SYSTEM TOKENS - DevEvent Premium UI
-   ========================================================================== */
-
 @theme inline {
-  /* -------------------------------------------------------------------------
-     COLOR TOKENS
-     ------------------------------------------------------------------------- */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -42,13 +35,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
 
-  /* -------------------------------------------------------------------------
-     TYPOGRAPHY TOKENS
-     ------------------------------------------------------------------------- */
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 
-  /* Font sizes - Using modular scale (1.25 ratio) */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -61,7 +50,6 @@
   --text-6xl: 3.75rem;
   --text-7xl: 4.5rem;
 
-  /* Line heights */
   --leading-none: 1;
   --leading-tight: 1.15;
   --leading-snug: 1.3;
@@ -69,15 +57,11 @@
   --leading-relaxed: 1.625;
   --leading-loose: 2;
 
-  /* Letter spacing */
   --tracking-tighter: -0.05em;
   --tracking-tight: -0.025em;
   --tracking-normal: 0;
   --tracking-wide: 0.025em;
 
-  /* -------------------------------------------------------------------------
-     SPACING TOKENS - 4px/8px grid system
-     ------------------------------------------------------------------------- */
   --space-0: 0;
   --space-0-5: 0.125rem;
   --space-1: 0.25rem;
@@ -104,7 +88,6 @@
   --space-36: 9rem;
   --space-40: 10rem;
 
-  /* Semantic spacing */
   --spacing-section: 6rem;
   --spacing-section-sm: 4rem;
   --spacing-content: 3rem;
@@ -114,9 +97,6 @@
   --spacing-compact: 0.75rem;
   --spacing-minimal: 0.5rem;
 
-  /* -------------------------------------------------------------------------
-     BORDER RADIUS TOKENS
-     ------------------------------------------------------------------------- */
   --radius: 0.5rem;
   --radius-none: 0;
   --radius-sm: 0.25rem;
@@ -127,9 +107,6 @@
   --radius-3xl: 1.5rem;
   --radius-full: 9999px;
 
-  /* -------------------------------------------------------------------------
-     SHADOW TOKENS
-     ------------------------------------------------------------------------- */
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -140,9 +117,6 @@
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
 
-  /* -------------------------------------------------------------------------
-     Z-INDEX LAYERS
-     ------------------------------------------------------------------------- */
   --z-dropdown: 50;
   --z-sticky: 100;
   --z-fixed: 200;
@@ -152,9 +126,6 @@
   --z-tooltip: 600;
   --z-toast: 700;
 
-  /* -------------------------------------------------------------------------
-     TRANSITION TOKENS
-     ------------------------------------------------------------------------- */
   --duration-instant: 50ms;
   --duration-fast: 100ms;
   --duration-normal: 150ms;
@@ -167,9 +138,6 @@
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-  /* -------------------------------------------------------------------------
-     ANIMATION KEYFRAMES
-     ------------------------------------------------------------------------- */
   --animate-shiny-text: shiny-text 8s infinite;
   @keyframes shiny-text {
     0%,
@@ -313,41 +281,28 @@
   }
 }
 
-/* ==========================================================================
-   COLOR SCHEME - Light Mode
-   Premium neutral palette with purposeful accent
-   ========================================================================== */
-
 :root {
-  /* Core colors - Zinc/Neutral base */
   --background: hsl(0 0% 100%);
   --foreground: hsl(240 10% 3.9%);
 
-  /* Card surfaces */
   --card: hsl(0 0% 100%);
   --card-foreground: hsl(240 10% 3.9%);
 
-  /* Popover surfaces */
   --popover: hsl(0 0% 100%);
   --popover-foreground: hsl(240 10% 3.9%);
 
-  /* Primary - Warm amber/orange accent */
   --primary: hsl(24 94% 50%);
   --primary-foreground: hsl(0 0% 100%);
 
-  /* Secondary - Subtle neutral */
   --secondary: hsl(240 4.8% 95.9%);
   --secondary-foreground: hsl(240 5.9% 10%);
 
-  /* Muted elements */
   --muted: hsl(240 4.8% 95.9%);
   --muted-foreground: hsl(240 3.8% 46.1%);
 
-  /* Accent for hover states */
   --accent: hsl(240 4.8% 95.9%);
   --accent-foreground: hsl(240 5.9% 10%);
 
-  /* Semantic colors */
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(0 0% 100%);
   --success: hsl(142 76% 36%);
@@ -355,23 +310,19 @@
   --warning: hsl(38 92% 50%);
   --warning-foreground: hsl(0 0% 0%);
 
-  /* Borders and inputs */
   --border: hsl(240 5.9% 90%);
   --input: hsl(240 5.9% 90%);
   --ring: hsl(24 94% 50%);
 
-  /* Surface variants */
   --surface: hsl(240 4.8% 97.5%);
   --surface-foreground: hsl(240 10% 3.9%);
 
-  /* Sidebar (Organizer dashboard) */
   --sidebar: hsl(0 0% 100%);
   --sidebar-foreground: hsl(240 5.3% 26.1%);
   --sidebar-accent: hsl(240 4.8% 95.9%);
   --sidebar-accent-foreground: hsl(240 5.9% 10%);
   --sidebar-border: hsl(240 5.9% 90%);
 
-  /* Typography */
   --font-sans:
     "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -379,11 +330,6 @@
     "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
     Consolas, monospace;
 }
-
-/* ==========================================================================
-   COLOR SCHEME - Dark Mode
-   Deep neutral with warm accent
-   ========================================================================== */
 
 .dark {
   --background: hsl(240 10% 3.9%);
@@ -428,10 +374,6 @@
   --sidebar-border: hsl(240 3.7% 15.9%);
 }
 
-/* ==========================================================================
-   BASE LAYER - Global Resets & Typography
-   ========================================================================== */
-
 @layer base {
   *,
   *::before,
@@ -446,7 +388,6 @@
     scroll-behavior: smooth;
   }
 
-  /* Respect reduced motion preferences */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -469,7 +410,6 @@
     line-height: 1.5;
   }
 
-  /* Typography hierarchy */
   h1,
   h2,
   h3,
@@ -506,7 +446,7 @@
   }
 
   h6 {
-    @apply text-base lg:text-lg font-medium;
+    @apply text-base font-medium lg:text-lg;
     line-height: 1.4;
   }
 
@@ -516,17 +456,14 @@
     line-height: 1.625;
   }
 
-  /* Focus states - accessible and consistent */
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 
-  /* Selection styling */
   ::selection {
     @apply bg-primary/20 text-foreground;
   }
 
-  /* Scrollbar styling */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -537,7 +474,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-border rounded-full;
+    @apply rounded-full bg-border;
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -545,33 +482,23 @@
   }
 }
 
-/* ==========================================================================
-   UTILITY LAYER - Custom Utilities
-   ========================================================================== */
-
 @layer utilities {
-  /* -------------------------------------------------------------------------
-     Container Utilities
-     ------------------------------------------------------------------------- */
   .container-tight {
-    @apply max-w-3xl mx-auto px-4 sm:px-6;
+    @apply max-w-3xl px-4 mx-auto sm:px-6;
   }
 
   .container-default {
-    @apply max-w-5xl mx-auto px-4 sm:px-6;
+    @apply max-w-5xl px-4 mx-auto sm:px-6;
   }
 
   .container-wide {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply px-4 mx-auto max-w-7xl sm:px-6 lg:px-8;
   }
 
   .container-full {
     @apply w-full px-4 sm:px-6 lg:px-8;
   }
 
-  /* -------------------------------------------------------------------------
-     Section Spacing
-     ------------------------------------------------------------------------- */
   .section {
     @apply py-16 md:py-20 lg:py-24;
   }
@@ -584,26 +511,23 @@
     @apply py-20 md:py-28 lg:py-32;
   }
 
-  /* -------------------------------------------------------------------------
-     Typography Utilities
-     ------------------------------------------------------------------------- */
   .text-display {
-    @apply text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tighter;
+    @apply text-5xl font-semibold tracking-tighter sm:text-6xl lg:text-7xl;
     line-height: 1.05;
   }
 
   .text-headline {
-    @apply text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight;
+    @apply text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl;
     line-height: 1.1;
   }
 
   .text-title {
-    @apply text-2xl sm:text-3xl font-semibold tracking-tight;
+    @apply text-2xl font-semibold tracking-tight sm:text-3xl;
     line-height: 1.2;
   }
 
   .text-subtitle {
-    @apply text-xl sm:text-2xl font-medium tracking-tight;
+    @apply text-xl font-medium tracking-tight sm:text-2xl;
     line-height: 1.25;
   }
 
@@ -628,7 +552,7 @@
   }
 
   .text-overline {
-    @apply text-xs font-medium uppercase tracking-wider text-muted-foreground;
+    @apply text-xs font-medium tracking-wider uppercase text-muted-foreground;
   }
 
   .text-balance {
@@ -639,40 +563,31 @@
     text-wrap: pretty;
   }
 
-  /* -------------------------------------------------------------------------
-     Surface Utilities
-     ------------------------------------------------------------------------- */
   .surface {
-    @apply bg-surface border border-border;
+    @apply border bg-surface border-border;
   }
 
   .surface-elevated {
-    @apply bg-card border border-border shadow-sm;
+    @apply border shadow-sm bg-card border-border;
   }
 
   .surface-inset {
-    @apply bg-muted/50 border border-border/50;
+    @apply border bg-muted/50 border-border/50;
   }
 
   .surface-interactive {
-    @apply bg-card border border-border shadow-sm transition-all duration-150;
+    @apply transition-all duration-150 border shadow-sm bg-card border-border;
     @apply hover:shadow-md hover:border-border/80;
   }
 
-  /* -------------------------------------------------------------------------
-     Divider Utilities
-     ------------------------------------------------------------------------- */
   .divider {
-    @apply h-px w-full bg-border;
+    @apply w-full h-px bg-border;
   }
 
   .divider-vertical {
     @apply w-px h-full bg-border;
   }
 
-  /* -------------------------------------------------------------------------
-     Backdrop Utilities
-     ------------------------------------------------------------------------- */
   .backdrop-blur-subtle {
     @apply backdrop-blur-sm bg-background/80;
   }
@@ -681,9 +596,6 @@
     @apply backdrop-blur-md bg-background/90;
   }
 
-  /* -------------------------------------------------------------------------
-     Grid Utilities
-     ------------------------------------------------------------------------- */
   .grid-auto-fill-sm {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
@@ -696,23 +608,20 @@
     grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   }
 
-  /* -------------------------------------------------------------------------
-     Prose Styles for Content Pages
-     ------------------------------------------------------------------------- */
   .prose {
-    @apply text-foreground/90 leading-relaxed max-w-none;
+    @apply leading-relaxed text-foreground/90 max-w-none;
   }
 
   .prose h2 {
-    @apply text-2xl font-semibold tracking-tight mt-12 mb-4 first:mt-0;
+    @apply mt-12 mb-4 text-2xl font-semibold tracking-tight first:mt-0;
   }
 
   .prose h3 {
-    @apply text-xl font-semibold tracking-tight mt-10 mb-3;
+    @apply mt-10 mb-3 text-xl font-semibold tracking-tight;
   }
 
   .prose h4 {
-    @apply text-lg font-medium tracking-tight mt-8 mb-3;
+    @apply mt-8 mb-3 text-lg font-medium tracking-tight;
   }
 
   .prose p {
@@ -725,11 +634,11 @@
   }
 
   .prose ul {
-    @apply list-disc list-outside ml-5;
+    @apply ml-5 list-disc list-outside;
   }
 
   .prose ol {
-    @apply list-decimal list-outside ml-5;
+    @apply ml-5 list-decimal list-outside;
   }
 
   .prose li {
@@ -741,11 +650,11 @@
   }
 
   .prose a {
-    @apply text-primary underline underline-offset-4 hover:text-primary/80 transition-colors;
+    @apply underline transition-colors text-primary underline-offset-4 hover:text-primary/80;
   }
 
   .prose blockquote {
-    @apply border-l-4 border-primary/30 pl-4 italic text-muted-foreground;
+    @apply pl-4 italic border-l-4 border-primary/30 text-muted-foreground;
   }
 
   .prose code {
@@ -753,16 +662,13 @@
   }
 
   .prose pre {
-    @apply font-mono text-sm bg-muted p-4 rounded-lg overflow-x-auto;
+    @apply p-4 overflow-x-auto font-mono text-sm rounded-lg bg-muted;
   }
 
   .prose pre code {
-    @apply bg-transparent p-0;
+    @apply p-0 bg-transparent;
   }
 
-  /* -------------------------------------------------------------------------
-     Animation Utilities
-     ------------------------------------------------------------------------- */
   .animate-in {
     animation:
       fade-in 0.3s var(--ease-out),
@@ -773,16 +679,10 @@
     animation: fade-out 0.2s var(--ease-in);
   }
 
-  /* -------------------------------------------------------------------------
-     Skeleton Loader
-     ------------------------------------------------------------------------- */
   .skeleton {
-    @apply bg-muted animate-pulse rounded;
+    @apply rounded bg-muted animate-pulse;
   }
 
-  /* -------------------------------------------------------------------------
-     Hide Scrollbar (when needed)
-     ------------------------------------------------------------------------- */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -792,9 +692,6 @@
     display: none;
   }
 
-  /* -------------------------------------------------------------------------
-     Focus Ring Utilities
-     ------------------------------------------------------------------------- */
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
@@ -804,12 +701,7 @@
   }
 }
 
-/* ==========================================================================
-   COMPONENT LAYER - Base Component Overrides
-   ========================================================================== */
-
 @layer components {
-  /* Base border and outline for all elements */
   * {
     @apply border-border outline-ring/50;
   }
