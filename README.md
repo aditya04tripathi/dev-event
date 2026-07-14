@@ -56,12 +56,28 @@ pnpm docker:up
 # Console: http://localhost:49155
 ```
 
-Production pull-only (VPS):
+Production pull-only (VPS + Cloudflare Tunnel):
 
 ```bash
+cp .env.production.example .env
 pnpm docker:prod:pull
 pnpm docker:prod:up
 ```
+
+Cloudflare Tunnel routes (cloudflared on the VPS):
+
+| Public URL | Local service |
+|------------|---------------|
+| https://devevent.adityatripathi.dev | http://127.0.0.1:49153 |
+| https://api.devevent.adityatripathi.dev | http://127.0.0.1:49152 |
+| https://minio.devevent.adityatripathi.dev | http://127.0.0.1:49154 |
+
+Set GitHub Actions repository variables (or rely on workflow defaults):
+
+- `NEXT_PUBLIC_API_URL` = `https://api.devevent.adityatripathi.dev`
+- `NEXT_PUBLIC_MINIO_PUBLIC_URL` = `https://minio.devevent.adityatripathi.dev`
+
+Rebuild the web image after changing those variables, then pull on the VPS.
 
 Images:
 
