@@ -5,18 +5,18 @@ function minioRemotePatterns(): NonNullable<
   NextConfig["images"]
 >["remotePatterns"] {
   const publicUrl =
-    process.env.NEXT_PUBLIC_MINIO_PUBLIC_URL || "http://127.0.0.1:9000";
+    process.env.NEXT_PUBLIC_MINIO_PUBLIC_URL || "http://127.0.0.1:49154";
   const patterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
     {
       protocol: "http",
       hostname: "127.0.0.1",
-      port: "9000",
+      port: "49154",
       pathname: "/**",
     },
     {
       protocol: "http",
       hostname: "localhost",
-      port: "9000",
+      port: "49154",
       pathname: "/**",
     },
   ];
