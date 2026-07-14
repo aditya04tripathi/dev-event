@@ -101,7 +101,7 @@ export const PROJECTS = [
 			"Next.js",
 			"TypeScript",
 			"MongoDB",
-			"Cloudinary",
+			"MinIO",
 			"Tailwind CSS",
 			"shadcn/ui",
 		],

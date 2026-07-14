@@ -14,7 +14,7 @@ The system encompasses a frontend web application built with Next.js 16 and a ba
 
 ### 2.1 System Context
 
-DevEvent operates as a standalone web application that interfaces with a MongoDB database for persistence, Cloudinary for media asset management, and SMTP services for transactional emails.
+DevEvent operates as a standalone web application that interfaces with a MongoDB database for persistence, MinIO (S3-compatible) for media asset management, and SMTP services for transactional emails.
 
 ### 2.2 User Types
 
@@ -27,7 +27,7 @@ DevEvent operates as a standalone web application that interfaces with a MongoDB
 - **Client**: Modern web browsers (Chrome, Firefox, Safari, Edge) on desktop, tablet, and mobile devices.
 - **Server**: Node.js 18+ runtime.
 - **Database**: MongoDB (v6.0+).
-- **External Services**: Cloudinary (Media), Generalized SMTP (Email).
+- **External Services**: MinIO / S3-compatible object storage (Media), Generalized SMTP (Email).
 
 ## 3. Functional Requirements
 
@@ -51,7 +51,7 @@ DevEvent operates as a standalone web application that interfaces with a MongoDB
 
 **FR-11**: The system shall allow authenticated organizers to create new events via a form.
 **FR-12**: The system shall validate all required event fields (title, date, location, description, image) before submission.
-**FR-13**: The system shall upload event cover images to Cloudinary and store the returned URL.
+**FR-13**: The system shall upload event cover images to MinIO (S3-compatible storage) and store the returned URL.
 **FR-14**: The system shall generate a URL-friendly slug from the event title.
 
 ### 3.4 API
@@ -109,7 +109,7 @@ DevEvent operates as a standalone web application that interfaces with a MongoDB
 
 **A-1**: Users have a valid email address for receiving tickets.
 **A-2**: The MongoDB instance supports transaction-like guarantees for booking integrity.
-**D-1**: Availability of Cloudinary API for image processing.
+**D-1**: Availability of a MinIO (or S3-compatible) endpoint for image storage.
 
 ## 8. Acceptance Criteria
 

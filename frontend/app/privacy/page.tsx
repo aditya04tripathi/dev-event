@@ -118,7 +118,7 @@ export default function PrivacyPage() {
             <h2>Third-Party Services</h2>
             <p>We may employ third-party companies and services for:</p>
             <ul>
-              <li>Image hosting and CDN (Cloudinary)</li>
+              <li>Image hosting via self-hosted object storage (MinIO / S3)</li>
               <li>Database services (MongoDB)</li>
               <li>Analytics and performance monitoring</li>
             </ul>

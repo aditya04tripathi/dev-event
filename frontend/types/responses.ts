@@ -1,41 +1,41 @@
-import type { ApiResponse, Booking, Event, Participant, User } from "./";
+import type { ApiResponse, Booking, Event, Participant, User } from ".";
 
 type SignUpResponse = {
-	token: string;
-	user: User;
+  token: string;
+  user: User;
 };
 
 type SignInResponse = {
-	token: string;
-	user: User;
+  token: string;
+  user: User;
 };
 
 type UserAllResponse = {
-	user: User[];
+  user: User[];
 };
 
 type EventResponse = {
-	events: Event[];
-	totalEvents: number;
-	totalPages: number;
-	currentPage: number;
-	nextPage: number | null;
-	prevPage: number | null;
+  events: Event[];
+  totalEvents: number;
+  totalPages: number;
+  currentPage: number;
+  nextPage: number | null;
+  prevPage: number | null;
 };
 
 type BookingResponse = {
-	id: string;
-	name: string;
-	email: string;
-	eventTitle: string;
-	checkedInAt: string;
+  id: string;
+  name: string;
+  email: string;
+  eventTitle: string;
+  checkedInAt: string;
 };
 
 type BookingParticipantsResponse = {
-	participants: Participant[];
-	totalParticipants: number;
-	currentPage: number;
-	totalPages: number;
+  participants: Participant[];
+  totalParticipants: number;
+  currentPage: number;
+  totalPages: number;
 };
 
 export type ApiSignUpResponse = ApiResponse<SignUpResponse>;
@@ -54,15 +54,15 @@ export type ApiGetOrganizerEventsResponse = ApiResponse<EventResponse>;
 export type ApiPostBookingResponse = ApiResponse<Booking>;
 export type ApiPostBookingCheckInResponse = ApiResponse<BookingResponse>;
 export type ApiGetBookingParticipantsResponse =
-	ApiResponse<BookingParticipantsResponse>;
+  ApiResponse<BookingParticipantsResponse>;
 export type ApiDeleteBookingResponse = ApiResponse<string>;
 export type ApiPostBookingResendQr = ApiResponse<{
-	_id: string;
-	eventId: string;
-	name: string;
-	email: string;
-	qrCode: string;
-	checkedInAt: string;
-	createdAt: string;
-	updatedAt: string;
+  _id: string;
+  eventId: string;
+  name: string;
+  email: string;
+  qrCode: string;
+  checkedInAt: string;
+  createdAt: string;
+  updatedAt: string;
 }>;
