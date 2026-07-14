@@ -68,7 +68,7 @@ The application follows a modular Next.js App Router structure:
 
     ```env
     NEXT_PUBLIC_API_URL=http://localhost:3000
-    NEXT_PUBLIC_MINIO_PUBLIC_URL=http://127.0.0.1:9000
+    NEXT_PUBLIC_MINIO_PUBLIC_URL=http://127.0.0.1:49154
     MINIO_ROOT_USER=admin
     MINIO_ROOT_PASSWORD=password123
     ```
@@ -79,7 +79,7 @@ The application follows a modular Next.js App Router structure:
     docker compose up minio -d
     ```
 
-    Console: [http://localhost:9001](http://localhost:9001) (admin / password123)
+    Console: [http://localhost:49155](http://localhost:49155) (admin / password123)
 
 5.  **Run Development Server**
 
@@ -95,7 +95,10 @@ Local build + MinIO:
 
 ```bash
 pnpm docker:up
-# http://localhost:49153
+# Web:    http://localhost:49153
+# API:    http://localhost:49152/api
+# MinIO:  http://127.0.0.1:49154
+# Console: http://localhost:49155
 ```
 
 Production (pull GHCR image only — never build on the VPS):

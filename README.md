@@ -41,8 +41,8 @@ pnpm dev:backend
 
 - Frontend: http://localhost:3001
 - API / Swagger: http://localhost:3000/api
-- MinIO API: http://127.0.0.1:9000
-- MinIO Console: http://localhost:9001
+- MinIO API: http://127.0.0.1:49154
+- MinIO Console: http://localhost:49155
 
 ## Docker
 
@@ -50,7 +50,10 @@ Local build (web + api + mongodb + minio):
 
 ```bash
 pnpm docker:up
-# http://localhost:49153
+# Web:    http://localhost:49153
+# API:    http://localhost:49152/api
+# MinIO:  http://127.0.0.1:49154
+# Console: http://localhost:49155
 ```
 
 Production pull-only (VPS):
