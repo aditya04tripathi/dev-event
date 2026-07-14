@@ -21,7 +21,7 @@ function minioRemotePatterns(): NonNullable<
     },
     {
       protocol: "https",
-      hostname: "minio.devevent.adityatripathi.dev",
+      hostname: "devevent-minio.adityatripathi.dev",
       pathname: "/**",
     },
   ];
