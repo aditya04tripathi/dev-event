@@ -67,7 +67,7 @@ export class EnvService {
 	get CorsOrigins(): string[] {
 		const raw = this.get<string>('CORS_ORIGINS');
 		if (!raw) {
-			return ['https://dev-event.adityatripathi.dev'];
+			return ['https://devevent.adityatripathi.dev'];
 		}
 		return raw
 			.split(',')
