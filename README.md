@@ -69,13 +69,13 @@ Cloudflare Tunnel routes (cloudflared on the VPS):
 | Public URL | Local service |
 |------------|---------------|
 | https://devevent.adityatripathi.dev | http://127.0.0.1:49153 |
-| https://api.devevent.adityatripathi.dev | http://127.0.0.1:49152 |
-| https://minio.devevent.adityatripathi.dev | http://127.0.0.1:49154 |
+| https://devevent-api.adityatripathi.dev | http://127.0.0.1:49152 |
+| https://devevent-minio.adityatripathi.dev | http://127.0.0.1:49154 |
 
 Set GitHub Actions repository variables (or rely on workflow defaults):
 
-- `NEXT_PUBLIC_API_URL` = `https://api.devevent.adityatripathi.dev`
-- `NEXT_PUBLIC_MINIO_PUBLIC_URL` = `https://minio.devevent.adityatripathi.dev`
+- `NEXT_PUBLIC_API_URL` = `https://devevent-api.adityatripathi.dev`
+- `NEXT_PUBLIC_MINIO_PUBLIC_URL` = `https://devevent-minio.adityatripathi.dev`
 
 Rebuild the web image after changing those variables, then pull on the VPS.
 
