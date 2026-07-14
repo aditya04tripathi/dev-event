@@ -19,3 +19,4 @@ pnpm-debug.log*
 frontend/next-env.d.ts
 .deploy-api-out
 .cursor/
+!.env.production.example
