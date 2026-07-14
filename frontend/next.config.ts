@@ -19,6 +19,11 @@ function minioRemotePatterns(): NonNullable<
       port: "49154",
       pathname: "/**",
     },
+    {
+      protocol: "https",
+      hostname: "minio.devevent.adityatripathi.dev",
+      pathname: "/**",
+    },
   ];
 
   try {
