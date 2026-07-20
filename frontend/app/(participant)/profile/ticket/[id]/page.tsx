@@ -21,6 +21,8 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { toast } from "sonner";
+import { downloadTicketIcsAction } from "@/lib/actions/downloads";
+import { downloadBase64File } from "@/lib/download-client";
 
 export default function TicketPage() {
   const params = useParams();
@@ -33,17 +35,8 @@ export default function TicketPage() {
 
   const handleDownloadIcs = async () => {
     try {
-      const { api } = require("@/lib/axios");
-      const response = await api.get(`/bookings/ticket/${id}/ics`, {
-        responseType: "blob",
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `event-booking.ics`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const file = await downloadTicketIcsAction(id);
+      downloadBase64File(file.base64, file.filename, file.contentType);
       toast.success("Calendar file downloaded!");
     } catch (error) {
       toast.error("Failed to download calendar file");

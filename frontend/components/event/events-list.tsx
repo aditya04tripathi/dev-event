@@ -3,9 +3,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Calendar, SearchX } from "lucide-react";
 import Link from "next/link";
-import { api } from "@/lib/axios";
+import { listEventsAction } from "@/lib/actions/events";
 import { queryKeys } from "@/hooks/api/query-keys";
-import type { ApiResponse, PaginatedEventResponse } from "@/types/api-types";
 import EventCard from "@/components/event/event-card";
 import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
@@ -28,18 +27,12 @@ export function EventsList({
     page,
     search,
     mode: mode !== "all" ? mode : undefined,
-    tags: selectedTags.length > 0 ? selectedTags.join(",") : undefined,
+    tags: selectedTags.length > 0 ? selectedTags : undefined,
   };
 
   const { data } = useSuspenseQuery({
     queryKey: queryKeys.events.list(params),
-    queryFn: async () => {
-      const { data } = await api.get<ApiResponse<PaginatedEventResponse>>(
-        "/event",
-        { params },
-      );
-      return data.data;
-    },
+    queryFn: () => listEventsAction(params),
   });
 
   const { events, totalEvents, totalPages, currentPage, nextPage, prevPage } =

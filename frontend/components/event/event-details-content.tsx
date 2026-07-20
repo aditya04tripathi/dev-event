@@ -14,9 +14,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { api } from "@/lib/axios";
+import { getEventAction } from "@/lib/actions/events";
 import { queryKeys } from "@/hooks/api/query-keys";
-import type { ApiResponse, EventResponse } from "@/types/api-types";
 import BookEvent from "@/components/event/book-event";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -51,12 +50,7 @@ function getModeColor(mode: string) {
 export function EventDetailsContent({ slug }: { slug: string }) {
   const { data: event } = useSuspenseQuery({
     queryKey: queryKeys.events.detail(slug),
-    queryFn: async () => {
-      const { data } = await api.get<ApiResponse<EventResponse>>(
-        `/event/${slug}`,
-      );
-      return data.data;
-    },
+    queryFn: () => getEventAction(slug),
   });
 
   const {

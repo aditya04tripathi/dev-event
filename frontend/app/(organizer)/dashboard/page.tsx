@@ -77,7 +77,7 @@ export default function OrganizerDashboard() {
         },
         onError: (error: any) => {
           toast.error(
-            error.response?.data?.message || "Failed to delete event",
+            error instanceof Error ? error.message : "Failed to delete event",
           );
         },
       });

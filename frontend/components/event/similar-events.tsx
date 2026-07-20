@@ -2,12 +2,7 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { CalendarX } from "lucide-react";
-import { api } from "@/lib/axios";
-import type {
-  ApiResponse,
-  EventResponse,
-  PaginatedEventResponse,
-} from "@/types/api-types";
+import { getSimilarEventsAction } from "@/lib/actions/events";
 import EventCard from "@/components/event/event-card";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
@@ -20,19 +15,7 @@ interface SimilarEventsProps {
 export function SimilarEvents({ slug }: SimilarEventsProps) {
   const { data: similarEvents } = useSuspenseQuery({
     queryKey: ["events", "similar", slug],
-    queryFn: async () => {
-      // First get the event to get its tags
-      const { data: eventRes } = await api.get<ApiResponse<EventResponse>>(
-        `/event/${slug}`,
-      );
-      if (!eventRes.data) return [];
-
-      const { data: listRes } = await api.get<
-        ApiResponse<PaginatedEventResponse>
-      >("/event", { params: { tags: eventRes.data.tags.join(","), limit: 7 } });
-
-      return listRes.data.events.filter((e) => e.slug !== slug).slice(0, 6);
-    },
+    queryFn: () => getSimilarEventsAction(slug, 6),
   });
 
   if (similarEvents.length === 0) {

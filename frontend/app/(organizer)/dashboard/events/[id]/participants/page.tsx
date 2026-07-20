@@ -32,6 +32,8 @@ import { BlurFade } from "@/components/ui/blur-fade";
 import { useBookingContext } from "@/context/booking-context";
 import { useEventContext } from "@/context/event-context";
 import Link from "next/link";
+import { exportParticipantsCsvAction } from "@/lib/actions/downloads";
+import { downloadBase64File } from "@/lib/download-client";
 
 export default function ParticipantsPage() {
   const params = useParams();
@@ -55,7 +57,9 @@ export default function ParticipantsPage() {
           },
           onError: (error: any) => {
             toast.error(
-              error.response?.data?.message || "Failed to remove participant",
+              error instanceof Error
+                ? error.message
+                : "Failed to remove participant",
             );
           },
         },
@@ -72,7 +76,7 @@ export default function ParticipantsPage() {
         },
         onError: (error: any) => {
           toast.error(
-            error.response?.data?.message || "Failed to resend QR code",
+            error instanceof Error ? error.message : "Failed to resend QR code",
           );
         },
       },
@@ -81,19 +85,10 @@ export default function ParticipantsPage() {
 
   const handleExport = async () => {
     try {
-      const { api } = require("@/lib/axios");
-      const response = await api.get(`/event/${eventId}/export-csv`, {
-        responseType: "blob",
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `participants-${eventId}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const file = await exportParticipantsCsvAction(eventId);
+      downloadBase64File(file.base64, file.filename, file.contentType);
       toast.success("CSV exported successfully");
-    } catch (error) {
+    } catch {
       toast.error("Failed to export CSV");
     }
   };

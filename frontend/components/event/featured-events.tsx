@@ -3,9 +3,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
-import { api } from "@/lib/axios";
+import { getFeaturedEvents } from "@/lib/actions/events";
 import { queryKeys } from "@/hooks/api/query-keys";
-import type { ApiResponse, PaginatedEventResponse } from "@/types/api-types";
 import EventCard from "@/components/event/event-card";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
@@ -15,13 +14,8 @@ export function FeaturedEvents() {
     queryKey: queryKeys.events.list({ limit: 6 }),
     queryFn: async () => {
       try {
-        const { data } = await api.get<ApiResponse<PaginatedEventResponse>>(
-          "/event",
-          { params: { limit: 6 } },
-        );
-        return data.data;
-      } catch (e) {
-        // Return fallback data if API fails (for build/prerender)
+        return await getFeaturedEvents(6);
+      } catch {
         return { events: [] };
       }
     },

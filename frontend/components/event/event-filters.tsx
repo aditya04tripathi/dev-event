@@ -3,8 +3,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Filter, Monitor, MapPin, Layers, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { api } from "@/lib/axios";
-import type { ApiResponse, PaginatedEventResponse } from "@/types/api-types";
+import { listEventsAction } from "@/lib/actions/events";
 import {
   Select,
   SelectContent,
@@ -38,12 +37,9 @@ export default function EventFilters({
   const { data: allTags } = useSuspenseQuery({
     queryKey: ["tags"],
     queryFn: async () => {
-      const { data } = await api.get<ApiResponse<PaginatedEventResponse>>(
-        "/event",
-        { params: { limit: 100 } },
-      );
+      const data = await listEventsAction({ limit: 100, page: 1 });
       const tags = new Set<string>();
-      data.data.events.forEach((event) => {
+      data.events.forEach((event) => {
         event.tags.forEach((tag) => tags.add(tag));
       });
       return Array.from(tags).sort();
