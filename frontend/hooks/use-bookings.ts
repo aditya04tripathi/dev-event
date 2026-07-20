@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
+import {
+  getBookingTicketAction,
+  listMyBookingsAction,
+} from "@/lib/actions/bookings";
 
 export interface Booking {
   _id: string;
@@ -21,28 +24,20 @@ export interface Booking {
 export const useBookings = () => {
   return useQuery({
     queryKey: ["my-bookings"],
-    queryFn: async () => {
-      const { data } = await api.get<any>("/bookings/my-bookings");
-      if (Array.isArray(data)) return data;
-      if (data && Array.isArray(data.data)) return data.data;
-      return [];
-    },
+    queryFn: () => listMyBookingsAction() as Promise<Booking[]>,
   });
+};
+
+export type BookingTicket = Booking & {
+  eventTitle: string;
+  eventDate: string;
+  eventLocation: string;
 };
 
 export const useBookingTicket = (id: string) => {
   return useQuery({
     queryKey: ["booking-ticket", id],
-    queryFn: async () => {
-      const { data } = await api.get<any>(`/bookings/ticket/${id}`);
-      if (data && data.data)
-        return data.data as Booking & {
-          eventTitle: string;
-          eventDate: string;
-          eventLocation: string;
-        };
-      return data;
-    },
+    queryFn: () => getBookingTicketAction(id) as Promise<BookingTicket>,
     enabled: !!id,
   });
 };

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { api } from "@/lib/axios";
-import type { ApiResponse, EventResponse } from "@/types/api-types";
+import { getEventBySlug } from "@/lib/actions/events";
 import { EventDetailsContent } from "@/components/event/event-details-content";
 import { SimilarEvents } from "@/components/event/similar-events";
 import { SimilarEventsSkeleton } from "@/components/event/similar-events-skeleton";
@@ -20,10 +19,7 @@ export async function generateMetadata({
   const { slug } = await params;
 
   try {
-    const { data } = await api.get<ApiResponse<EventResponse>>(
-      `/event/${slug}`,
-    );
-    const event = data.data;
+    const event = await getEventBySlug(slug);
 
     return {
       title: `${event.title} | DevEvent`,

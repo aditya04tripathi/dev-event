@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { UserResponse } from "@/types/api-types";
 import { useRouter } from "next/navigation";
+import { signOutAction } from "@/lib/actions/auth";
 
 interface AuthContextType {
     user: UserResponse | null;
@@ -22,29 +23,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
-        const token = localStorage.getItem("token");
 
-        if (storedUser && token) {
+        if (storedUser) {
             try {
                 setUser(JSON.parse(storedUser));
             } catch (e) {
                 console.error("Failed to parse user from localStorage", e);
                 localStorage.removeItem("user");
-                localStorage.removeItem("token");
             }
         }
         setIsLoading(false);
     }, []);
 
-    const login = (userData: UserResponse, token: string) => {
+    const login = (userData: UserResponse, _token: string) => {
         localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", token);
         setUser(userData);
     };
 
     const logout = () => {
+        void signOutAction();
         localStorage.removeItem("user");
-        localStorage.removeItem("token");
         setUser(null);
         router.push("/auth/login");
     };

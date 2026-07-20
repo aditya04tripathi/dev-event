@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useSignupMutation } from "@/hooks/api/use-auth-api";
+import { signUpAction } from "@/lib/actions/auth";
 import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ export function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
-  const signupMutation = useSignupMutation();
+  const [isPending, startTransition] = useTransition();
 
   const initialRole =
     searchParams.get("role") === "organizer" ? "organizer" : "user";
@@ -55,24 +55,23 @@ export function SignupForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    signupMutation.mutate(
-      { ...formData, role },
-      {
-        onSuccess: (data) => {
-          toast.success("Account created successfully!");
-          login(data.user, data.token);
+    startTransition(async () => {
+      try {
+        const data = await signUpAction({ ...formData, role });
+        toast.success("Account created successfully!");
+        login(data.user, data.token);
 
-          if (data.user.roles.includes("organizer")) {
-            router.push("/dashboard");
-          } else {
-            router.push("/events");
-          }
-        },
-        onError: (error: any) => {
-          toast.error(error.response?.data?.message || "Something went wrong");
-        },
-      },
-    );
+        if (data.user.roles.includes("organizer")) {
+          router.push("/dashboard");
+        } else {
+          router.push("/events");
+        }
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Something went wrong";
+        toast.error(message);
+      }
+    });
   };
 
   return (
@@ -143,7 +142,7 @@ export function SignupForm() {
                     setFormData({ ...formData, fullName: e.target.value })
                   }
                   required
-                  disabled={signupMutation.isPending}
+                  disabled={isPending}
                 />
               </div>
             </div>
@@ -162,7 +161,7 @@ export function SignupForm() {
                     setFormData({ ...formData, username: e.target.value })
                   }
                   required
-                  disabled={signupMutation.isPending}
+                  disabled={isPending}
                 />
               </div>
             </div>
@@ -182,7 +181,7 @@ export function SignupForm() {
                   setFormData({ ...formData, email: e.target.value })
                 }
                 required
-                disabled={signupMutation.isPending}
+                disabled={isPending}
               />
             </div>
           </div>
@@ -202,7 +201,7 @@ export function SignupForm() {
                 }
                 required
                 minLength={8}
-                disabled={signupMutation.isPending}
+                disabled={isPending}
               />
             </div>
             {/* Password Strength Indicator */}
@@ -233,7 +232,7 @@ export function SignupForm() {
             type="submit"
             className="w-full"
             size="lg"
-            isLoading={signupMutation.isPending}
+            isLoading={isPending}
             loadingText="Creating account..."
           >
             Create account

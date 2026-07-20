@@ -1,15 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
+import {
+  createEventAction,
+  deleteEventAction,
+  getEventAction,
+  listEventsAction,
+  listMyEventsAction,
+  updateEventAction,
+} from "@/lib/actions/events";
+import { toEventFormData } from "@/lib/event-form-data";
 import { queryKeys } from "./query-keys";
-import type {
-  ApiResponse,
-  EventResponse,
-  PaginatedEventResponse,
-  CreateEventRequest,
-  UpdateEventRequest,
-} from "@/types/api-types";
+import type { CreateEventRequest, UpdateEventRequest } from "@/types/api-types";
 
-// Queries
 export const useEvents = (params?: {
   page?: number;
   limit?: number;
@@ -20,25 +21,14 @@ export const useEvents = (params?: {
 }) => {
   return useQuery({
     queryKey: queryKeys.events.list(params),
-    queryFn: async () => {
-      const { data } = await api.get<ApiResponse<PaginatedEventResponse>>(
-        "/event",
-        { params },
-      );
-      return data.data;
-    },
+    queryFn: () => listEventsAction(params),
   });
 };
 
 export const useEvent = (idOrSlug: string) => {
   return useQuery({
     queryKey: queryKeys.events.detail(idOrSlug),
-    queryFn: async () => {
-      const { data } = await api.get<ApiResponse<EventResponse>>(
-        `/event/${idOrSlug}`,
-      );
-      return data.data;
-    },
+    queryFn: () => getEventAction(idOrSlug),
     enabled: !!idOrSlug,
   });
 };
@@ -50,32 +40,21 @@ export const useMyEvents = (params?: {
 }) => {
   return useQuery({
     queryKey: queryKeys.events.mine(params),
-    queryFn: async () => {
-      const { data } = await api.get<ApiResponse<PaginatedEventResponse>>(
-        "/event/organizer/my-events",
-        { params },
-      );
-      return data.data;
-    },
+    queryFn: () => listMyEventsAction(params),
   });
 };
 
-// Mutations
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (eventData: CreateEventRequest) => {
-      // Need to handle File object properly for multipart/form-data
-      // Axios usually handles this if we pass a FormData object or if we use proper serialization
-      // But adhering to previous logic:
-      const { data } = await api.post<ApiResponse<EventResponse>>(
-        "/event",
-        eventData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        },
+    mutationFn: async (
+      eventData: CreateEventRequest & { image: File | Blob },
+    ) => {
+      return createEventAction(
+        toEventFormData(
+          eventData as unknown as Record<string, string | File | Blob>,
+        ),
       );
-      return data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.events.all });
@@ -91,16 +70,14 @@ export const useUpdateEvent = () => {
       eventData,
     }: {
       id: string;
-      eventData: UpdateEventRequest;
+      eventData: UpdateEventRequest & { image?: File | Blob };
     }) => {
-      const { data } = await api.patch<ApiResponse<EventResponse>>(
-        `/event/${id}`,
-        eventData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        },
+      return updateEventAction(
+        id,
+        toEventFormData(
+          eventData as unknown as Record<string, string | File | Blob>,
+        ),
       );
-      return data.data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.events.all });
@@ -117,10 +94,7 @@ export const useUpdateEvent = () => {
 export const useDeleteEvent = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: string) => {
-      const { data } = await api.delete<ApiResponse<any>>(`/event/${id}`);
-      return data.data;
-    },
+    mutationFn: (id: string) => deleteEventAction(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.events.all });
     },

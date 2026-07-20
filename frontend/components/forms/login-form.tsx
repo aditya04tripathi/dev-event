@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useLoginMutation } from "@/hooks/api/use-auth-api";
+import { signInAction } from "@/lib/actions/auth";
 import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ import { toast } from "sonner";
 export function LoginForm() {
   const router = useRouter();
   const { login } = useAuth();
-  const loginMutation = useLoginMutation();
+  const [isPending, startTransition] = useTransition();
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
     password: "",
@@ -23,8 +23,9 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate(formData, {
-      onSuccess: (data) => {
+    startTransition(async () => {
+      try {
+        const data = await signInAction(formData);
         toast.success("Welcome back!");
         login(data.user, data.token);
 
@@ -33,10 +34,11 @@ export function LoginForm() {
         } else {
           router.push("/events");
         }
-      },
-      onError: (error: any) => {
-        toast.error(error.response?.data?.message || "Invalid credentials");
-      },
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Invalid credentials";
+        toast.error(message);
+      }
     });
   };
 
@@ -71,7 +73,7 @@ export function LoginForm() {
                   setFormData({ ...formData, usernameOrEmail: e.target.value })
                 }
                 required
-                disabled={loginMutation.isPending}
+                disabled={isPending}
               />
             </div>
           </div>
@@ -98,7 +100,7 @@ export function LoginForm() {
                   setFormData({ ...formData, password: e.target.value })
                 }
                 required
-                disabled={loginMutation.isPending}
+                disabled={isPending}
               />
             </div>
           </div>
@@ -107,7 +109,7 @@ export function LoginForm() {
             type="submit"
             className="w-full"
             size="lg"
-            isLoading={loginMutation.isPending}
+            isLoading={isPending}
             loadingText="Signing in..."
           >
             Sign in
