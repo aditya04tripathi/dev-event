@@ -4,39 +4,45 @@ import type { NextConfig } from "next";
 function minioRemotePatterns(): NonNullable<
   NextConfig["images"]
 >["remotePatterns"] {
-  const publicUrl =
-    process.env.NEXT_PUBLIC_MINIO_PUBLIC_URL || "http://127.0.0.1:49154";
+  const appUrl = process.env.APP_PUBLIC_URL ?? "http://127.0.0.1:49153";
   const patterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
     {
       protocol: "http",
       hostname: "127.0.0.1",
-      port: "49154",
-      pathname: "/**",
+      port: "49153",
+      pathname: "/api/storage/**",
     },
     {
       protocol: "http",
       hostname: "localhost",
-      port: "49154",
-      pathname: "/**",
+      port: "49153",
+      pathname: "/api/storage/**",
     },
     {
-      protocol: "https",
-      hostname: "devevent-minio.adityatripathi.dev",
-      pathname: "/**",
+      protocol: "http",
+      hostname: "127.0.0.1",
+      port: "3001",
+      pathname: "/api/storage/**",
+    },
+    {
+      protocol: "http",
+      hostname: "localhost",
+      port: "3001",
+      pathname: "/api/storage/**",
     },
   ];
 
   try {
-    const url = new URL(publicUrl);
+    const url = new URL(appUrl);
     const protocol = url.protocol.replace(":", "") as "http" | "https";
     patterns.push({
       protocol,
       hostname: url.hostname,
       ...(url.port ? { port: url.port } : {}),
-      pathname: "/**",
+      pathname: "/api/storage/**",
     });
   } catch {
-    // ignore invalid NEXT_PUBLIC_MINIO_PUBLIC_URL
+    // ignore invalid APP_PUBLIC_URL
   }
 
   return patterns;
