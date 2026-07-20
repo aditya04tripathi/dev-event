@@ -68,10 +68,13 @@ Cloudflare Tunnel (web only):
 |------------|---------------|
 | https://devevent.adityatripathi.dev | http://127.0.0.1:49153 |
 
-Images:
+Images (published for `linux/amd64` and `linux/arm64`):
 
 - `ghcr.io/aditya04tripathi/dev-event/web`
 - `ghcr.io/aditya04tripathi/dev-event/api`
+
+On ARM VPS (e.g. AWS Graviton), pull after a fresh CI build. If you still see
+`no matching manifest for linux/arm64`, re-run the GitHub **Docker** workflow on `main`.
 
 ## Scripts
 
@@ -79,7 +82,7 @@ Images:
 |--------|-------------|
 | `pnpm build` | Build frontend + backend |
 | `pnpm lint` | Lint both packages |
-| `pnpm docker:build` | Build linux/amd64 images locally |
+| `pnpm docker:build` | Build multi-arch images locally (amd64 + arm64) |
 | `pnpm docker:up` / `docker:down` | Local compose |
 | `pnpm docker:prod:*` | Pull-only prod compose |
 
