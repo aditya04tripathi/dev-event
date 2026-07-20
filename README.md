@@ -39,21 +39,19 @@ pnpm dev:frontend
 pnpm dev:backend
 ```
 
-- Frontend: http://localhost:3001
-- API / Swagger: http://localhost:3000/api
-- MinIO API: http://127.0.0.1:49154
-- MinIO Console: http://localhost:49155
+- Frontend: http://localhost:3001 (server actions call the api on `API_INTERNAL_URL`)
+- API / Swagger (local backend only): http://localhost:3000/api
+- Docker web UI: http://localhost:49153
 
 ## Docker
 
-Local build (web + api + mongodb + minio):
+Only **web** port `49153` is published. API, MongoDB, and MinIO are internal; the Next.js server calls them via `API_INTERNAL_URL` and `MINIO_INTERNAL_URL`. Media is served at `/api/storage/*`.
+
+Local full stack:
 
 ```bash
 pnpm docker:up
-# Web:    http://localhost:49153
-# API:    http://localhost:49152/api
-# MinIO:  http://127.0.0.1:49154
-# Console: http://localhost:49155
+# Web: http://localhost:49153
 ```
 
 Production pull-only (VPS + Cloudflare Tunnel):
@@ -64,20 +62,11 @@ pnpm docker:prod:pull
 pnpm docker:prod:up
 ```
 
-Cloudflare Tunnel routes (cloudflared on the VPS):
+Cloudflare Tunnel (web only):
 
 | Public URL | Local service |
 |------------|---------------|
 | https://devevent.adityatripathi.dev | http://127.0.0.1:49153 |
-| https://devevent-api.adityatripathi.dev | http://127.0.0.1:49152 |
-| https://devevent-minio.adityatripathi.dev | http://127.0.0.1:49154 |
-
-Set GitHub Actions repository variables (or rely on workflow defaults):
-
-- `NEXT_PUBLIC_API_URL` = `https://devevent-api.adityatripathi.dev`
-- `NEXT_PUBLIC_MINIO_PUBLIC_URL` = `https://devevent-minio.adityatripathi.dev`
-
-Rebuild the web image after changing those variables, then pull on the VPS.
 
 Images:
 
