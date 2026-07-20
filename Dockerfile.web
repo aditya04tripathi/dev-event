@@ -17,10 +17,6 @@ COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY frontend ./frontend
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG NEXT_PUBLIC_API_URL=
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_MINIO_PUBLIC_URL=http://127.0.0.1:49154
-ENV NEXT_PUBLIC_MINIO_PUBLIC_URL=$NEXT_PUBLIC_MINIO_PUBLIC_URL
 RUN pnpm --filter @dev-event/frontend build
 
 FROM node:24-alpine AS runner

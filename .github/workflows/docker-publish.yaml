@@ -32,9 +32,7 @@ jobs:
         include:
           - target: web
             dockerfile: Dockerfile.web
-            build_args: |
-              NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL || 'https://devevent-api.adityatripathi.dev' }}
-              NEXT_PUBLIC_MINIO_PUBLIC_URL=${{ vars.NEXT_PUBLIC_MINIO_PUBLIC_URL || 'https://devevent-minio.adityatripathi.dev' }}
+            build_args: ""
           - target: api
             dockerfile: Dockerfile.api
             build_args: ""
