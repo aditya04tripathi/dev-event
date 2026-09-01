@@ -1,21 +1,11 @@
 import { Controller, Get, Header } from "@nestjs/common";
-import { collectDefaultMetrics, register } from "prom-client";
-
-let metricsInitialized = false;
-
-function ensureMetrics() {
-	if (!metricsInitialized) {
-		collectDefaultMetrics({ register });
-		metricsInitialized = true;
-	}
-}
+import { metricsRegister } from "./metrics.interceptor";
 
 @Controller()
 export class MetricsController {
 	@Get("metrics")
-	@Header("Content-Type", register.contentType)
+	@Header("Content-Type", metricsRegister.contentType)
 	async getMetrics(): Promise<string> {
-		ensureMetrics();
-		return register.metrics();
+		return metricsRegister.metrics();
 	}
 }

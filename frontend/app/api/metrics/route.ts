@@ -1,19 +1,9 @@
-import { collectDefaultMetrics, register } from "prom-client";
 import { NextResponse } from "next/server";
-
-let metricsInitialized = false;
-
-function ensureMetrics() {
-	if (!metricsInitialized) {
-		collectDefaultMetrics({ register });
-		metricsInitialized = true;
-	}
-}
+import { register as metricsRegister } from "@/lib/http-metrics";
 
 export async function GET() {
-	ensureMetrics();
-	const metrics = await register.metrics();
+	const metrics = await metricsRegister.metrics();
 	return new NextResponse(metrics, {
-		headers: { "Content-Type": register.contentType },
+		headers: { "Content-Type": metricsRegister.contentType },
 	});
 }
