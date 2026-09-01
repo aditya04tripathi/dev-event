@@ -66,7 +66,7 @@ Production runs on [Railway](https://railway.app) with two services:
 1. Connect this repo to the Railway DevEvent project (web + api services).
 2. Copy variables from `.env.example` into Railway.
 3. Set `MONGODB_URI`, bucket credentials, and JWT secret from Railway plugins.
-4. For observability, set `ENABLE_TRACING`, `OTEL_SERVICE_NAME`, and `OTEL_EXPORTER_OTLP_ENDPOINT` on both web and api.
+4. For observability, set `ENABLE_TRACING=true`, `OTEL_SERVICE_NAME`, and `OTEL_EXPORTER_OTLP_ENDPOINT=https://otel-collector.adityatripathi.dev` on both web and api. Grafana: https://grafana.adityatripathi.dev
 
 ## Scripts
 
