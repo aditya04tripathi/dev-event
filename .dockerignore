@@ -17,6 +17,8 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+!.env.local.example
+!.env.production.example
 Dockerfile*
 docker-compose*
 .dockerignore

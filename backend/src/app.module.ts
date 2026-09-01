@@ -12,6 +12,7 @@ import { EventModule } from './event/event.module';
 import { BookingModule } from './booking/booking.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { SeedModule } from './seed/seed.module';
+import { HealthController } from './health/health.controller';
 
 @Module({
 	imports: [
@@ -27,7 +28,7 @@ import { SeedModule } from './seed/seed.module';
 		SeedModule,
 	],
 
-	controllers: [AppController],
+	controllers: [AppController, HealthController],
 	providers: [AppService],
 })
 export class AppModule {}
