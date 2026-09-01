@@ -29,6 +29,10 @@ const httpRequestDuration = new Histogram({
 
 export { register as metricsRegister };
 
+function shouldSkipRoute(path: string): boolean {
+	return /^\/(metrics|health)/.test(path);
+}
+
 @Injectable()
 export class MetricsInterceptor implements NestInterceptor {
 	intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
@@ -37,6 +41,10 @@ export class MetricsInterceptor implements NestInterceptor {
 		const res = http.getResponse<Response>();
 		const start = Date.now();
 		const route = req.route?.path ?? req.path ?? "unknown";
+
+		if (shouldSkipRoute(route)) {
+			return next.handle();
+		}
 
 		return next.handle().pipe(
 			tap({
