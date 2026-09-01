@@ -13,7 +13,7 @@ pnpm monorepo: Next.js frontend + NestJS API + MinIO (S3) + MongoDB.
 
 - Node.js 20+
 - pnpm 10+
-- Docker (MinIO, MongoDB, and production deploy)
+- Docker (local Mongo + MinIO)
 
 ## Setup
 
@@ -54,27 +54,19 @@ pnpm docker:up
 # Web: http://localhost:49153
 ```
 
-Production pull-only (VPS + Cloudflare Tunnel):
+## Production (Railway)
 
-```bash
-cp .env.production.example .env
-pnpm docker:prod:pull
-pnpm docker:prod:up
-```
+Production runs on [Railway](https://railway.app) with two services:
 
-Cloudflare Tunnel (web only):
+| Service | Config | Domain |
+|---------|--------|--------|
+| `web` | `railway.toml` + `Dockerfile.web` | https://devevent.adityatripathi.dev |
+| `api` | `railway.api.toml` + `Dockerfile.api` | internal / API subdomain |
 
-| Public URL | Local service |
-|------------|---------------|
-| https://devevent.adityatripathi.dev | http://127.0.0.1:49153 |
-
-Images (published for `linux/amd64` and `linux/arm64`):
-
-- `ghcr.io/aditya04tripathi/dev-event/web`
-- `ghcr.io/aditya04tripathi/dev-event/api`
-
-On ARM VPS (e.g. AWS Graviton), pull after a fresh CI build. If you still see
-`no matching manifest for linux/arm64`, re-run the GitHub **Docker** workflow on `main`.
+1. Connect this repo to the Railway DevEvent project (web + api services).
+2. Copy variables from `.env.example` into Railway.
+3. Set `MONGODB_URI`, bucket credentials, and JWT secret from Railway plugins.
+4. For observability, set `ENABLE_TRACING`, `OTEL_SERVICE_NAME`, and `OTEL_EXPORTER_OTLP_ENDPOINT` on both web and api.
 
 ## Scripts
 
@@ -82,9 +74,8 @@ On ARM VPS (e.g. AWS Graviton), pull after a fresh CI build. If you still see
 |--------|-------------|
 | `pnpm build` | Build frontend + backend |
 | `pnpm lint` | Lint both packages |
-| `pnpm docker:build` | Build multi-arch images locally (amd64 + arm64) |
+| `pnpm docker:build` | Build web and api images locally |
 | `pnpm docker:up` / `docker:down` | Local compose |
-| `pnpm docker:prod:*` | Pull-only prod compose |
 
 ## License
 

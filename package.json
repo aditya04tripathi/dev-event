@@ -24,9 +24,6 @@
     "start:backend": "pnpm --filter @dev-event/backend start:prod",
     "docker:build": "docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile.web -t dev-event-web . && docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile.api -t dev-event-api .",
     "docker:up": "docker compose up --build -d && echo http://localhost:49153",
-    "docker:down": "docker compose down",
-    "docker:prod:pull": "docker compose -f docker-compose.prod.yml pull",
-    "docker:prod:up": "docker compose -f docker-compose.prod.yml up -d && echo http://localhost:49153",
-    "docker:prod:down": "docker compose -f docker-compose.prod.yml down"
+    "docker:down": "docker compose down"
   }
 }

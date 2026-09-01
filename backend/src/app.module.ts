@@ -13,6 +13,7 @@ import { BookingModule } from './booking/booking.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { SeedModule } from './seed/seed.module';
 import { HealthController } from './health/health.controller';
+import { MetricsController } from './metrics/metrics.controller';
 
 @Module({
 	imports: [
@@ -28,7 +29,7 @@ import { HealthController } from './health/health.controller';
 		SeedModule,
 	],
 
-	controllers: [AppController, HealthController],
+	controllers: [AppController, HealthController, MetricsController],
 	providers: [AppService],
 })
 export class AppModule {}

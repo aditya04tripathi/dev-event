@@ -101,14 +101,7 @@ pnpm docker:up
 # Console: http://localhost:49155
 ```
 
-Production (pull GHCR image only — never build on the VPS):
-
-```bash
-pnpm docker:prod:pull
-pnpm docker:prod:up
-```
-
-Image: `ghcr.io/aditya04tripathi/dev-event`
+Production runs on Railway — see the root [README](../README.md#production-railway).
 
 ## Usage
 
