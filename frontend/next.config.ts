@@ -1,4 +1,3 @@
-import path from "node:path";
 import type { NextConfig } from "next";
 
 function minioRemotePatterns(): NonNullable<
@@ -49,8 +48,6 @@ function minioRemotePatterns(): NonNullable<
 }
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  outputFileTracingRoot: path.join(__dirname, ".."),
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },
