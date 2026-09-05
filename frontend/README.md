@@ -39,8 +39,8 @@ The application follows a modular Next.js App Router structure:
 
 - Node.js 18+
 - pnpm
-- Docker (for MinIO locally)
 - MongoDB instance
+- MinIO (or S3-compatible) storage
 - Backend API (`NEXT_PUBLIC_API_URL`) with MinIO configured
 
 ### Local Setup
@@ -68,38 +68,18 @@ The application follows a modular Next.js App Router structure:
 
     ```env
     NEXT_PUBLIC_API_URL=http://localhost:3000
-    NEXT_PUBLIC_MINIO_PUBLIC_URL=http://127.0.0.1:49154
+    NEXT_PUBLIC_MINIO_PUBLIC_URL=http://127.0.0.1:9000
     MINIO_ROOT_USER=admin
     MINIO_ROOT_PASSWORD=password123
     ```
 
-4.  **Start MinIO (object storage)**
-
-    ```bash
-    docker compose up minio -d
-    ```
-
-    Console: [http://localhost:49155](http://localhost:49155) (admin / password123)
-
-5.  **Run Development Server**
+4.  **Run Development Server**
 
     ```bash
     pnpm dev
     ```
 
     Open [http://localhost:3000](http://localhost:3000) to view the application.
-
-## Docker
-
-Local build + MinIO:
-
-```bash
-pnpm docker:up
-# Web:    http://localhost:49153
-# API:    http://localhost:49152/api
-# MinIO:  http://127.0.0.1:49154
-# Console: http://localhost:49155
-```
 
 Production runs on Railway — see the root [README](../README.md#production-railway).
 

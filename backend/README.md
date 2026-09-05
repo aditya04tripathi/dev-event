@@ -17,7 +17,7 @@ Dev-Event is a comprehensive backend solution for organizing and managing events
 
 ## Tech Stack
 
-- **Runtime**: [Bun](https://bun.sh/)
+- **Runtime**: Node.js / pnpm
 - **Framework**: [NestJS](https://nestjs.com/)
 - **Database**: MongoDB (via Mongoose)
 - **Object Storage**: Minio (S3 Compatible)
@@ -27,8 +27,8 @@ Dev-Event is a comprehensive backend solution for organizing and managing events
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) installed.
-- [Docker](https://www.docker.com/) for running MongoDB and Minio.
+- Node.js 20+ and pnpm
+- MongoDB and MinIO instances available
 
 ### Quick Start
 
@@ -41,14 +41,10 @@ Dev-Event is a comprehensive backend solution for organizing and managing events
    ```bash
    cp .env.example .env
    ```
-3. **Launch services**:
+3. **Install and Run** (from monorepo root preferred):
    ```bash
-   docker-compose up -d
-   ```
-4. **Install and Run**:
-   ```bash
-   bun install
-   bun start:dev
+   pnpm install
+   pnpm --filter @dev-event/backend start:dev
    ```
 
 ## Configuration
