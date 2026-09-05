@@ -40,14 +40,15 @@ pnpm dev:backend
 
 Production runs on [Railway](https://railway.app) with two services built via Railpack:
 
-| Service | Config | Domain |
-|---------|--------|--------|
-| `web` | `railway.toml` | https://devevent.adityatripathi.dev |
-| `api` | `railway.api.toml` | internal / API subdomain |
+| Service | Config file | Domain |
+|---------|-------------|--------|
+| `web` | `/frontend/railway.toml` | https://devevent.adityatripathi.dev |
+| `api` | `/backend/railway.toml` | internal / API subdomain |
 
 1. Connect this repo to the Railway DevEvent project (web + api services).
-2. Copy variables from `.env.example` into Railway.
-3. Set `MONGODB_URI`, bucket credentials, and JWT secret from Railway plugins.
+2. In each service’s Settings → Config as Code, set the config file path above (keep Root Directory `/`).
+3. Copy variables from `.env.example` into Railway.
+4. Set `MONGODB_URI`, bucket credentials, and JWT secret from Railway plugins.
 
 ## Scripts
 
