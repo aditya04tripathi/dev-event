@@ -5,11 +5,6 @@ import { GlobalExceptionFilter } from './utils/filters/global-exception.filter';
 import { ResponseInterceptor } from './utils/interceptors/response.interceptor';
 import { EnvService } from './env/env.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { initTracing } from './config/tracing.config';
-
-if (process.env.ENABLE_TRACING === 'true') {
-	initTracing(process.env.OTEL_SERVICE_NAME ?? 'devevent-api');
-}
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);

@@ -13,9 +13,6 @@ import { BookingModule } from './booking/booking.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { SeedModule } from './seed/seed.module';
 import { HealthController } from './health/health.controller';
-import { MetricsController } from './metrics/metrics.controller';
-import { MetricsInterceptor } from './metrics/metrics.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
 	imports: [
@@ -31,13 +28,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 		SeedModule,
 	],
 
-	controllers: [AppController, HealthController, MetricsController],
-	providers: [
-		AppService,
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: MetricsInterceptor,
-		},
-	],
+	controllers: [AppController, HealthController],
+	providers: [AppService],
 })
 export class AppModule {}
