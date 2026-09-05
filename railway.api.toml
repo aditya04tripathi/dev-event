@@ -1,0 +1,8 @@
+[build]
+builder = "RAILPACK"
+buildCommand = "pnpm --filter @dev-event/backend build"
+
+[deploy]
+startCommand = "pnpm --filter @dev-event/backend start:prod"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
