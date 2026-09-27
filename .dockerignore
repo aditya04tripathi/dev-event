@@ -1,0 +1,32 @@
+# Dependency caches
+node_modules
+**/node_modules
+
+# Next.js build output
+.next
+**/.next
+
+# NestJS build output
+dist
+**/dist
+*.tsbuildinfo
+
+# Git and GitHub
+.git
+.github
+
+# Environment secrets
+.env*
+!.env.example
+
+# Development tools & logs
+.agents
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+.DS_Store
+
+# Test & coverage
+coverage
+**/coverage

@@ -48,6 +48,7 @@ function minioRemotePatterns(): NonNullable<
 }
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },
