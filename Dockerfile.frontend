@@ -38,6 +38,9 @@ RUN pnpm --filter @dev-event/frontend build
 
 # --- Production runner stage ---
 FROM node:22-alpine AS runner
+RUN apk upgrade --no-cache && \
+    apk add --no-cache libc6-compat && \
+    rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /opt/yarn*
 WORKDIR /app
 
 ENV NODE_ENV=production

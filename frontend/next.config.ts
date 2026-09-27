@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-function minioRemotePatterns(): NonNullable<
+function storageRemotePatterns(): NonNullable<
   NextConfig["images"]
 >["remotePatterns"] {
   const appUrl = process.env.APP_PUBLIC_URL ?? "http://127.0.0.1:49153";
@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     dangerouslyAllowLocalIP: true,
-    remotePatterns: minioRemotePatterns(),
+    remotePatterns: storageRemotePatterns(),
   },
 
   async rewrites() {

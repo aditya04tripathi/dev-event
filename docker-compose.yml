@@ -13,7 +13,7 @@ services:
       - HOSTNAME=0.0.0.0
       - NODE_ENV=production
       - API_INTERNAL_URL=http://backend:3000
-      - MINIO_INTERNAL_URL=http://minio:9000
+      - STORAGE_INTERNAL_URL=http://seaweedfs:8888
       - APP_PUBLIC_URL=${APP_PUBLIC_URL:-https://devevent.adityatripathi.dev}
     depends_on:
       backend:
@@ -46,18 +46,14 @@ services:
       - PORT=3000
       - DATABASE_URL=${DATABASE_URL:-mongodb://mongo:27017/dev-event}
       - JWT_SECRET=${JWT_SECRET:-dev-event-super-secret-jwt-key}
-      - MINIO_ENDPOINT=${MINIO_ENDPOINT:-minio:9000}
-      - MINIO_PUBLIC_URL=${MINIO_PUBLIC_URL:-https://devevent.adityatripathi.dev/api/storage}
-      - MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME:-dev-event-bucket}
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-admin}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-password123}
-      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-admin}
-      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-password123}
+      - STORAGE_ENDPOINT=${STORAGE_ENDPOINT:-http://seaweedfs:8888}
+      - STORAGE_PUBLIC_URL=${STORAGE_PUBLIC_URL:-https://devevent.adityatripathi.dev/api/storage}
+      - STORAGE_BUCKET_NAME=${STORAGE_BUCKET_NAME:-dev-event-bucket}
       - CORS_ORIGINS=${CORS_ORIGINS:-https://devevent.adityatripathi.dev}
     depends_on:
       mongo:
         condition: service_healthy
-      minio:
+      seaweedfs:
         condition: service_healthy
     networks:
       - dev-event-net
@@ -93,20 +89,17 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  minio:
-    image: quay.io/minio/minio:latest
-    container_name: dev-event-minio
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: dev-event-seaweedfs
     restart: unless-stopped
-    command: server /data --console-address ":9001"
-    environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-admin}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-password123}
+    command: "server -dir=/data -filer=true -s3 -s3.port=8333"
     volumes:
-      - minio_data:/data
+      - seaweedfs_data:/data
     networks:
       - dev-event-net
     healthcheck:
-      test: ["CMD-SHELL", "mc ready local || curl -f http://localhost:9000/minio/health/live || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8888/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -120,7 +113,7 @@ services:
 volumes:
   mongo_data:
     driver: local
-  minio_data:
+  seaweedfs_data:
     driver: local
 
 networks:

@@ -5,7 +5,7 @@ import { Event } from '../event/event.schema';
 import { Booking } from '../booking/booking.schema';
 import { Model, Types } from 'mongoose';
 import { Role } from '../user/enums/role.enum';
-import { MinioService } from '../minio/minio.service';
+import { StorageService } from '../storage/storage.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -329,7 +329,7 @@ async function bootstrap() {
 	const userModel = app.get<Model<User>>(User.name);
 	const eventModel = app.get<Model<Event>>(Event.name);
 	const bookingModel = app.get<Model<Booking>>(Booking.name);
-	const minioService = app.get(MinioService);
+	const storageService = app.get(StorageService);
 
 	console.log('--- Starting Seeding Process ---');
 
@@ -374,27 +374,27 @@ async function bootstrap() {
 			try {
 				const imageName = eventData.image.split('/').pop() || 'default.png';
 				const imageFilePath = path.join(imagesPath, imageName);
-				let minioImageName = '';
+				let uploadedImageUrl = '';
 
 				if (fs.existsSync(imageFilePath)) {
 					const buffer = fs.readFileSync(imageFilePath);
 					const mimetype = imageName.endsWith('.png')
 						? 'image/png'
 						: 'image/jpeg';
-					minioImageName = await minioService.uploadBuffer(
+					uploadedImageUrl = await storageService.uploadBuffer(
 						buffer,
 						imageName,
 						mimetype,
 					);
-					console.log(`Uploaded ${imageName} to Minio as ${minioImageName}`);
+					console.log(`Uploaded ${imageName} to SeaweedFS as ${uploadedImageUrl}`);
 				} else {
 					console.warn(`Image file not found: ${imageFilePath}`);
 				}
 
 				await eventModel.create({
 					...eventData,
-					image: minioImageName,
-					organizer: organizer._id as Types.ObjectId,
+					image: uploadedImageUrl,
+					organizer: organizer._id,
 				});
 				console.log(`Created event: ${eventData.title}`);
 			} catch (error) {

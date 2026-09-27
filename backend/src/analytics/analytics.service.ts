@@ -28,11 +28,11 @@ export class AnalyticsService {
 
 		const totalBookings = await this.bookingModel.countDocuments({
 			eventId: event._id,
-		} as any);
+		});
 		const totalCheckIns = await this.bookingModel.countDocuments({
 			eventId: event._id,
 			checkedInAt: { $exists: true, $ne: null },
-		} as any);
+		});
 
 		// Get bookings over the last 7 days
 		const sevenDaysAgo = new Date();
@@ -90,11 +90,11 @@ export class AnalyticsService {
 		const totalEvents = events.length;
 		const totalBookings = await this.bookingModel.countDocuments({
 			eventId: { $in: eventIds },
-		} as any);
+		});
 		const totalCheckIns = await this.bookingModel.countDocuments({
 			eventId: { $in: eventIds },
 			checkedInAt: { $exists: true, $ne: null },
-		} as any);
+		});
 
 		// Top events by bookings
 		const topEvents = await this.bookingModel.aggregate([

@@ -4,11 +4,11 @@ import { SeedService } from './seed.service';
 import { UserModule } from 'src/user/user.module';
 import { EventModule } from 'src/event/event.module';
 import { BookingModule } from 'src/booking/booking.module';
-import { MinioModule } from 'src/minio/minio.module';
+import { StorageModule } from 'src/storage/storage.module';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-	imports: [UserModule, EventModule, BookingModule, MinioModule, AuthModule],
+	imports: [UserModule, EventModule, BookingModule, StorageModule, AuthModule],
 	controllers: [SeedController],
 	providers: [SeedService],
 })

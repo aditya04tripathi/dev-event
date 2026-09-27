@@ -7,7 +7,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
 import { EnvModule } from './env/env.module';
 import { DatabaseModule } from './database/database.module';
-import { MinioModule } from './minio/minio.module';
+import { StorageModule } from './storage/storage.module';
 import { EventModule } from './event/event.module';
 import { BookingModule } from './booking/booking.module';
 import { AnalyticsModule } from './analytics/analytics.module';
@@ -18,7 +18,7 @@ import { HealthController } from './health/health.controller';
 	imports: [
 		EnvModule,
 		DatabaseModule,
-		MinioModule,
+		StorageModule,
 		JwtModule,
 		AuthModule,
 		UserModule,

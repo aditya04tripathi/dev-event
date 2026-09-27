@@ -53,7 +53,7 @@ Key environment variables in `.env`:
 
 - `DATABASE_URL`: MongoDB connection string.
 - `JWT_SECRET`: Secret key for authentication.
-- `MINIO_*`: Configuration for object storage.
+- `STORAGE_*`: Configuration for object storage.
 
 ## Usage
 

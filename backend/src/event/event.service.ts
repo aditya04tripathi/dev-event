@@ -1,7 +1,7 @@
 import { Inject, Injectable, ConflictException, Logger } from '@nestjs/common';
 import mongoose, { Model } from 'mongoose';
 import { Event } from './event.schema';
-import { MinioService } from 'src/minio/minio.service';
+import { StorageService } from 'src/storage/storage.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
@@ -9,7 +9,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 export class EventService {
 	constructor(
 		@Inject(Event.name) private eventModel: Model<Event>,
-		private readonly minioService: MinioService,
+		private readonly storageService: StorageService,
 	) {}
 
 	private logger = new Logger(EventService.name);
@@ -181,7 +181,7 @@ export class EventService {
 		}
 		let imageUrl = '';
 		if (file) {
-			imageUrl = await this.minioService.uploadFile(file);
+			imageUrl = await this.storageService.uploadFile(file);
 		}
 
 		let tags = createEventDto.tags;
@@ -267,7 +267,7 @@ export class EventService {
 		const updateData: any = { ...updateEventDto };
 
 		if (file) {
-			const imageUrl = await this.minioService.uploadFile(file);
+			const imageUrl = await this.storageService.uploadFile(file);
 			updateData.image = imageUrl;
 		}
 
@@ -334,7 +334,7 @@ export class EventService {
 	private async mapEventImage(event: any) {
 		if (event.image && !event.image.startsWith('http')) {
 			try {
-				event.image = await this.minioService.getFileUrl(event.image);
+				event.image = await this.storageService.getFileUrl(event.image);
 			} catch (error) {
 				this.logger.warn(
 					`Failed to generate URL for image ${event.image}`,

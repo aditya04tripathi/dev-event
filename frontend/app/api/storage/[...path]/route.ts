@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getMinioInternalBaseUrl } from "@/lib/api/config";
+import { getStorageInternalBaseUrl } from "@/lib/api/config";
 
 export const runtime = "nodejs";
 
@@ -9,7 +9,7 @@ export async function GET(
 ) {
   const { path } = await context.params;
   const objectPath = path.join("/");
-  const base = getMinioInternalBaseUrl();
+  const base = getStorageInternalBaseUrl();
   const targetUrl = `${base}/${objectPath}`;
 
   const upstream = await fetch(targetUrl, { method: "GET" });

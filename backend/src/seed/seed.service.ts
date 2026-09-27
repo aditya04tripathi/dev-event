@@ -3,7 +3,7 @@ import { Model, Types } from 'mongoose';
 import { User } from 'src/user/user.schema';
 import { Event } from 'src/event/event.schema';
 import { Booking } from 'src/booking/booking.schema';
-import { MinioService } from 'src/minio/minio.service';
+import { StorageService } from 'src/storage/storage.service';
 import { events as MOCK_EVENTS } from 'src/constants';
 import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
@@ -24,7 +24,7 @@ export class SeedService {
 		@Inject(User.name) private userModel: Model<User>,
 		@Inject(Event.name) private eventModel: Model<Event>,
 		@Inject(Booking.name) private bookingModel: Model<Booking>,
-		private readonly minioService: MinioService,
+		private readonly storageService: StorageService,
 		private readonly authService: AuthService,
 	) {}
 
@@ -112,7 +112,7 @@ export class SeedService {
 					organizers[Math.floor(Math.random() * organizers.length)];
 
 				// Handle image upload if exists
-				let minioImageName = '';
+				let uploadedImageUrl = '';
 				if (eventData.image) {
 					if (
 						fs.existsSync(
@@ -128,7 +128,7 @@ export class SeedService {
 								buffer: imageBuffer,
 								mimetype: 'image/jpeg',
 							} as Express.Multer.File;
-							minioImageName = await this.minioService.uploadFile(mockFile);
+							uploadedImageUrl = await this.storageService.uploadFile(mockFile);
 							this.logger.log(`Uploaded image: ${eventData.image}`);
 						} catch (uploadError) {
 							this.logger.warn(
@@ -146,7 +146,7 @@ export class SeedService {
 				// Only get presigned URL if we have a valid image name
 				const event = await this.eventModel.create({
 					...eventData,
-					image: minioImageName,
+					image: uploadedImageUrl,
 					organizer: organizer._id as Types.ObjectId,
 				});
 

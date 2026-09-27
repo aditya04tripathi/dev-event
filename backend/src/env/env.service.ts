@@ -36,32 +36,37 @@ export class EnvService {
 		return this.get<number>('PORT');
 	}
 
+	get StorageEndpoint(): string {
+		return (
+			this.get<string>('STORAGE_ENDPOINT') ||
+			'http://seaweedfs:8888'
+		);
+	}
+
+	get StoragePublicUrl(): string {
+		return (
+			this.get<string>('STORAGE_PUBLIC_URL') ||
+			'https://devevent.adityatripathi.dev/api/storage'
+		);
+	}
+
+	get StorageBucketName(): string {
+		return (
+			this.get<string>('STORAGE_BUCKET_NAME') ||
+			'dev-event-bucket'
+		);
+	}
+
 	get MinioEndpoint(): string {
-		return this.get<string>('MINIO_ENDPOINT');
+		return this.StorageEndpoint;
 	}
 
 	get MinioPublicUrl(): string {
-		return this.get<string>('MINIO_PUBLIC_URL');
-	}
-
-	get MinioAccessKey(): string {
-		return this.get<string>('MINIO_ACCESS_KEY');
-	}
-
-	get MinioSecretKey(): string {
-		return this.get<string>('MINIO_SECRET_KEY');
+		return this.StoragePublicUrl;
 	}
 
 	get MinioBucketName(): string {
-		return this.get<string>('MINIO_BUCKET_NAME');
-	}
-
-	get MinioRootUser(): string {
-		return this.get<string>('MINIO_ROOT_USER');
-	}
-
-	get MinioRootPassword(): string {
-		return this.get<string>('MINIO_ROOT_PASSWORD');
+		return this.StorageBucketName;
 	}
 
 	get CorsOrigins(): string[] {

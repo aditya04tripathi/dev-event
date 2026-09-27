@@ -26,29 +26,17 @@ export class EnvironmentVariables {
 	@IsString()
 	DATABASE_URL: string;
 
+	@IsOptional()
 	@IsString()
-	MINIO_ENDPOINT: string;
+	STORAGE_ENDPOINT?: string;
 
 	@IsOptional()
 	@IsString()
-	MINIO_PUBLIC_URL: string;
+	STORAGE_PUBLIC_URL?: string;
 
 	@IsOptional()
 	@IsString()
-	MINIO_ACCESS_KEY: string;
-
-	@IsOptional()
-	@IsString()
-	MINIO_SECRET_KEY: string;
-
-	@IsString()
-	MINIO_BUCKET_NAME: string;
-
-	@IsString()
-	MINIO_ROOT_USER: string;
-
-	@IsString()
-	MINIO_ROOT_PASSWORD: string;
+	STORAGE_BUCKET_NAME?: string;
 
 	@IsOptional()
 	@IsString()

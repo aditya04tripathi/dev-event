@@ -3,8 +3,10 @@ export function getApiInternalBaseUrl(): string {
   return url.replace(/\/$/, "");
 }
 
-export function getMinioInternalBaseUrl(): string {
-  const url = process.env.MINIO_INTERNAL_URL ?? "http://127.0.0.1:9000";
+export function getStorageInternalBaseUrl(): string {
+  const url =
+    process.env.STORAGE_INTERNAL_URL ??
+    "http://127.0.0.1:8888";
   return url.replace(/\/$/, "");
 }
 

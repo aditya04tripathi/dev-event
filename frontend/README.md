@@ -67,10 +67,9 @@ The application follows a modular Next.js App Router structure:
     Required variables:
 
     ```env
-    NEXT_PUBLIC_API_URL=http://localhost:3000
-    NEXT_PUBLIC_MINIO_PUBLIC_URL=http://127.0.0.1:9000
-    MINIO_ROOT_USER=admin
-    MINIO_ROOT_PASSWORD=password123
+    API_INTERNAL_URL=http://localhost:3000
+    STORAGE_INTERNAL_URL=http://127.0.0.1:8888
+    APP_PUBLIC_URL=http://127.0.0.1:49153
     ```
 
 4.  **Run Development Server**

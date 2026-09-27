@@ -112,9 +112,9 @@ export const PROJECTS = [
 // Social Links
 export const SOCIAL_LINKS = {
 	github: "https://github.com/aditya04tripathi",
-	linkedin: "https://www.linkedin.com/in/aditya-tripathi-887586379",
-	twitter: "https://twitter.com",
-	email: "mailto:adityatripathi.at04@gmail.com",
+	linkedin: "https://www.linkedin.com/in/adityatripathi0404",
+	twitter: "https://twitter.com/adity04tripathi",
+	email: "mailto:me@adityatripathi.dev",
 };
 
 // Contact Reasons
