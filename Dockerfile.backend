@@ -5,6 +5,8 @@ FROM node:22-alpine AS base
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+ENV CI=true
+
 # Pin pnpm version explicitly matching packageManager in package.json
 RUN npm install -g pnpm@10.17.0
 
@@ -27,6 +29,7 @@ WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/backend/node_modules ./backend/node_modules
+COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY backend ./backend
 COPY frontend/package.json ./frontend/package.json
@@ -34,7 +37,7 @@ COPY frontend/package.json ./frontend/package.json
 ENV NODE_ENV=production
 
 RUN pnpm --filter @dev-event/backend build
-RUN pnpm prune --prod
+RUN CI=true pnpm prune --prod --config.confirmModulesPurge=false
 
 # --- Production runner stage ---
 FROM node:22-alpine AS runner
