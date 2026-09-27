@@ -5,11 +5,14 @@
   "packageManager": "pnpm@10.17.0",
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@parcel/watcher",
+      "@scarf/scarf",
       "argon2",
       "bcrypt",
+      "msw",
       "sharp",
-      "unrs-resolver",
-      "@nestjs/core"
+      "unrs-resolver"
     ]
   },
   "scripts": {
